@@ -20,14 +20,14 @@
 在配置ios环境时运行brew install --HEAD libimobiledevice 报错:<br>
 configure: error: Package requirements (libusbmuxd >= 1.1.0) were not met:<br>
 Requested 'libusbmuxd >= 1.1.0' but version of libusbmuxd is 1.0.10<br>
-
 Consider adjusting the PKG_CONFIG_PATH environment variable if you<br>
 installed software in a non-standard prefix.<br>
-
 Alternatively, you may set the environment variables libusbmuxd_CFLAGS<br>
 and libusbmuxd_LIBS to avoid the need to call pkg-config.<br>
 See the pkg-config man page for more details.<br>
 READ THIS: https://docs.brew.sh/Troubleshooting<br>
 需要运行brew unlink usbmuxd & brew install --HEAD usbmuxd而不是libusbmuxd<br>
 上面配置完毕 android studio 打开flutter项目 连接上真机或者打开ios模拟器 在设备栏会看到设备连接<br>
-在运行项目之前 [要在xcode中配置账号 证书](https://flutterchina.club/ios-release/) ,设置完毕点击studio中运行按钮或者Terminal中输入flutter run 即可
+在运行项目之前 [要在xcode中配置账号 证书](https://flutterchina.club/ios-release/) ,设置完毕点击studio中运行按钮或者Terminal中输入flutter run 即可<br>
+运行真机时碰到错误<br> Error connecting to the service protocol: HttpException: , uri = http://127.0.0.1:1024/ws <br> 
+1、重启xCode编译器试试 2、于是打开Xcode->Window->Devices and Simulators  勾选Connect via network
