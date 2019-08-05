@@ -1,7 +1,7 @@
 {
-  "version":3,
+  "version":2,
   "isForce":false,
   "versionName":"1.0",
-  "des":"有新版本，是否去更新",
+  "des":"有新版本，是否去更新,",
   "url":"https://www.baidu.com/"
 }
