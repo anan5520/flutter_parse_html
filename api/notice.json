@@ -2,6 +2,6 @@
   "content": "测试",
   "version": 1,
   "title": "提示",
-  "isShow": true,
+  "isShow": false,
   "canCancel": true
 }
