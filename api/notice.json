@@ -2,5 +2,6 @@
   "content": "",
   "version": 1,
   "title": "提示",
+  "isShow": false,
   "canCancel": true
 }
