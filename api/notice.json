@@ -1,7 +1,7 @@
 {
-  "content": "测试",
+  "content": "郑鹏鹤，注意点身体",
   "version": 1,
   "title": "提示",
-  "isShow": false,
+  "isShow": true,
   "canCancel": true
 }
