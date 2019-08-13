@@ -5,7 +5,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' as parse;
-import 'package:flutter_html_textview_render/html_text_view.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 class BookPage extends StatelessWidget{
   var url;
@@ -89,7 +89,7 @@ class BookState extends State<BookHomePage>{
               sliver: new SliverList(
                 delegate: new SliverChildListDelegate(
                   <Widget>[
-                    HtmlTextView(data: content),
+                    Html(data: content),
                   ],
                 ),
               ),

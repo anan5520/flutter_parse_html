@@ -34,5 +34,8 @@ class SharedPreferencesKeys {
   ///  
   /// }]
   static String searchHistory = 'searchHistory';
+  static String htmlUrl1 = 'htmlUrl';
+  static String update = 'update';
+  static String urls = 'urls';
 }
 

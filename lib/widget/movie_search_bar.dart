@@ -62,12 +62,11 @@ class SearchResultPage extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    // TODO: implement createState
     return SearchState(_query);
   }
 }
 
-class SearchState extends State<SearchResultPage> {
+class SearchState extends State<SearchResultPage> with AutomaticKeepAliveClientMixin{
   final String _query;
 
   SearchState(this._query);
@@ -78,7 +77,6 @@ class SearchState extends State<SearchResultPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _dio = new Dio();
     getData(_query);
@@ -86,6 +84,7 @@ class SearchState extends State<SearchResultPage> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     Widget content;
     if (_data.length > 0) {
       content = ListView.builder(
@@ -217,5 +216,9 @@ class SearchState extends State<SearchResultPage> {
           );
         });
   }
+
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => true;
 
 }

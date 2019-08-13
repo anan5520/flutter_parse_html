@@ -1,5 +1,7 @@
 
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_ijkplayer/flutter_ijkplayer.dart';
 class VideoPlayPage extends StatelessWidget{
@@ -25,6 +27,7 @@ class VideoPage extends StatefulWidget{
   @override
   State<StatefulWidget> createState() {
     // TODO: implement createState
+    print('播放地址>>>$url');
     return _VideoAppState(url);
   }
 }
@@ -55,7 +58,7 @@ class _VideoAppState extends State<VideoPage>{
         body: Center(
             child: IjkPlayer(mediaController: _controller,
               controllerWidgetBuilder: (_){return DefaultIJKControllerWidget(
-                controller: _controller,horizontalGesture: false,);},
+                controller: _controller,);},
               statusWidgetBuilder: (context,controller,status){
                 switch(status){
                   case IjkStatus.prepared:
@@ -98,7 +101,7 @@ class _VideoAppState extends State<VideoPage>{
   }
 
   void startPlay() async{
-    await _controller.setNetworkDataSource(playUrl,autoPlay: false);
+    await _controller.setNetworkDataSource(playUrl,autoPlay: Platform.isAndroid);
   }
 
 }

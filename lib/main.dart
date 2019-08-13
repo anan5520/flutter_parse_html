@@ -1,5 +1,6 @@
 
 import 'package:flutter_parse_html/ui/home_page.dart';
+import 'package:flutter_parse_html/ui/parse/htm_parse_page1.dart';
 import 'package:flutter_parse_html/ui/parse/image_page.dart';
 import 'dart:io';
 import 'package:flutter/material.dart';
@@ -8,7 +9,7 @@ import 'package:flutter_parse_html/ui/movie/movie_page.dart';
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -26,9 +27,19 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       onGenerateRoute: (setting){
+//        switch(setting.name){
+//          case '/HtmlParse1':
+//             new MaterialPageRoute(builder: (BuildContext context) {
+//              return HtmlParsePage1();
+//            })
+//            break;
+//        }
         if(setting.name == '/ImagePage'){
           return MaterialPageRoute(builder: (context) => ImagePage(setting.arguments));
         }
+      },
+      routes: <String,WidgetBuilder>{
+        "/HtmlParse1":(BuildContext context)=>new HtmlParsePage1(),
       },
       home: HomePage(),
     );

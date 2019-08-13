@@ -1,6 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_parse_html/model/button_bean.dart';
+import 'package:flutter_parse_html/model/movie_bean.dart';
 import 'package:flutter_parse_html/model/video_list_item.dart';
 import 'package:flutter_parse_html/mvp/presenter/movie_presenter.dart';
 import 'package:flutter_parse_html/mvp/presenter/movie_presenter_impl.dart';
@@ -9,18 +11,15 @@ import 'package:flutter_parse_html/widget/movie_search_bar.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:flutter_parse_html/ui/parse/htm_parse_page1.dart';
+import 'package:flutter_parse_html/ui/movie/movie_detail_page.dart';
+import 'package:flutter_parse_html/api/api_constant.dart';
+import 'package:flutter_parse_html/ui/home_other_page.dart';
+import 'package:unicorndial/unicorndial.dart';
 
 class MoviePage extends StatefulWidget {
+  final MovieType _type;
 
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
+  MoviePage(this._type);
 
   @override
   _MyHomePageState createState() {
@@ -31,9 +30,9 @@ class MoviePage extends StatefulWidget {
   }
 }
 
-class _MyHomePageState extends State<MoviePage>   with TickerProviderStateMixin,AutomaticKeepAliveClientMixin
+class _MyHomePageState extends State<MoviePage>
+    with TickerProviderStateMixin, AutomaticKeepAliveClientMixin
     implements MovieView {
-  int _counter = 0;
   AnimationController controller;
   CurvedAnimation curvedAnimation;
   MoviePresenter _presenter;
@@ -45,13 +44,14 @@ class _MyHomePageState extends State<MoviePage>   with TickerProviderStateMixin,
   var _index = 1;
   RefreshController _refreshController;
   Future dialogCall;
-  final String _videoUrl = 'http://4kbo.com/index.php/vod/show/id/';
-
-  int _currentIndex = 0;
+  String _videoUrl = '${ApiConstant.movieBaseUrl}/index.php/vod/show/id/1/';
+  String _title = '电影';
+  List<UnicornButton> _childButtons;
 
   @override
   void initState() {
     super.initState();
+    initUrl();
     _refreshController = new RefreshController();
     controller = new AnimationController(
         duration: new Duration(seconds: 3), vsync: this);
@@ -77,30 +77,20 @@ class _MyHomePageState extends State<MoviePage>   with TickerProviderStateMixin,
       print("ppp:${movement.value}");
       setState(() {});
     });
-    _presenter.loadMovieList(_videoUrl, _index, true);
-  }
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
+    _presenter.loadMovieList(_videoUrl, _index,widget._type, true);
   }
 
   @override
   void dispose() {
-    // TODO: implement dispose
-    super.dispose();
     controller.dispose();
     _refreshController.dispose();
+    super.dispose();
+
   }
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
     //
@@ -111,7 +101,14 @@ class _MyHomePageState extends State<MoviePage>   with TickerProviderStateMixin,
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
-        title: Text('电影'),
+        title: GestureDetector(
+          onLongPress: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) {
+              return HomeOtherPage();
+            }));
+          },
+          child: Text(_title),
+        ),
         actions: <Widget>[
           IconButton(
               icon: Icon(Icons.search),
@@ -132,11 +129,11 @@ class _MyHomePageState extends State<MoviePage>   with TickerProviderStateMixin,
           enablePullUp: true,
           onRefresh: () {
             _index = 1;
-            _presenter.loadMovieList(_videoUrl, _index, true);
+            _presenter.loadMovieList(_videoUrl, _index,widget._type, true);
           },
           onLoading: () {
             _index++;
-            _presenter.loadMovieList(_videoUrl, _index, false);
+            _presenter.loadMovieList(_videoUrl, _index,widget._type, false);
           },
           child: GridView.builder(
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -151,16 +148,13 @@ class _MyHomePageState extends State<MoviePage>   with TickerProviderStateMixin,
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.of(context)
-              .push(new MaterialPageRoute(builder: (BuildContext context) {
-            return HtmlParsePage1();
-          }));
-        },
-        tooltip: 'Increment',
-        child: Icon(Icons.add_alarm),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      floatingActionButton: UnicornDialer(
+          backgroundColor: Color.fromRGBO(255, 255, 255, 0.6),
+          parentButtonBackground: Colors.redAccent,
+          orientation: UnicornOrientation.VERTICAL,
+          parentButton: Icon(Icons.add),
+          childButtons:
+              _childButtons), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 
@@ -175,9 +169,23 @@ class _MyHomePageState extends State<MoviePage>   with TickerProviderStateMixin,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           Expanded(
-            child: CachedNetworkImage(
-              imageUrl: item.imageUrl,
-              fit: BoxFit.cover,
+            child: Stack(
+              children: <Widget>[
+                ConstrainedBox(
+                  child: CachedNetworkImage(
+                    placeholder: (context, url) => new Icon(Icons.image),
+                    errorWidget: (context, url, error) => new Icon(Icons.error),
+                    imageUrl: item.imageUrl,
+                    fit: BoxFit.cover,
+                  ),
+                  constraints: new BoxConstraints.expand(),
+                ),
+                Text(
+                  item.des,
+                  style: TextStyle(color: Colors.white),
+                )
+              ],
+              alignment: AlignmentDirectional.bottomEnd,
             ),
           ),
           Text(
@@ -207,13 +215,15 @@ class _MyHomePageState extends State<MoviePage>   with TickerProviderStateMixin,
   }
 
   @override
-  loadMovieListSuc(List<VideoListItem> list, bool isRefresh) {
+  loadMovieListSuc(
+      List<VideoListItem> list, List<ButtonBean> btns, bool isRefresh) {
     if (isRefresh) {
       data.clear();
     }
     _refreshController.refreshCompleted();
     _refreshController.loadComplete();
     data.addAll(list);
+    initChildBtn(btns);
     setState(() {});
   }
 
@@ -223,15 +233,63 @@ class _MyHomePageState extends State<MoviePage>   with TickerProviderStateMixin,
   }
 
   @override
-  getVideoUrlSuc(String url) {
+  getVideoUrlSuc(MovieBean movieBean) {
     Navigator.pop(context);
     Navigator.of(context)
         .push(new MaterialPageRoute(builder: (BuildContext context) {
-      return VideoPlayPage(url);
+      return MovieDetailPage(1,movieBean);
     }));
   }
 
   @override
   // TODO: implement wantKeepAlive
   bool get wantKeepAlive => true;
+
+  void initUrl() {
+    switch (widget._type) {
+      case MovieType.movie:
+        _title = '电影';
+        _videoUrl = '${ApiConstant.movieBaseUrl}/index.php/vod/show/by/hits/id/1/';
+        break;
+      case MovieType.tv:
+        _title = '电视剧';
+        _videoUrl = '${ApiConstant.movieBaseUrl}/index.php/vod/show/by/hits/id/2/';
+        break;
+      case MovieType.variety:
+        _title = '综艺';
+        _videoUrl = '${ApiConstant.movieBaseUrl}/index.php/vod/show/by/hits/id/3/';
+        break;
+      case MovieType.comic:
+        _title = '动漫';
+        _videoUrl = '${ApiConstant.movieBaseUrl}/index.php/vod/show/by/hits/id/4/';
+        break;
+    }
+  }
+
+  void initChildBtn(List<ButtonBean> btns) {
+    if (_childButtons == null) {
+      _childButtons = List<UnicornButton>();
+    } else {
+      _childButtons.clear();
+    }
+    for (var value in btns) {
+      _childButtons.add(UnicornButton(
+          hasLabel: true,
+          labelText: value.title,
+          currentButton: FloatingActionButton(
+            heroTag: value,
+            mini: true,
+            child: Icon(Icons.directions_car),
+            onPressed: () {
+              List<String> Strings = value.value.replaceAll('.html', '/').split('/id');
+              value.value = '${Strings[0]}/by/hits/id${Strings[1]}';
+              _videoUrl = '${ApiConstant.movieBaseUrl}${value.value}';
+              _presenter.loadMovieList(_videoUrl, _index,widget._type, true);
+            },
+          )));
+    }
+  }
+
 }
+
+enum MovieType { movie, tv, variety, comic }

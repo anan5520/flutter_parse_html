@@ -4,12 +4,13 @@ import 'dart:convert';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' as parse;
-import 'package:flutter_html_textview_render/html_text_view.dart';
 class ImagePage  extends StatefulWidget{
 
   List<String> imgs;
+  bool addHeader = false;
   var parentContext;
   final Map arguments;
   ImagePage(this.arguments);
@@ -20,6 +21,7 @@ class ImagePage  extends StatefulWidget{
   State<StatefulWidget> createState() {
     // TODO: implement createState
     imgs = arguments['list'];
+    addHeader = arguments['addHeader'] == null?false:arguments['addHeader'];
     return BookState(imgs,parentContext);
   }
 }
@@ -31,20 +33,25 @@ class BookState extends State<ImagePage>{
 
   PageController _pageController;
   var parentContext;
-
+  Map<String,String> header;
 
   BookState(this.imgs, this.parentContext);
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
+    header = widget.addHeader? {
+    'Accept-Language': 'zh-CN,zh;q=0.9,zh-TW;q=0.8',
+    'Host': 'i.meizitu.net',
+    'User-Agent':
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36',
+    'Referer': 'http://www.mzitu.com/'
+    }:{};
     _pageController = new PageController(viewportFraction: 0.8);
   }
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Scaffold(
       appBar: AppBar(title: Text('图片'),
       leading: IconButton(icon: Icon(Icons.arrow_back), onPressed: (){
@@ -59,6 +66,9 @@ class BookState extends State<ImagePage>{
             return Padding(
               padding: EdgeInsets.only(left: 10,right: 10),
               child: CachedNetworkImage(
+                httpHeaders:header,
+                  placeholder: (context, url) => SpinKitChasingDots(color: Colors.blue,),
+                  errorWidget: (context, url, error) => new Icon(Icons.error),
                   imageUrl: imgs[index]
               ),
             );
