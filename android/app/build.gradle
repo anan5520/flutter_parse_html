@@ -34,7 +34,7 @@ android {
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId "com.arvin.flutter_parse_html"
-        minSdkVersion 16
+        minSdkVersion 21
         targetSdkVersion 28
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
@@ -72,7 +72,23 @@ flutter {
 }
 
 dependencies {
+//    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation files('libs/tbs_sdk_thirdapp_v4.3.0.151_44051_sharewithdownloadwithfile_withoutGame_obfs_20210524_174029.jar')
     testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'com.android.support.test:runner:1.0.2'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    implementation  'com.umeng.umsdk:analytics:8.0.0'
+    implementation 'com.umeng.umsdk:common:2.1.0'
+    //PushSDK必须依赖utdid库，所以需要加入对应依赖
+    implementation 'com.umeng.umsdk:utdid:1.1.5.3'
+//PushSDK
+    implementation 'com.umeng.umsdk:push:6.0.1'
+    implementation("com.squareup.okhttp3:okhttp:4.9.0")
+    implementation 'androidx.multidex:multidex:2.0.1'
+    implementation 'com.shuyu:gsyVideoPlayer-java:8.1.0'
+
+//是否需要ExoPlayer模式
+    implementation 'com.shuyu:GSYVideoPlayer-exo2:8.1.0'
+    implementation 'com.shuyu:gsyVideoPlayer-armv7a:8.1.0'
+    implementation 'com.shuyu:gsyVideoPlayer-arm64:8.1.0'
+    implementation 'com.ldoublem.loadingview:loadingviewlib:1.0'
+    implementation 'com.google.android.exoplayer:exoplayer:2.14.1'
 }

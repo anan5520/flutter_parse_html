@@ -155,7 +155,7 @@ class ForumDisplayState extends State<ForumDisplayPage>
     PornForumItem item = _data[index];
     return GestureDetector(onTap: (){
       Navigator.push(context, MaterialPageRoute(builder: (context){
-        return PornForumContentPage(item.tid);
+        return PornForumContentPage(item.tid,0,'');
       }));
     },child: Padding(
       padding: EdgeInsets.only(left: 5, right: 5, top: 5),

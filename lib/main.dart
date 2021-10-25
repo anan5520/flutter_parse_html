@@ -2,10 +2,9 @@
 import 'package:flutter_parse_html/ui/home_page.dart';
 import 'package:flutter_parse_html/ui/parse/htm_parse_page1.dart';
 import 'package:flutter_parse_html/ui/parse/image_page.dart';
-import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter_parse_html/ui/movie/movie_page.dart';
-
+import 'package:flutter_parse_html/ui/parse/show_staggered_image_page.dart';
+import 'package:flutter_parse_html/ui/splash_page.dart';
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
@@ -13,7 +12,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: '老司机',
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -27,35 +26,23 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       onGenerateRoute: (setting){
-//        switch(setting.name){
-//          case '/HtmlParse1':
-//             new MaterialPageRoute(builder: (BuildContext context) {
-//              return HtmlParsePage1();
-//            })
-//            break;
-//        }
         if(setting.name == '/ImagePage'){
           return MaterialPageRoute(builder: (context) => ImagePage(setting.arguments));
         }
+        if(setting.name == '/ShowStaggeredImagePage'){
+          return MaterialPageRoute(builder: (context) => ShowStaggeredImagePage(setting.arguments));
+        }
+        return null;
       },
       routes: <String,WidgetBuilder>{
         "/HtmlParse1":(BuildContext context)=>new HtmlParsePage1(),
+        "/HomePage":(BuildContext context)=>new HomePage(),
       },
-      home: HomePage(),
+      home: SplashPage(),
     );
   }
+
+
 }
 
-class MySecondPage extends StatefulWidget {
-  @override
-  State<StatefulWidget> createState() => _MySecondPageState();
-}
-
-class _MySecondPageState extends State<MySecondPage> {
-  @override
-  Widget build(BuildContext context) {
-    // TODO: implement build
-    return null;
-  }
-}
 

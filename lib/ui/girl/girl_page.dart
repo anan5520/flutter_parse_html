@@ -169,7 +169,8 @@ class GirlItemState extends State<GirlItemPage>
               width: girlBean.width,
               httpHeaders: {
                 'Accept-Language': 'zh-CN,zh;q=0.9,zh-TW;q=0.8',
-                'Host': 'i.meizitu.net',
+//                'Host': 'i.meizitu.net',
+                'Sec-Fetch-Mode': 'no-cors',
                 'User-Agent':
                 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36',
                 'Referer': 'http://www.mzitu.com/'
@@ -187,6 +188,7 @@ class GirlItemState extends State<GirlItemPage>
   void getData() async {
     List<GirlBean> list = await GirlHelper.getGirlList(widget._tag, _page);
     _data.addAll(list);
+    print(_data.toString());
     setState(() {
       _refreshController.refreshCompleted();
       _refreshController.loadComplete();

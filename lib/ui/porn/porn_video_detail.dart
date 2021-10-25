@@ -1,12 +1,25 @@
+import 'package:flick_video_player/flick_video_player.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_parse_html/download/download_page.dart';
+import 'package:flutter_parse_html/download/download_util.dart';
+import 'package:flutter_parse_html/ui/porn/porn_page.dart';
+import 'package:flutter_parse_html/util/common_util.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:path/path.dart';
+import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:video_player/video_player.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_parse_html/model/porn_bean.dart';
-import 'package:flutter_ijkplayer/flutter_ijkplayer.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:flutter_parse_html/util/porn_helper.dart';
 import 'dart:io';
+
+import '../video_play.dart';
+
 class PornVideoDetailPage extends StatefulWidget {
   final VideoResult _videoResult;
 
@@ -21,7 +34,7 @@ class PornVideoDetailPage extends StatefulWidget {
 
 class PornVideoDetailState extends State<PornVideoDetailPage> {
   bool _showThumb = true;
-  IjkMediaController _controller;
+  FlickManager _controller;
   RefreshController _refreshController;
   List<VideoComment> _data = [];
   int _page = 1;
@@ -30,7 +43,9 @@ class PornVideoDetailState extends State<PornVideoDetailPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    _controller = IjkMediaController();
+    _controller = new FlickManager(
+        videoPlayerController:
+            VideoPlayerController.network(widget._videoResult.videoUrl));
     _refreshController = RefreshController(initialRefresh: true);
     startVideo();
   }
@@ -41,6 +56,40 @@ class PornVideoDetailState extends State<PornVideoDetailPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('视频详情'),
+        actions: <Widget>[
+          FlatButton(
+            child: Text('查看所有作品',style: TextStyle(color: Colors.white,fontSize: 12),),
+            onPressed: (){
+              //跳转查看作者其他作品
+              Navigator.pop(context);
+              Navigator.of(context).push(
+                  new MaterialPageRoute(builder: (BuildContext context) {
+                    return PornPage.authorId(widget._videoResult.ownerId);
+                  }));
+            },
+          ),
+          GestureDetector(
+            onTap: () {
+              Fluttertoast.showToast(
+                  msg: '已复制到粘贴板', toastLength: Toast.LENGTH_SHORT);
+              Clipboard.setData(
+                  new ClipboardData(text: widget._videoResult.videoUrl));
+            },
+            child: Center(
+              child: Padding(
+                padding: EdgeInsets.only(right: 10),
+                child: Text('复制链接'),
+              ),
+            ),
+          ),
+          new IconButton(
+              icon: new Icon(Icons.file_download),
+              tooltip: '下载',
+              onPressed: () {
+                CommonUtil.toVideoPlay(widget._videoResult.videoUrl, context,
+                    isDownLoad: true);
+              })
+        ],
       ),
       body: Column(
         children: <Widget>[
@@ -48,25 +97,20 @@ class PornVideoDetailState extends State<PornVideoDetailPage> {
             height: 200,
             child: Stack(
               children: <Widget>[
-                IjkPlayer(
-                  mediaController: _controller,
-                  statusWidgetBuilder: (context, controller, status) {
-                    if (status == IjkStatus.prepared ) {
-//                      _showThumb = true;
-                      _controller.play();
-                    }else if(status == IjkStatus.error){
-//                      _showThumb = false;
-                    }else if(status == IjkStatus.playing){
-//                      _showThumb = true;
-                    }
-                  },
+                FlickVideoPlayer(
+                  flickManager: _controller,
+                  flickVideoWithControls: new FlickVideoWithControls(
+                      videoFit: BoxFit.contain,
+                      controls: FlickPortraitControls()),
                 ),
                 Offstage(
                     offstage: _showThumb,
                     child: CachedNetworkImage(
                         width: double.infinity,
                         fit: BoxFit.cover,
-                        imageUrl: widget._videoResult.thumbImgUrl)),
+                        imageUrl: widget._videoResult.thumbImgUrl == null
+                            ? ''
+                            : widget._videoResult.thumbImgUrl)),
               ],
             ),
           ),
@@ -80,17 +124,29 @@ class PornVideoDetailState extends State<PornVideoDetailPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Padding(
-                  padding: EdgeInsets.only(bottom: 5,left: 5,right: 5),
+                  padding: EdgeInsets.only(bottom: 5, left: 5, right: 5),
                   child: Text(
                     '${widget._videoResult.videoName}',
                     style: TextStyle(color: Colors.white),
                   ),
                 ),
-                Padding(padding: EdgeInsets.only(left: 5,right: 5),
-                child: Text(
-                  '${widget._videoResult.userOtherInfo}',
-                  style: TextStyle(color: Colors.white70,fontSize: 11),
-                ),),
+                Padding(
+                  padding: EdgeInsets.only(left: 5, right: 5),
+                  child: GestureDetector(
+                    onTap: () {
+                      //跳转查看作者其他作品
+                      Navigator.pop(context);
+                      Navigator.of(context).push(
+                          new MaterialPageRoute(builder: (BuildContext context) {
+                            return PornPage.authorId(widget._videoResult.ownerId);
+                          }));
+                    },
+                    child: Text(
+                      '${widget._videoResult.userOtherInfo}',
+                      style: TextStyle(color: Colors.white70, fontSize: 11),
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
@@ -98,6 +154,14 @@ class PornVideoDetailState extends State<PornVideoDetailPage> {
         ],
       ),
     );
+  }
+
+  void _addDownload(BuildContext context, String title, String url) async {
+    DownloadUtil.downVideo(url, title, 1);
+    Fluttertoast.showToast(msg: '添加下载成功');
+    Navigator.push(context, MaterialPageRoute(builder: (context) {
+      return DownloadPage();
+    }));
   }
 
   @override
@@ -136,9 +200,11 @@ class PornVideoDetailState extends State<PornVideoDetailPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Padding(
-                      padding: EdgeInsets.only(bottom: 5,top: 5),
+                      padding: EdgeInsets.only(bottom: 5, top: 5),
                       child: Text(
-                          '${videoComment.uName}----${videoComment.replyTime}',style: TextStyle(color: Colors.blueAccent),),
+                        '${videoComment.uName}----${videoComment.replyTime}',
+                        style: TextStyle(color: Colors.blueAccent),
+                      ),
                     ),
                     Text(content)
                   ],
@@ -159,13 +225,10 @@ class PornVideoDetailState extends State<PornVideoDetailPage> {
     _refreshController.refreshCompleted();
     _refreshController.loadComplete();
     _data.addAll(list);
-    setState(() {
-
-    });
+    setState(() {});
   }
 
-  void startVideo()async {
-   await _controller.setNetworkDataSource(widget._videoResult.videoUrl,
-        autoPlay: Platform.isAndroid);
+  void startVideo() async {
+    _controller.flickVideoManager.videoPlayerController.play();
   }
 }

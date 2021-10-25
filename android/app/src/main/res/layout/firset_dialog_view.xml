@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@color/transparent"
+    android:paddingLeft="25dp"
+    android:paddingRight="25dp"
+    android:gravity="center_horizontal">
+    <com.ldoublem.loadingviewlib.view.LVEatBeans
+        android:id="@+id/img_loading"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_gravity="center" />
+    <TextView
+        android:id="@+id/tvLoad"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:textSize="16.0sp"
+        android:text="获取视频中"
+        android:textColor="@color/white"
+        android:gravity="center"/>
+
+</LinearLayout>

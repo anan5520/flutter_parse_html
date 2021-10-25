@@ -106,7 +106,7 @@ class FanHaoContentState extends State<FanHaoContentPage> {
   }
 
   void getData() async {
-    var response = await http.get(widget._url);
+    var response = await http.get(Uri(path: widget._url));
     Utf8Decoder utf8decoder = new Utf8Decoder();
     var html = utf8decoder.convert(response.bodyBytes);
     _forumContent = FanHaoHelper.parseFanHaoContent(widget._type, html);
@@ -178,7 +178,7 @@ class FanHao3State extends State<FanHao3List> {
   }
 
   void getData() async {
-    var response = await http.get(widget._url);
+    var response = await http.get(Uri(path: widget._url));
     Utf8Decoder utf8decoder = new Utf8Decoder();
     var html = utf8decoder.convert(response.bodyBytes);
     var list = FanHaoHelper.parseFanHao3List('', html);

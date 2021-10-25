@@ -37,5 +37,6 @@ class SharedPreferencesKeys {
   static String htmlUrl1 = 'htmlUrl';
   static String update = 'update';
   static String urls = 'urls';
+  static String movieType = 'movieType';
 }
 

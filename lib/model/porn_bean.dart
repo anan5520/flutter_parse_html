@@ -38,6 +38,8 @@ class VideoComment {
   String replyTime;
   String replyId;
   String titleInfo;
+  String content;
+  PornForumContent pornForumContent;
   List<String> commentQuoteList;
 
   @override
@@ -71,13 +73,11 @@ class PornForumItem {
 }
 
 class PornForumContent {
-   String content;
-   List<String> imageList;
+  String content;
+  List<String> imageList;
 
-   @override
-   String toString() {
-     return 'PornForumContent{content: $content, imageList: $imageList}';
-   }
-
-
+  @override
+  String toString() {
+    return 'PornForumContent{content: $content, imageList: $imageList}';
+  }
 }

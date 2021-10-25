@@ -2,7 +2,9 @@
 
 
 import 'package:flutter/material.dart';
+import 'package:flutter_parse_html/model/movie_bean.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:html/parser.dart' as parse;
 
 class WebViewPage extends StatefulWidget {
@@ -28,9 +30,8 @@ class _WebViewPageState extends State<WebViewPage> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
-    super.dispose();
     flutterWebviewPlugin.dispose();
+    super.dispose();
   }
 
   @override
@@ -46,7 +47,7 @@ class _WebViewPageState extends State<WebViewPage> {
     //url变化监听
     flutterWebviewPlugin.onUrlChanged.listen((url){
       print('url>>>$url');
-      if(!url.contains(urlString) && url.endsWith('com/')){
+      if(url.contains('.mp4')){
         Navigator.pop(context,url);
       }
     });
@@ -69,9 +70,12 @@ class _WebViewPageState extends State<WebViewPage> {
           ),
         ),
         actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.navigate_next),
-            onPressed: () => launchUrl(),
+
+          RaisedButton(
+            child: Text('点击解析视频'),
+            textColor: Colors.blue,
+            color: Colors.white,
+            onPressed: () => getHtml(),
           )
         ],
       ),
@@ -84,14 +88,35 @@ class _WebViewPageState extends State<WebViewPage> {
 
   void getHtml() async{
    String html = await flutterWebviewPlugin.evalJavascript("document.getElementsByTagName('html')[0].innerHTML");
+   if(html.startsWith('"')){
+     html = html.substring(1,html.length - 1);
+   }
+   html = html.replaceAll('\\u003C', '<');
+   html = html.replaceAll('\\', '');
    var document = parse.parse(html);
-   var element = document.getElementsByClassName('text-center header_title size_xxxl c_red').first;
-   if(element != null){
-     String url = 'https://${element.text}';
-     if(url.endsWith('com') && _resultUrl.isEmpty){
-       _resultUrl = url;
-       Navigator.pop(context,url);
-     }
+   var element = document.getElementsByTagName('tbody');
+   if(element != null && element.length > 0){
+     var bodyEle = element.first;
+     String url = '';
+     List<MovieItemBean> list = [];
+     var trEles = bodyEle.getElementsByTagName('tr');
+      for (var value in trEles) {
+          var aEles = value.getElementsByTagName('a');
+          for (var value1 in aEles) {
+            url = value1.attributes['href'];
+            if(url.startsWith('http')){
+              MovieItemBean movieItemBean = new MovieItemBean();
+              movieItemBean.targetUrl = url;
+              var td = value.getElementsByTagName('td');
+              movieItemBean.name = td.length > 2?td[1].text:'';
+              list.add(movieItemBean);
+            }
+          }
+
+      }
+     Navigator.pop(context,list);
+   }else{
+     Fluttertoast.showToast(msg: '请先点击"GO to download"按钮');
    }
   }
 }

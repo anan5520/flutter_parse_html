@@ -6,11 +6,16 @@ import 'package:flutter_parse_html/util/porn_helper.dart';
 import 'package:flutter_parse_html/model/porn_bean.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_parse_html/ui/parse/image_page.dart';
+import 'package:flutter_parse_html/util/ya_se_helper.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 class PornForumContentPage extends StatefulWidget {
   final int _tid;
+  final int _type;
+  final String _url;
 
-  PornForumContentPage(this._tid);
+
+  PornForumContentPage(this._tid, this._type, this._url);
 
   @override
   State<StatefulWidget> createState() {
@@ -44,7 +49,7 @@ class PornForumContentState extends State<PornForumContentPage> {
             sliver: new SliverList(
               delegate: new SliverChildListDelegate(
                 <Widget>[
-                  Html(data: _forumContent != null?_forumContent.content:""),
+                  HtmlWidget( _forumContent != null?_forumContent.content:""),
                 ],
               ),
             ),
@@ -58,7 +63,7 @@ class PornForumContentState extends State<PornForumContentPage> {
       ),
       floatingActionButton: FloatingActionButton(onPressed: (){
         if(_forumContent != null){
-          Navigator.pushNamed(context, "/ImagePage", arguments: {"list": _forumContent.imageList});
+          Navigator.pushNamed(context, "/ShowStaggeredImagePage", arguments: {"list": _forumContent.imageList});
         }
       },
         child: Icon(Icons.image),
@@ -84,7 +89,12 @@ class PornForumContentState extends State<PornForumContentPage> {
 //  }
 
   void getData() async {
-     _forumContent = await PornHelper.parsePornForumContent(widget._tid);
+    if(widget._type == 0){
+      _forumContent = await PornHelper.parsePornForumContent(widget._tid);
+    }else if(widget._type == 1){
+      _forumContent = await YaSeHelper.parseAVContent(widget._url);
+    }
+
     setState(() {
       _showLoading = false;
     });

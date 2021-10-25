@@ -216,8 +216,7 @@ class FanHaoState extends State<FanHaoPage> with AutomaticKeepAliveClientMixin {
             child: Icon(Icons.directions_car),
             onPressed: () {
               _currentKey = value;
-              _data.clear();
-              getData();
+              _refreshController.requestRefresh();
             },
           )));
     }

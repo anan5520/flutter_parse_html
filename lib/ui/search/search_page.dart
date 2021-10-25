@@ -12,7 +12,7 @@ import 'package:flutter_parse_html/util/native_utils.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class SearchPage extends StatefulWidget {
-  final String _key;
+   String _key;
 
   SearchPage(this._key);
 
@@ -26,6 +26,7 @@ class SearchSate extends State<SearchPage> {
   TextEditingController controller = TextEditingController();
   List<SearchBean> _data = [];
   int _page = 1;
+  String key;
 
   RefreshController _refreshController;
 
@@ -33,6 +34,7 @@ class SearchSate extends State<SearchPage> {
   void initState() {
     _refreshController = new RefreshController(initialRefresh: true);
     controller.text = widget._key;
+    key = widget._key;
     super.initState();
   }
 
@@ -45,7 +47,10 @@ class SearchSate extends State<SearchPage> {
           autofocus: false,
           controller: controller,
           textInputAction: TextInputAction.go,
-          onSubmitted: search,
+          onSubmitted: (value){
+            key = value;
+            _refreshController.requestRefresh();
+          },
           style: TextStyle(color: Colors.white),
           decoration: InputDecoration(
             border: InputBorder.none,
@@ -61,11 +66,11 @@ class SearchSate extends State<SearchPage> {
         onRefresh: () {
           _page = 1;
           _data.clear();
-          search(widget._key);
+          search(key);
         },
         onLoading: () {
           _page++;
-          search(widget._key);
+          search(key);
         },
         child: ListView.separated(
           itemBuilder: getItem,
@@ -80,7 +85,7 @@ class SearchSate extends State<SearchPage> {
 
   search(String value) async {
     var response =
-        await http.get('${ApiConstant.searchUrl}$value&m=&f=_all&s=&p=$_page');
+        await http.get(Uri(path: '${ApiConstant.searchUrl}$value&m=&f=_all&s=&p=$_page'));
     Utf8Decoder utf8decoder = new Utf8Decoder();
     var html = utf8decoder.convert(response.bodyBytes);
     var doc = parse.parse(html);
@@ -101,7 +106,7 @@ class SearchSate extends State<SearchPage> {
       }
     }
     if (list.length <= 0) {
-      var response1 = await http.get(ApiConstant.getNiMaUrl(value, _page));
+      var response1 = await http.get(Uri(path: ApiConstant.getNiMaUrl(value, _page)));
       var html1 = utf8decoder.convert(response1.bodyBytes);
       var doc1 = parse.parse(html1);
       var elements1 = doc1.getElementsByClassName('x-item');

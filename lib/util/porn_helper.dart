@@ -2,7 +2,8 @@ import 'package:flutter_parse_html/api/api_constant.dart';
 import 'package:flutter_parse_html/net/net_util.dart';
 import 'dart:math';
 import 'package:flutter_parse_html/model/porn_bean.dart';
-import 'package:convert/convert.dart';
+import 'package:flutter_parse_html/ui/pornhub/pornhub_util.dart';
+import 'package:flutter_parse_html/util/escapeu_unescape.dart';
 import 'dart:convert';
 import 'package:html/parser.dart' as parse;
 import 'package:flutter_parse_html/util/log_utils.dart';
@@ -10,16 +11,18 @@ import 'package:flutter_parse_html/util/log_utils.dart';
 class PornHelper {
   static final String _tag = 'PornHelper';
 
-  static Future<VideoResult> parseVideoPage(String viewKey) {
+  static Future<VideoResult> parseVideoPage(PornItem item) {
+    var viewKey = item.viewKey;
     Map<String, dynamic> param = {'viewkey': viewKey};
     Map<String, dynamic> header = {
       'X-Forwarded-For': _getRandomIPAddress(),
-      'Referer': ApiConstant.getPornHomeUrl()
+      'Referer': ApiConstant.getPornHomeUrl(),
+      'Cookie': ApiConstant.pornCookie
     };
     return NetUtil.getHtmlData(ApiConstant.getPornParseVideoUrl(),
             paras: param, header: header)
         .then((onValue) {
-      return _parseVideoUrl(onValue, viewKey);
+      return _parseVideoUrl(onValue, item);
     });
   }
 
@@ -33,11 +36,13 @@ class PornHelper {
     };
     Map<String, dynamic> header = {
       'X-Requested-With': 'XMLHttpRequest',
-      'Referer': ApiConstant.getPornHomeUrl()
+      'Referer': ApiConstant.getPornHomeUrl(),
+      'Cookie': ApiConstant.pornCookie
     };
     return NetUtil.getHtmlData(ApiConstant.getPornCommentUrl(),
             paras: param,
             header: header,
+            isWeb: true,
             referer: _getPlayVideoReferer(viewKey))
         .then((onValue) {
       return _parseVideoComment(onValue);
@@ -48,11 +53,11 @@ class PornHelper {
   static Future<List<PornForumItem>> parsePornForum(String fid, int page) {
     Map<String, dynamic> param = {'fid': fid, 'page': page};
     return NetUtil.getHtmlData(
-            fid == 'index'
-                ? ApiConstant.getPornForumHomeUrl()
-                : ApiConstant.getPornForumUrl(),
-            paras: param)
-        .then((onValue) {
+      fid == 'index'
+          ? ApiConstant.getPornForumHomeUrl()
+          : ApiConstant.getPornForumUrl(),
+      paras: param,
+    ).then((onValue) {
       return fid == 'index'
           ? _parsePornIndexForum(onValue)
           : _parsePornForum(onValue, page);
@@ -64,7 +69,7 @@ class PornHelper {
     return NetUtil.getHtmlData(ApiConstant.getPornForumContentUrl(),
             paras: param)
         .then((onValue) {
-      return _parsePornForumContent(onValue);
+      return parsePornForumContentImg(onValue);
     });
   }
 
@@ -79,36 +84,31 @@ class PornHelper {
   }
 
   //解析视频地址
-  static VideoResult _parseVideoUrl(String html, String viewKey) {
+  static VideoResult _parseVideoUrl(String html, PornItem item) {
+    var viewKey = item.viewKey;
     VideoResult videoResult = new VideoResult();
     if (html.contains('你每天只可观看10个视频')) {
       print('超出观看上限了');
       videoResult.id = VideoResult.OUT_OF_WATCH_TIMES;
       return videoResult;
     }
-    final String reg =
-        "document.write\\(strencode\\(\"(.+)\",\"(.+)\",.+\\)\\);";
-    RegExp regExp = RegExp(reg);
-    if (regExp.hasMatch(html)) {
-      Match match = regExp.firstMatch(html);
-      String s = match.group(1);
-      String s1 = match.group(2);
-      s = String.fromCharCodes(new Runes(utf8.decode(base64Decode(s))));
-      String source1 = '';
-      for (int i = 0, k = 0; i < s.length; i++) {
-        k = i % s1.length;
-        source1 =
-            '$source1${String.fromCharCode(s.codeUnitAt(i) ^ s1.codeUnitAt(k))}';
-      }
-      source1 = String.fromCharCodes(base64Decode(source1));
-      var document = parse.parse(source1);
+
+    RegExp regExp = RegExp(r'document.write\(strencode2\("|"\)\);');
+    var strings = html.split(regExp);
+    if (strings.length > 1) {
+      String s = strings[1];
+      s = EscapeUnescape.unescape(s);
+      var document = parse.parse(s);
       String videoUrl =
           document.querySelectorAll('source').first.attributes['src'];
       videoResult.videoUrl = videoUrl;
-      int startIndex = videoUrl.lastIndexOf("/");
-      int endIndex = videoUrl.indexOf(".mp4");
-      String videoId = videoUrl.substring(startIndex + 1, endIndex);
-      videoResult.videoId = videoId;
+      try {
+        var tempVideoUrl = videoUrl.substring(0, videoUrl.indexOf(".m3u8"));
+        int startIndex = tempVideoUrl.lastIndexOf("/");
+        videoResult.videoId = tempVideoUrl.substring(++startIndex);
+      } catch (e) {
+        print(e);
+      }
       //解析作者
       var doc = parse.parse(html);
       String ownerUrl =
@@ -121,39 +121,96 @@ class PornHelper {
           doc.getElementById('addToFavLink').querySelectorAll('a').first;
       var addToFavLink = element.attributes;
 
-      var args = addToFavLink['onclick'].split(',');
-      var userId = args[1].trim();
-      LogUtils.d(_tag, "userId》》》》$userId");
+//      var args = addToFavLink['onclick'].split(',');
+//      var userId = args[1].trim();
+//      LogUtils.d(_tag, "userId》》》》$userId");
 
       //原始纯数字作者id，用于收藏接口
-      String authorId = args[3].replaceAll(');', '').trim();
-      LogUtils.d(_tag, 'authorId=====$authorId');
-      videoResult.authorId = authorId;
+//      String authorId = args[3].replaceAll(');', '').trim();
+//      LogUtils.d(_tag, 'authorId=====$authorId');
+//      videoResult.authorId = authorId;
 
       String ownerName = doc.querySelector('a[href*=UID]').text;
       videoResult.ownerName = ownerName;
+      var infos = doc.getElementsByClassName('videodetails-yakov');
+      infos.forEach((value) {
+        if (value.text.contains('添加时间')) {
+          try {
+            String allInfo = value.text;
+            allInfo = allInfo.replaceAll('\s', '');
+            allInfo = allInfo.replaceAll('\t', '');
+            allInfo = allInfo.replaceAll('\n', '');
+            String addDate = allInfo.substring(
+                allInfo.indexOf('添加时间'), allInfo.indexOf('作者'));
+            videoResult.addDate = addDate;
+            String otherInfo =
+                allInfo.substring(allInfo.indexOf('注册'), allInfo.indexOf('简介'));
+            videoResult.userOtherInfo = otherInfo;
+          } catch (e) {
+            print(e);
+          }
+        }
+      });
+      var imageEles = doc.getElementById("player_one_html5_api");
+      if (imageEles != null &&
+          imageEles.attributes != null &&
+          imageEles.attributes.containsKey('poster')) {
+        String thumbImg = doc.getElementById('vid').attributes['poster'];
+        videoResult.thumbImgUrl = thumbImg;
+      }
 
-      String allInfo = doc.getElementById('videodetails-content').text;
-      allInfo = allInfo.replaceAll('\s', '');
-      allInfo = allInfo.replaceAll('\t', '');
-      allInfo = allInfo.replaceAll('\n', '');
-      String addDate =
-          allInfo.substring(allInfo.indexOf('添加时间'), allInfo.indexOf('作者'));
-      videoResult.addDate = addDate;
-
-      String otherInfo =
-          allInfo.substring(allInfo.indexOf('注册'), allInfo.indexOf('简介'));
-      videoResult.userOtherInfo = otherInfo;
-
-      String thumbImg = doc.getElementById('vid').attributes['poster'];
-      videoResult.thumbImgUrl = thumbImg;
-
-      String videoName = doc.getElementById('viewvideo-title').text;
+      String videoName =
+          doc.getElementsByClassName('login_register_header').first.text;
       videoName = videoName.replaceAll('\s', '');
       videoName = videoName.replaceAll('\t', '');
       videoName = videoName.replaceAll('\n', '');
       videoResult.videoName = videoName;
       videoResult.viewKey = viewKey;
+    } else {
+      try {
+        var doc = parse.parse(html);
+        var eles = doc.getElementsByTagName('source');
+        String videoUrl = '';
+        if (eles.length > 0) {
+          videoUrl = eles.first.attributes['src'];
+        } else {
+          var videos = html.split(new RegExp(r'<source src="|" type='));
+          videos.forEach((element) {
+            if (element.startsWith('http')) {
+              videoUrl = element;
+            }
+          });
+        }
+
+        videoResult.videoUrl = videoUrl;
+        videoResult.thumbImgUrl =
+            doc.getElementsByTagName('video').first.attributes['poster'];
+        videoResult.viewKey = viewKey;
+        videoResult.videoName = item.title;
+        try {
+          var tempVideoUrl = videoUrl.substring(0, videoUrl.indexOf(".mp4"));
+          int startIndex = tempVideoUrl.lastIndexOf("/");
+          videoResult.videoId = tempVideoUrl.substring(++startIndex);
+        } catch (e) {
+          print(e);
+        }
+        String content = doc.getElementById('videodetails-content').text;
+        var times = content.split(new RegExp(r'添加时间:|作者:'));
+        if (times.length > 1) {
+          videoResult.addDate = times[1];
+        }
+        var userNames = content.split(new RegExp(r'作者:|注册:'));
+        if (userNames.length > 1) {
+          videoResult.ownerName = userNames[1];
+        }
+
+        var userInfo = content.split('注册:');
+        if (userInfo.length > 1) {
+          videoResult.userOtherInfo = userInfo[1];
+        }
+      } catch (e) {
+        print(e);
+      }
     }
 
     return videoResult;
@@ -375,7 +432,7 @@ class PornHelper {
     return list;
   }
 
-  static PornForumContent _parsePornForumContent(String html) {
+  static PornForumContent parsePornForumContentImg(String html) {
     String baseUrl = ApiConstant.pornForumBaseUrl;
     var doc = parse.parse(html);
     var linkTag = doc.querySelectorAll('link').first;
@@ -453,7 +510,8 @@ class PornHelper {
         .replaceAll("<dd", "<dt")
         .replaceAll("\\</dd>", "\\</dt>");
 //    String contentStr = doc.getElementsByClassName('postmessage firstpost').first.text;
-    forumContent.content = doc.getElementsByClassName('postcontent').first.outerHtml;
+    forumContent.content =
+        doc.getElementsByClassName('postcontent').first.outerHtml;
     forumContent.imageList = StringList;
     return forumContent;
   }

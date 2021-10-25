@@ -1,6 +1,12 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_parse_html/download/download_page.dart';
 import 'package:flutter_parse_html/resources/shared_preferences_keys.dart';
+import 'package:flutter_parse_html/ui/douyin/dou_yin_page.dart';
+import 'package:flutter_parse_html/ui/home_page.dart';
+import 'package:flutter_parse_html/ui/parse/htm_parse_page2.dart';
+import 'package:flutter_parse_html/ui/xianfeng/xian_feng_2_page.dart';
+import 'package:flutter_parse_html/ui/yaSe/ya_se.dart';
 import 'package:flutter_parse_html/util/shared_preferences.dart';
 import 'live/live_page.dart';
 import 'movie/movie_page.dart';
@@ -16,7 +22,8 @@ import 'dart:convert';
 import 'package:flutter_parse_html/util/native_utils.dart';
 import 'package:package_info/package_info.dart';
 import 'package:flutter_parse_html/ui/parse/htm_parse_page1.dart';
-import 'parse/xian_feng_page.dart';
+import 'package:flutter_parse_html/ui/xianfeng/xian_feng_page.dart';
+//老司机页面
 class HomeOtherPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
@@ -27,16 +34,15 @@ class HomeOtherPage extends StatefulWidget {
 class HomeOtherState extends State<HomeOtherPage> {
   List _tabData = [
     {'text': '老司机', 'icon': Icon(Icons.directions_car)},
-    {'text': '番号', 'icon': Icon(Icons.store_mall_directory)},
+    {'text': '91porn', 'icon': Icon(Icons.music_video)},
     {'text': '直播', 'icon': Icon(Icons.live_tv)},
-    {'text': '先锋', 'icon': Icon(Icons.forum)},
-    {'text': '国产', 'icon': Icon(Icons.music_video)},
-    {'text': '美图', 'icon': Icon(Icons.photo)},
+    {'text': '先锋', 'icon': Icon(Icons.videocam)},
+    {'text': '老司机3', 'icon': Icon(Icons.directions_bus)},
+    // {'text': '下载', 'icon': Icon(Icons.file_download)},
   ];
   List<BottomNavigationBarItem> _bottomItems = [];
   int _currentIndex = 0;
   PageController _controller;
-
   @override
   void initState() {
     super.initState();
@@ -50,11 +56,11 @@ class HomeOtherState extends State<HomeOtherPage> {
       body: PageView(
         children: <Widget>[
           new HtmlParsePage1(),
-          new FanHaoHomePage(),
+          new PornHomePage(),
           new LivePage(),
-          new XianFengPage(),
-          new PornPage(),
-          new GirlPage()
+          new XianFeng2Page(),
+          new HtmlParsePage2(),
+          // new DownloadPage(),
         ],
         controller: _controller,
         onPageChanged: _onPageChanged,
@@ -72,6 +78,9 @@ class HomeOtherState extends State<HomeOtherPage> {
   void _onPageChanged(int index) {
     setState(() {
       _currentIndex = index;
+      if(index != 1){
+        // _douYinPage.startOrStopPlay(false);
+      }
     });
   }
 
@@ -85,5 +94,12 @@ class HomeOtherState extends State<HomeOtherPage> {
       _bottomItems.add(BottomNavigationBarItem(
           icon: value['icon'], title: Text('${value['text']}')));
     }
+  }
+
+  @override
+  void dispose() {
+    HomePage.inLsj = false;
+    super.dispose();
+    // _douYinPage.dispose();
   }
 }

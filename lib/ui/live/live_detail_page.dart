@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_parse_html/model/live_bean.dart';
+import 'package:flutter_parse_html/model/movie_bean.dart';
+import 'package:flutter_parse_html/util/common_util.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -55,9 +57,7 @@ class LiveState extends State<LiveDetailPage> {
     Zhubo item = _data[index];
     return GestureDetector(
       onTap: (){
-        Navigator.push(context, MaterialPageRoute(builder: (context){
-          return VideoPlayPage(item.address);
-        }));
+        CommonUtil.toVideoPlay(item.address, context,title: item.title,isLive: true);
       },
       child: Column(
         children: <Widget>[
