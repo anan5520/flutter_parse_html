@@ -9,8 +9,10 @@ import 'package:flutter_parse_html/ui/live/tv_page.dart';
 import 'package:flutter_parse_html/ui/parse/abj_list_page.dart';
 import 'package:flutter_parse_html/ui/parse/htm_parse_page1.dart';
 import 'package:flutter_parse_html/ui/parse/htm_parse_page2.dart';
+import 'package:flutter_parse_html/ui/parse/video_list10_page.dart';
 import 'package:flutter_parse_html/ui/parse/video_list2_page.dart';
 import 'package:flutter_parse_html/ui/parse/video_list3_page.dart';
+import 'package:flutter_parse_html/ui/parse/video_list4_page.dart';
 import 'package:flutter_parse_html/ui/parse/video_list6_page.dart';
 import 'package:flutter_parse_html/ui/porn/porn_page.dart';
 import 'package:flutter_parse_html/ui/pornhub/porn_hub_page.dart';
@@ -127,15 +129,11 @@ class HomePage extends StatefulWidget {
     ApiConstant.xianFeng5Url = urls.xianFeng5Url != null
         ? urls.xianFeng5Url
         : ApiConstant.xianFeng5Url;
-    ApiConstant.douYinUrl = urls.douYinUrl != null
-        ? urls.douYinUrl
-        : ApiConstant.douYinUrl;
-    ApiConstant.douYin2Url = urls.douYin2Url != null
-        ? urls.douYin2Url
-        : ApiConstant.douYin2Url;
-    ApiConstant.abjUrl = urls.abjUrl != null
-        ? urls.abjUrl
-        : ApiConstant.abjUrl;
+    ApiConstant.douYinUrl =
+        urls.douYinUrl != null ? urls.douYinUrl : ApiConstant.douYinUrl;
+    ApiConstant.douYin2Url =
+        urls.douYin2Url != null ? urls.douYin2Url : ApiConstant.douYin2Url;
+    ApiConstant.abjUrl = urls.abjUrl != null ? urls.abjUrl : ApiConstant.abjUrl;
   }
 }
 
@@ -189,6 +187,7 @@ class HomeState extends State<HomePage> with WidgetsBindingObserver {
 //           new VideoList6Page(''),
 //           PornPage.type(1),
 //           VideoList3Page(),
+//           VideoList10Page(),
           new MoviePage(MovieType.movie),
           new GifPage(),
           // tvPage,
@@ -333,7 +332,7 @@ class HomeState extends State<HomePage> with WidgetsBindingObserver {
     if (status != PermissionStatus.granted) {
       await Permission.storage.request();
       NativeUtils.initX5Web();
-    }else{
+    } else {
       NativeUtils.initX5Web();
     }
   }

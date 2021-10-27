@@ -250,14 +250,7 @@ class ParseState extends State<ParsePage> with AutomaticKeepAliveClientMixin {
     String body = "";
     if (widget._parse2baseType == Parse2BaseType.type4) {
       body = await NetUtil.getHtmlData(url,
-          isGbk: widget._parse2baseType == Parse2BaseType.type4,
-          header: {
-            "Cookie":
-                "CLIPSHARE=h3rpp5c6ndl4t6klqau8spa542; covid191=be49USItF3gSyo3t8Sy298U4iKRhJWunUKRzCr%2Bd",
-            "Accept-Encoding": "gzip, deflate, br",
-            "Content-Type":
-                "multipart/form-data; boundary=<calculated when request is sent>",
-          });
+          isGbk: true,);
     } else {
       body = await PornHubUtil.getHtmlFromHttpDeugger(url);
     }

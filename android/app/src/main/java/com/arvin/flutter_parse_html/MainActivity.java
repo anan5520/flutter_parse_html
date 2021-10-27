@@ -59,6 +59,7 @@ public class MainActivity extends FlutterActivity {
     CustomFlutterPlugins.startQBrowser(flutterEngine, com.arvin.flutter_parse_html.MainActivity.this);
     CustomFlutterPlugins.registerVideoPlay(flutterEngine, com.arvin.flutter_parse_html.MainActivity.this);
     CustomFlutterPlugins.registerDouYin(flutterEngine, com.arvin.flutter_parse_html.MainActivity.this);
+    CustomFlutterPlugins.strEncodeChange(flutterEngine, com.arvin.flutter_parse_html.MainActivity.this);
     CustomFlutterPlugins.startUcBrowser(flutterEngine, com.arvin.flutter_parse_html.MainActivity.this);
     CustomFlutterPlugins.initX5Web(flutterEngine, com.arvin.flutter_parse_html.MainActivity.this);
     FlutterPluginCounter.registerWith(flutterEngine, com.arvin.flutter_parse_html.MainActivity.this);

@@ -22,6 +22,7 @@ import com.umeng.analytics.MobclickAgent;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 
 import io.flutter.embedding.engine.FlutterEngine;
@@ -54,6 +55,7 @@ public class CustomFlutterPlugins {
     public static final String HTTP_POST = "HTTP_POST";
     public static final String GO_TO_ACT = "android_go_to_act";
     public static final String IMAGE_SAVE = "android_image_save";
+    public static final String STRING_ENCODE = "STRING_ENCODE";
 
     public static void registerLogger(FlutterEngine flutterEngine) {
         new MethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger(), LOG_CHANNEL_NAME).setMethodCallHandler((methodCall, result) -> {
@@ -218,6 +220,20 @@ public class CustomFlutterPlugins {
         new MethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger(), GO_TO_DOU_YIN).setMethodCallHandler((methodCall, result) -> {
             String type = methodCall.argument("type");
             DouYinAct.startAct(type,act);
+        });
+    }
+
+    public static void strEncodeChange(FlutterEngine flutterEngine, Activity act) {
+        new MethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger(), STRING_ENCODE).setMethodCallHandler((methodCall, result) -> {
+            String str = methodCall.argument("str");
+            String oldChar = methodCall.argument("oldChar");
+            String newChar = methodCall.argument("newChar");
+            try {
+                result.success(new String(str.getBytes(oldChar),newChar));
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+
         });
     }
 

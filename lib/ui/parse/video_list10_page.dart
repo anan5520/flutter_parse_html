@@ -34,7 +34,7 @@ class VideoList10State extends State<VideoList10Page>
   List<ButtonBean> _btns;
 
   RefreshController _refreshController;
-  int _page = 1,buttonType = 0;
+  int _page = 1, buttonType = 0;
   String _currentKey = '/vodlist/33';
   bool _isSearch = false;
   TextEditingController _editingController;
@@ -86,7 +86,7 @@ class VideoList10State extends State<VideoList10Page>
             Expanded(
               child: SmartRefresher(
                 onRefresh: () {
-                  _page = buttonType == 1?_page:1;
+                  _page = buttonType == 1 ? _page : 1;
                   _data.clear();
                   _getData();
                 },
@@ -133,15 +133,18 @@ class VideoList10State extends State<VideoList10Page>
     try {
       var doc = parse.parse(response);
       var gotoEles = doc.getElementsByClassName("film_bar clearfix");
-      var gotoEle = gotoEles.length == 0?doc.getElementsByClassName('series_body').first:gotoEles.first;
-      String url = '${ApiConstant.videoList10Url}${gotoEle
-          .getElementsByTagName('a').first.attributes['href']}';
+      var gotoEle = gotoEles.length == 0
+          ? doc.getElementsByClassName('series_body').first
+          : gotoEles.first;
+      String url =
+          '${ApiConstant.videoList10Url}${gotoEle.getElementsByTagName('a').first.attributes['href']}';
       var detailResponse = await PornHubUtil.getHtmlFromHttpDeugger(url);
-      var playUrl = EscapeUnescape.unescape(detailResponse.split(new RegExp(r'"\);|unescape\("'))[1])
-      .split('url=')[1];
+      var playUrl = EscapeUnescape.unescape(
+              detailResponse.split(new RegExp(r'"\);|unescape\("'))[1])
+          .split('url=')[1];
       Navigator.pop(context);
       if (playUrl.startsWith('http')) {
-        CommonUtil.toVideoPlay(playUrl, context,title:data.title);
+        CommonUtil.toVideoPlay(playUrl, context, title: data.title);
       }
     } catch (e) {
       Navigator.pop(context);
@@ -193,15 +196,19 @@ class VideoList10State extends State<VideoList10Page>
     String url = _isSearch
         ? '${ApiConstant.videoList10Url}/vodtag/$_currentKey/index-$_page.html'
         : "${ApiConstant.videoList10Url}$_currentKey-$_page.html";
-    String response =  await PornHubUtil.getHtmlFromHttpDeugger(url);
+    String response = await PornHubUtil.getHtmlFromHttpDeugger(url);
     _refreshController.refreshCompleted();
     _refreshController.loadComplete();
     var doc = parse.parse(response);
     try {
       var listEle = doc.getElementsByClassName('box movie_list');
-      listEle = listEle.length == 0?doc.getElementsByClassName('ilist_box'):listEle;
-      var tdElements = listEle.first.getElementsByTagName('ul').first
-      .getElementsByTagName('li');
+      listEle = listEle.length == 0
+          ? doc.getElementsByClassName('ilist_box')
+          : listEle;
+      var tdElements = listEle.first
+          .getElementsByTagName('ul')
+          .first
+          .getElementsByTagName('li');
       for (var value in tdElements) {
         var aEles = value.getElementsByTagName('a');
         if (aEles.length > 0) {
@@ -211,8 +218,12 @@ class VideoList10State extends State<VideoList10Page>
           String href = '${ApiConstant.videoList10Url}$hrefs';
           var imgEle = aEle.getElementsByTagName('img').first;
           item.title = CommonUtil.replaceStr(value.text);
-          item.imageUrl = imgEle.attributes['data-original'];
-          item.imageUrl = item.imageUrl.startsWith('http')?item.imageUrl:'http:${item.imageUrl}';
+          item.imageUrl = imgEle.attributes['data-original'] == null
+              ? imgEle.attributes['src']
+              : imgEle.attributes['data-original'];
+          item.imageUrl = item.imageUrl.startsWith('http')
+              ? item.imageUrl
+              : 'http:${item.imageUrl}';
           item.targetUrl = href;
           _data.add(item);
         }
@@ -220,16 +231,21 @@ class VideoList10State extends State<VideoList10Page>
       if (_btns == null) {
         _btns = [];
         var menus = doc.getElementsByClassName('classlist');
-        var menu = menus.length == 0?doc.getElementsByClassName('wrap mt20 nav').first.getElementsByClassName('nav_menu clearfix')
-        :menus.first.getElementsByClassName('classlist_con');
-        for(int i = 0;i < 4;i ++ ){
+        var menu = menus.length == 0
+            ? doc
+                .getElementsByClassName('wrap mt20 nav')
+                .first
+                .getElementsByClassName('nav_menu clearfix')
+            : menus.first.getElementsByClassName('classlist_con');
+        for (int i = 0; i < 4; i++) {
           var ulELe = menu[i];
           var liEles = ulELe.getElementsByTagName('a');
           liEles.forEach((value1) {
             ButtonBean buttonBean = ButtonBean();
             buttonBean.title = value1.text;
-            if(!value1.text.contains('区') && !value1.text.contains('会员')){
-              buttonBean.value = value1.attributes['href'].replaceAll('.html', '');
+            if (!value1.text.contains('区') && !value1.text.contains('会员')) {
+              buttonBean.value =
+                  value1.attributes['href'].replaceAll('.html', '');
               _btns.add(buttonBean);
             }
           });
@@ -239,9 +255,7 @@ class VideoList10State extends State<VideoList10Page>
       print(e);
     }
 
-    setState(() {
-
-    });
+    setState(() {});
   }
 
   void _showDialog() async {
@@ -253,10 +267,10 @@ class VideoList10State extends State<VideoList10Page>
           );
         });
     if (buttonBean != null) {
-      if(buttonBean.type == 1){
+      if (buttonBean.type == 1) {
         _page = buttonBean.page;
         buttonType = 1;
-      }else{
+      } else {
         _isSearch = false;
         buttonType = 0;
         _currentKey = buttonBean.value;

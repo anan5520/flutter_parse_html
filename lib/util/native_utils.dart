@@ -21,7 +21,7 @@ class NativeUtils {
   static const goDouYin = const MethodChannel("GO_TO_DOU_YIN");
   static const _channel_gallery = const MethodChannel("arvin_gallery_saver");
   static const counterPlugin = const EventChannel('native/plugin');
-
+  static const _strChangeEncode = const MethodChannel('STRING_ENCODE');
 
   static const String pleaseProvidePath = 'Please provide valid file path.';
   static const String fileIsNotVideo = 'File on path is not a video.';
@@ -35,6 +35,7 @@ class NativeUtils {
   static void onPause() {
     umeng.invokeMethod('onPause', {'event': " "});
   }
+
   static void onEvent(String event) {
     umeng.invokeMethod('event', {'event': event});
   }
@@ -47,12 +48,12 @@ class NativeUtils {
     perform.invokeMethod('act', {'magnet': magnet});
   }
 
-  static Future<bool> toX5Browser(String url,String title) {
-   return  perform.invokeMethod('toX5Browser', {'url': url,'title':title});
+  static Future<bool> toX5Browser(String url, String title) {
+    return perform.invokeMethod('toX5Browser', {'url': url, 'title': title});
   }
 
-  static void toX5Play(String url,String title) {
-    perform.invokeMethod('toX5Play', {'url': url,'title':title});
+  static void toX5Play(String url, String title) {
+    perform.invokeMethod('toX5Play', {'url': url, 'title': title});
   }
 
   static void startQBrowser(String url) {
@@ -67,9 +68,11 @@ class NativeUtils {
     goToDownload.invokeMethod('GO_TO_DOWNLOAD', {'url': url});
   }
 
-  static void goToVideoPlay(String url,String title,bool isLive) {
-    goToPlay.invokeMethod('GO_TO_PLAY', {'url': url,'title':title,'isLive':isLive});
+  static void goToVideoPlay(String url, String title, bool isLive) {
+    goToPlay.invokeMethod(
+        'GO_TO_PLAY', {'url': url, 'title': title, 'isLive': isLive});
   }
+
   static void goToDouYin(String type) {
     goDouYin.invokeMethod('GO_TO_DOU_YIN', {'type': type});
   }
@@ -77,8 +80,18 @@ class NativeUtils {
   static void toBrowser(String url) {
     perform.invokeMethod('toBrowser', {'url': url});
   }
+
   static void toXfPlay(String url) {
     perform.invokeMethod('xfplay', {'url': url});
+  }
+
+  static Future<String> strChangeEncode(
+      String str, String oldChar, String newChar){
+   return _strChangeEncode.invokeMethod('STRING_ENCODE', {
+      'str': str,
+      'oldChar': oldChar,
+      'newChar': newChar
+    }).then((value) => value.toString());
   }
 
   ///saves video from provided temp path and optional album name in gallery
@@ -105,7 +118,8 @@ class NativeUtils {
   }
 
   ///saves image from provided temp path and optional album name in gallery
-  static Future<bool> saveImage(String path, {String albumName,Map<String, String> headers}) async {
+  static Future<bool> saveImage(String path,
+      {String albumName, Map<String, String> headers}) async {
     File tempFile;
     if (path == null || path.isEmpty) {
       throw ArgumentError(pleaseProvidePath);
@@ -114,7 +128,7 @@ class NativeUtils {
       throw ArgumentError(fileIsNotImage);
     }
     if (!isLocalFilePath(path)) {
-      tempFile = await _downloadFile(path,headers: headers);
+      tempFile = await _downloadFile(path, headers: headers);
       path = tempFile.path;
     }
 
@@ -129,24 +143,26 @@ class NativeUtils {
     return result;
   }
 
-
-  static void startFromNativeLis(void onEvent(Object event),{Function onError}){
+  static void startFromNativeLis(void onEvent(Object event),
+      {Function onError}) {
     //开启监听
-    if(_subscription == null){
-      _subscription =  counterPlugin.receiveBroadcastStream().listen(onEvent,onError: onError);
+    if (_subscription == null) {
+      _subscription = counterPlugin
+          .receiveBroadcastStream()
+          .listen(onEvent, onError: onError);
     }
   }
 
-  static void cancelFromNativeLis(){
-    if(_subscription != null){
+  static void cancelFromNativeLis() {
+    if (_subscription != null) {
       _subscription.cancel();
     }
   }
 
-
-  static Future<File> _downloadFile(String url,{Map<String, String> headers}) async {
+  static Future<File> _downloadFile(String url,
+      {Map<String, String> headers}) async {
     print(url);
-    var response = await http.get(Uri(path: url),headers: headers);
+    var response = await http.get(Uri(path: url), headers: headers);
     var bytes = response.bodyBytes;
     String dir = (await getTemporaryDirectory()).path;
     File file = new File('$dir/${basename(url)}');
@@ -155,5 +171,4 @@ class NativeUtils {
     print(file.path);
     return file;
   }
-
 }

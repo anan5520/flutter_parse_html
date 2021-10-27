@@ -124,7 +124,7 @@ class VideoList9State extends State<VideoList9Page>
 
   void goToPlay(VideoListItem data) async {
     showLoading();
-    var response = await PornHubUtil.getHtmlFromHttpDeugger(data.targetUrl);
+    var response = await PornHubUtil.getHtmlFromJsonp(data.targetUrl);
     try {
       var doc = parse.parse(response);
       String playUrl = doc.getElementsByTagName('iframe').first.attributes['src'].split('url=')[1];
@@ -181,7 +181,7 @@ class VideoList9State extends State<VideoList9Page>
     String url = _isSearch
         ? '${ApiConstant.videoList9Url}/vod-search-wd-$_currentKey-p-$_page.html'
         : "${ApiConstant.videoList9Url}$_currentKey/$_page.html";
-    String response =  await PornHubUtil.getHtmlFromHttpDeugger(url);
+    String response =  await PornHubUtil.getHtmlFromJsonp(url);
     _refreshController.refreshCompleted();
     _refreshController.loadComplete();
     var doc = parse.parse(response);

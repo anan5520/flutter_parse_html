@@ -28,13 +28,16 @@ class MovieUtil {
           .first.getElementsByTagName('img').first
           .attributes['data-original'];
       if (element != null) {
-        String id = 'playlist2';
+        String id = '';
         var eleIds = document.getElementsByClassName('nav nav-tabs active').first.getElementsByTagName('li');
         eleIds.forEach((element) {
           if(element.text.contains('m3u8')){
             id = element.getElementsByTagName('a').first.attributes['href'].replaceAll('#', '');
           }
         });
+        if(id.isEmpty && eleIds.length > 0){
+          id = eleIds[0].getElementsByTagName('a').first.attributes['href'].replaceAll('#', '');
+        }
         var itemElements = document.getElementById(id)
             .getElementsByTagName('li');
         List<MovieItemBean> list = List();

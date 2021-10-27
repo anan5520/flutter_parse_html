@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_parse_html/book/base/util/utils_toast.dart';
 import 'package:flutter_parse_html/model/movie_bean.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_parse_html/model/xian_feng6_bean_entity.dart';
@@ -87,7 +88,7 @@ class MovieDetailState extends State<MovieDetailPage> {
   }
 
   getWidgetList() {
-    List<Widget> list = List();
+    List<Widget> list = [];
     for (var value in widget._movieBean.list) {
       list.add(Container(
         height: 20,
@@ -222,6 +223,8 @@ class MovieDetailState extends State<MovieDetailPage> {
         String data = playData.split(new RegExp(r'now="|.m3u8'))[1];
         LogUtils.d("json", "播放数据>>>${data}");
         playUrl = '$data.m3u8';
+      }else{
+        ToastUtils.showToast("获取播放地址失败");
       }
       // if (playUrl.isNotEmpty) {
       //   // if (encrypt == 1) {

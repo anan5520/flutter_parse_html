@@ -39,7 +39,6 @@ import 'video_list1_page.dart';
 class HtmlParsePage1 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return ParseHomePage();
   }
 }
@@ -47,7 +46,6 @@ class HtmlParsePage1 extends StatelessWidget {
 class ParseHomePage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    // TODO: implement createState
     return HomePageState();
   }
 }
