@@ -14,7 +14,7 @@ abstract class BaseStatelessView<M extends BaseViewModel>
 
     Widget resultWidget;
 
-    M viewModel=buildViewModel(context);
+    M viewModel = buildViewModel(context);
 
     if (viewModel != null) {
       resultWidget = ChangeNotifierProvider<M>(create: (context) {
@@ -22,8 +22,8 @@ abstract class BaseStatelessView<M extends BaseViewModel>
         return viewModel;
       }, child: Consumer<M>(
           builder: (BuildContext context, M viewModel, Widget child) {
-        return buildView(context, viewModel);
-      }));
+            return buildView(context, viewModel);
+          }));
     } else {
       loadData(context, null);
       resultWidget = buildView(context, null);
@@ -59,9 +59,9 @@ abstract class BaseStatefulView<M extends BaseViewModel>
 }
 
 abstract class BaseStatefulViewState<T extends BaseStatefulView,
-    M extends BaseViewModel> extends State<T> {
+M extends BaseViewModel> extends State<T> {
 
-   M viewModel;
+  M viewModel;
 
   @override
   void initState() {
@@ -71,21 +71,32 @@ abstract class BaseStatefulViewState<T extends BaseStatefulView,
 
   @override
   Widget build(BuildContext context) {
-
-    viewModel=buildViewModel(context);
+    viewModel = buildViewModel(context);
 
     Widget resultWidget;
-    if (viewModel != null&&isBindViewModel()) {
+    if (viewModel != null && isBindViewModel()) {
       resultWidget = ChangeNotifierProvider<M>(create: (context) {
         loadData(context, viewModel);
         return viewModel;
       }, child: Consumer<M>(
           builder: (BuildContext context, M viewModel, Widget child) {
-        return buildView(context, viewModel);
-      }));
+            return WillPopScope(
+              child: buildView(context, viewModel),
+              onWillPop: () {
+                Navigator.pop(context);
+                return new Future.value(false);
+              },
+            );
+          }));
     } else {
-      loadData(context,viewModel);
-      resultWidget = buildView(context, viewModel);
+      loadData(context, viewModel);
+      resultWidget = WillPopScope(
+        child: buildView(context, viewModel),
+        onWillPop: () {
+          Navigator.pop(context);
+          return new Future.value(false);
+        },
+      );
     }
 
     return resultWidget;
@@ -96,12 +107,12 @@ abstract class BaseStatefulViewState<T extends BaseStatefulView,
   /// 初始化数据
   void initData();
 
-   M buildViewModel(BuildContext context);
+  M buildViewModel(BuildContext context);
 
-   /// 需要使用viewModel加载数据、或者页面刷新重新配置数据
+  /// 需要使用viewModel加载数据、或者页面刷新重新配置数据
   void loadData(BuildContext context, M viewModel);
 
-  bool isBindViewModel(){
+  bool isBindViewModel() {
     return true;
   }
 

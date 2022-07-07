@@ -255,3 +255,61 @@ class ShowImageDialogState extends State {
     }
 }
 }
+
+
+class ProgressDialog extends StatefulWidget{
+
+  double startProgress = 0;
+
+
+  ProgressDialog(this.startProgress);
+
+  @override
+  State<StatefulWidget> createState() {
+    return ProgressDialogState();
+  }
+}
+
+class ProgressDialogState extends State<ProgressDialog> {
+  double _progress = 0;
+
+  @override
+  void initState() {
+    _progress = widget.startProgress;
+    super.initState();
+  }
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 200,
+      child: Padding(
+        padding: EdgeInsets.only(top: 20,bottom: 20),
+        child: Column(
+          children: [
+            Text("进度${(_progress * 100).toStringAsFixed(0)} %"),
+            Slider(
+              min: 0,
+              max: 1,
+              label: "${(_progress * 100).toStringAsFixed(0)} %",
+              value: _progress,
+              divisions: 100,
+              inactiveColor: Colors.grey,
+              activeColor: Colors.blue,
+              onChangeEnd: (d){
+                _progress = d;
+              }, onChanged: (double value) {
+              _progress = value;
+              setState((){});
+            },
+            ),
+            MaterialButton(onPressed:(){
+              Navigator.pop(context, _progress);
+            }, child: Text("确定",style: TextStyle(color: Colors.white),),color: Colors.blue)
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+

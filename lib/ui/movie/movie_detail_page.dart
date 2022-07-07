@@ -6,8 +6,10 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_parse_html/book/base/util/utils_toast.dart';
 import 'package:flutter_parse_html/model/movie_bean.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter_parse_html/model/movie_detail2.dart';
 import 'package:flutter_parse_html/model/xian_feng6_bean_entity.dart';
 import 'package:flutter_parse_html/ui/parse/webview_page.dart';
+import 'package:flutter_parse_html/ui/pornhub/pornhub_util.dart';
 import 'package:flutter_parse_html/util/common_util.dart';
 import 'package:flutter_parse_html/util/native_utils.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -23,6 +25,7 @@ class MovieDetailPage extends StatefulWidget {
   int _type = 1;
   final MovieBean _movieBean;
 
+  //type: 7里番
   MovieDetailPage(this._type, this._movieBean);
   @override
   State<StatefulWidget> createState() {
@@ -118,6 +121,12 @@ class MovieDetailState extends State<MovieDetailPage> {
                 getVideoUrlWithType5(value.targetUrl);
               }else if (widget._type == 6) {
                 getVideoUrlWithType6(value.targetUrl);
+              }else if (widget._type == 7) {
+                getVideoUrlWithType7(value.targetUrl);
+              }else if (widget._type == 8) {
+                getVideoUrlWithType8(value.targetUrl);
+              }else if (widget._type == 9) {
+                getVideoUrlWithType9(value.targetUrl);
               }else{
                 CommonUtil.toVideoPlay(value.targetUrl, context);
               }
@@ -204,6 +213,48 @@ class MovieDetailState extends State<MovieDetailPage> {
         Clipboard.setData(new ClipboardData(text: playUrl));
       }
     }
+  }
+
+  void getVideoUrlWithType7(String url)async{
+    print(url);
+    showLoading();
+    var pageBody = await NetUtil.getHtmlData(url);
+    var doc = parse.parse(pageBody);
+    var playUrl = doc.getElementsByTagName('iframe').first.attributes['src'].replaceAll('&zimu=', '').split('url=')[1];
+    Navigator.pop(context);
+    if(playUrl.isNotEmpty ){
+      CommonUtil.toVideoPlay(playUrl, context);
+    }
+  }
+
+  void getVideoUrlWithType9(String url)async{
+    print(url);
+    showLoading();
+    var pageBody = await NetUtil.getHtmlData(url);
+    var pageDocument = parse.parse(pageBody);
+    var playUrls = pageDocument.getElementsByClassName('play-window').first.getElementsByTagName('script').first.text.split('=')[1];
+    Navigator.pop(context);
+    var detail = MovieDetail2.fromJson(convert.json.decode(playUrls));
+    var playUrl = detail.url;
+      if(playUrl.isNotEmpty ){
+        CommonUtil.toVideoPlay(playUrl, context);
+      }
+
+  }
+
+  void getVideoUrlWithType8(String url)async{
+    print(url);
+    showLoading();
+    var pageBody = await PornHubUtil.getHtmlFromHttpDeugger(url);
+    var playUrls = pageBody.split(RegExp(r';var now="|.m3u8'));
+    Navigator.pop(context);
+    if(playUrls.length > 0){
+      var playUrl = '${playUrls[1]}.m3u8';
+      if(playUrl.isNotEmpty ){
+        CommonUtil.toVideoPlay(playUrl, context);
+      }
+    }
+
   }
 
   void goToPlay(String targetUrl) async {

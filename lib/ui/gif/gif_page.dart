@@ -353,7 +353,7 @@ class PhotoItemPageState extends State with AutomaticKeepAliveClientMixin {
 
   List<ButtonBean> childBtnValues;
 
-  var urlIndex = ['3', '3', '3', '2', '1'];
+  var urlIndex = ['1', '2', '3', '2', '1'];
 
   var _widgetContent;
 
@@ -388,7 +388,7 @@ class PhotoItemPageState extends State with AutomaticKeepAliveClientMixin {
             crossAxisCount: 4,
             mainAxisSpacing: 4.0,
             crossAxisSpacing: 4.0,
-            itemCount: _data.length,
+            itemCount: _data?.length,
             itemBuilder: (BuildContext context, int index) => new Container(
                 color: Colors.grey,
                 child: GestureDetector(
@@ -449,9 +449,24 @@ class PhotoItemPageState extends State with AutomaticKeepAliveClientMixin {
     for (var i = 0; i < 8; i++) {
       var response = await NetUtil.getHtmlData(
           'https://api.uomg.com/api/rand.img${urlIndex[Random().nextInt(urlIndex.length)]}&format=json');
-      Map<String, dynamic> jsonStr = json.decode(response);
+      print('图片请求返回:$response');
       GifItemBean gifItemBean = new GifItemBean();
-      gifItemBean.imageUrl = jsonStr['imgurl'];
+      try {
+        Map<String, dynamic> jsonStr = json.decode(response);
+        var imgurl = jsonStr['imgurl'];
+        if(imgurl is List){
+          imgurl?.forEach((element) {
+            GifItemBean itemBean = new GifItemBean();
+            itemBean.imageUrl = element;
+            _data.add(itemBean);
+          });
+        }else {
+          gifItemBean.imageUrl = imgurl;
+        }
+      } catch (e) {
+        print(e);
+        gifItemBean.imageUrl = 'https://api.uomg.com/api/rand.img${urlIndex[Random().nextInt(urlIndex.length)]}';
+      }
       _data.add(gifItemBean);
     }
 

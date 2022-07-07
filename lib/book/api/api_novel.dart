@@ -1,11 +1,13 @@
- import 'dart:math';
+import 'dart:math';
 
 import 'package:flutter_parse_html/api/api_constant.dart';
 import 'package:flutter_parse_html/book/novel/entity/entity_novel_book_chapter.dart';
-import 'package:flutter_parse_html/book/novel/entity/entity_novel_book_key_word_search.dart' as search;
+import 'package:flutter_parse_html/book/novel/entity/entity_novel_book_key_word_search.dart'
+    as search;
 import 'package:flutter_parse_html/book/novel/entity/entity_novel_book_key_word_search.dart';
 import 'package:flutter_parse_html/book/novel/entity/entity_novel_book_recommend.dart';
-import 'package:flutter_parse_html/book/novel/entity/entity_novel_book_recommend.dart' as recommend;
+import 'package:flutter_parse_html/book/novel/entity/entity_novel_book_recommend.dart'
+    as recommend;
 import 'package:flutter_parse_html/book/novel/entity/entity_novel_book_review.dart';
 import 'package:flutter_parse_html/book/novel/entity/entity_novel_book_source.dart';
 import 'package:flutter_parse_html/book/novel/entity/entity_novel_detail.dart';
@@ -13,6 +15,7 @@ import 'package:flutter_parse_html/book/novel/entity/entity_novel_short_comment.
 import 'package:flutter_parse_html/book/base/http/manager_net_request.dart';
 import 'package:flutter_parse_html/net/net_util.dart';
 import 'package:flutter_parse_html/ui/home_page.dart';
+import 'package:flutter_parse_html/ui/pornhub/pornhub_util.dart';
 import 'package:flutter_parse_html/util/common_util.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:html/parser.dart';
@@ -82,50 +85,109 @@ class NovelApi {
 
   /// 小说关键词搜索
   Future<BaseResponse<NovelKeyWordSearch>> searchTargetKeyWord(String keyWord,
-      {int start: 0, int limit: 20}) async {
+      {int start: 1, int limit: 20}) async {
     var response;
     BaseResponse<NovelKeyWordSearch> result = BaseResponse();
-    if(HomePage.inLsj){
+    if (HomePage.inLsj) {
       try {
-        response = await NetUtil.getHtmlDataPost("${ApiConstant.bookUrl2}/search.php",paras: {'keyword':keyWord});
+        response = await NetUtil.getHtmlData(
+            "${ApiConstant.bookUrl2}/modules/article/search.php?searchkey=${Uri.encodeFull(keyWord)}&searchtype=all&page=$start");
         result.isSuccess = true;
         List<search.Books> books = [];
-        var liEles = parse(response).getElementsByClassName('common-bookele');
-        liEles.forEach((element) {
-          String targetUrl = element.getElementsByTagName('a').first.attributes['href'];
-          var ids = targetUrl.split(new RegExp(r'\/|.html'));
-          String id = ids[ids.length - 2];
-          String author = CommonUtil.replaceStr(element.getElementsByTagName('p')[0].text);
-          String title = CommonUtil.replaceStr(element.getElementsByTagName('a').first.text);
-          String cover = '';
-          String shortIntro = CommonUtil.replaceStr(element.getElementsByTagName('p')[1].text);
-          search.Books book = new search.Books(id, false, title, 'aliases', 'cat', author, 'site', cover, shortIntro,
-              'lastChapter', 0, 0, false, 0,0, 'contentType', 'superscript', 0, null);
-          books.add(book);
-        });
-        NovelKeyWordSearch novelKeyWordSearch = NovelKeyWordSearch(books,books.length,true);
+        var doc = parse(response);
+        try {
+          var tdElements = doc.getElementById('jieqi_page_contents').getElementsByTagName('tr');
+          if(tdElements != null && tdElements.length <= 0){
+            var divElements = doc.getElementsByClassName('c_row');
+            divElements.forEach((value) {
+              var aEles = value.getElementsByTagName('a');
+              var aEle = aEles.first;
+              search.Books item = search.Books.empty();
+              String href = aEle.attributes['href'];
+              item.cover = value.getElementsByTagName('img').first.attributes['src'];
+              item.title = CommonUtil.replaceStr(
+                  value.getElementsByClassName('c_subject').first.text);
+              item.author = CommonUtil.replaceStr(
+                  value.getElementsByClassName('c_tag').first.text);
+              item.shortIntro = CommonUtil.replaceStr(
+                  value.getElementsByClassName('c_description').first.text);
+              item.id = href;
+              books.add(item);
+            });
+          }else{
+            for (var value in tdElements) {
+              var aEles = value.getElementsByTagName('a');
+              var aEle = aEles.first;
+              search.Books item = search.Books.empty();
+              String href = aEle.attributes['href'];
+              item.cover = '';
+              item.title = CommonUtil.replaceStr(
+                  value.getElementsByTagName('td').first.text);
+              item.author = CommonUtil.replaceStr(
+                  value.getElementsByTagName('td')[2].text);
+              item.shortIntro = CommonUtil.replaceStr(
+                  value.text);
+              item.id = href;
+              books.add(item);
+            }
+          }
+        } catch (e) {
+          print(e);
+        }
+        NovelKeyWordSearch novelKeyWordSearch =
+            NovelKeyWordSearch(books, books.length, true);
         result.data = novelKeyWordSearch;
       } catch (e) {
         print("$e");
       }
-    }else{
+    } else {
       try {
-        response = await NetUtil.getHtmlDataPost("${ApiConstant.bookUrl3}/search.php",paras: {'searchkey':keyWord});
+        response = await NetUtil.getHtmlDataPost(
+            "${ApiConstant.bookUrl3}/search.php",
+            paras: {'searchkey': keyWord});
         result.isSuccess = true;
         List<search.Books> books = [];
-        var searchList = parse(response).getElementsByClassName('slide-item list1');
+        var searchList =
+            parse(response).getElementsByClassName('slide-item list1');
         var liEles = searchList.first.getElementsByTagName('div');
         liEles.forEach((element) {
-          String id = element.getElementsByTagName('a').first.attributes['href'];
-          String author = CommonUtil.replaceStr(element.getElementsByTagName('a').first.getElementsByClassName('author').first.text);
-          String title = CommonUtil.replaceStr(element.getElementsByClassName('title').first.text);
+          String id =
+              element.getElementsByTagName('a').first.attributes['href'];
+          String author = CommonUtil.replaceStr(element
+              .getElementsByTagName('a')
+              .first
+              .getElementsByClassName('author')
+              .first
+              .text);
+          String title = CommonUtil.replaceStr(
+              element.getElementsByClassName('title').first.text);
           String cover = '';
-          String shortIntro = CommonUtil.replaceStr(element.getElementsByClassName('author')[1].text);
-          search.Books book = new search.Books(id, false, title, 'aliases', 'cat', author, 'site', cover, shortIntro,
-              shortIntro, 0, 0, false, 0,0, 'contentType', 'superscript', 0, null);
+          String shortIntro = CommonUtil.replaceStr(
+              element.getElementsByClassName('author')[1].text);
+          search.Books book = new search.Books(
+              id,
+              false,
+              title,
+              'aliases',
+              'cat',
+              author,
+              'site',
+              cover,
+              shortIntro,
+              shortIntro,
+              0,
+              0,
+              false,
+              0,
+              0,
+              'contentType',
+              'superscript',
+              0,
+              null);
           books.add(book);
         });
-        NovelKeyWordSearch novelKeyWordSearch = NovelKeyWordSearch(books,books.length,true);
+        NovelKeyWordSearch novelKeyWordSearch =
+            NovelKeyWordSearch(books, books.length, true);
         result.data = novelKeyWordSearch;
       } catch (e) {
         print("$e");
@@ -164,25 +226,32 @@ class NovelApi {
   Future<BaseResponse<NovelDetailInfo>> getNovelDetailInfo(
       String bookId) async {
     BaseResponse<NovelDetailInfo> result = BaseResponse()..isSuccess = false;
-    var img = ['https://img.xsnvshen.net/thumb_205x308/album/22469/33694/cover.jpg',
-      'https://img.xsnvshen.net/thumb_205x308/album/22204/33695/cover.jpg',
-      'https://img.xsnvshen.net/thumb_205x308/album/27912/33692/cover.jpg',
-      'https://img.xsnvshen.net/thumb_205x308/album/15769/33691/cover.jpg',
-      'https://img.xsnvshen.net/thumb_205x308/album/22162/22162.jpg',
-    'https://img.xsnvshen.net/thumb_205x308/album/27717/33693/cover.jpg'];
-    if(HomePage.inLsj){
+    var img = [
+      'https://api.uomg.com/api/rand.img1',
+      'https://api.uomg.com/api/rand.img2',
+      'https://api.uomg.com/api/rand.img3',
+      'https://api.uomg.com/api/rand.img1',
+      'https://api.uomg.com/api/rand.img2',
+      'https://api.uomg.com/api/rand.img3'
+    ];
+    if (HomePage.inLsj) {
       try {
-        var response = await NetUtil.getHtmlData('${ApiConstant.bookUrl2}/book/$bookId.html');
+        var response =
+            await PornHubUtil.getHtmlFromHttpDeugger('${bookId.replaceAll('articleinfo', 'reader').replaceAll('?id', '?aid')}');
         var doc = parse(response);
-        var infoEle = doc.getElementById('novelMain');
-        String title = CommonUtil.replaceStr(doc.getElementsByClassName('h_nav_items').first.text);
-        String author = doc.getElementsByClassName('article_info_td').first.getElementsByTagName('div').first.text;
-        String cover = img[Random().nextInt(6)];
-        String wordCount = infoEle.getElementsByClassName('article_info_td').first.getElementsByTagName('div').first.text;
+        var infoEle =
+            doc.getElementsByClassName('mainbody').first;
+        String title = CommonUtil.replaceStr(
+            infoEle.getElementsByClassName('atitle').first.text);
+        String author = CommonUtil.replaceStr(
+            infoEle.getElementsByClassName('ainfo').first.text);
+        String cover = img[Random().nextInt(img.length)];
+        String wordCount = '未知';
         String longIntro = '';
         String lastChapter = '最近更新';
         List<String> tags = [];
-        NovelDetailInfo novelDetailInfo = new NovelDetailInfo(bookId, title, author,cover,0,wordCount,tags,longIntro);
+        NovelDetailInfo novelDetailInfo = new NovelDetailInfo(
+            bookId, title, author, cover, 0, wordCount, tags, longIntro);
         Rating rating = new Rating(0, 0, '', false);
         novelDetailInfo.rating = rating;
         novelDetailInfo.latelyFollower = 0;
@@ -191,25 +260,42 @@ class NovelApi {
         novelDetailInfo.lastChapter = lastChapter;
         result.data = novelDetailInfo;
         List<recommend.Books> recommendBook = [];
-        result.data.novelBookRecommend = NovelBookRecommend(recommendBook,false);
+        result.data.novelBookRecommend =
+            NovelBookRecommend(recommendBook, false);
       } catch (e) {
         print("$e");
       }
-    }else    {
+    } else {
       try {
-        var response = await NetUtil.getHtmlData('${ApiConstant.bookUrl3}$bookId');
+        var response =
+            await NetUtil.getHtmlData('${ApiConstant.bookUrl3}$bookId');
         var doc = parse(response);
         var infoEle = doc.getElementsByClassName('synopsisArea_detail').first;
         String title = doc.getElementsByClassName('title').first.text;
-        String author = infoEle.getElementsByClassName('author').first.text.replaceAll('作者：', '');
-        String cover = infoEle.getElementsByTagName('img').first.attributes['src'];
+        String author = infoEle
+            .getElementsByClassName('author')
+            .first
+            .text
+            .replaceAll('作者：', '');
+        String cover =
+            infoEle.getElementsByTagName('img').first.attributes['src'];
         String wordCount = '';
-        String longIntro = doc.getElementsByClassName('review').first.text.replaceAll(new RegExp(r'\n|\t'), '');
-        String lastChapter = doc.getElementsByClassName('str-over-dot').first.text.replaceAll(new RegExp(r'\n|\t'), '');
+        String longIntro = doc
+            .getElementsByClassName('review')
+            .first
+            .text
+            .replaceAll(new RegExp(r'\n|\t'), '');
+        String lastChapter = doc
+            .getElementsByClassName('str-over-dot')
+            .first
+            .text
+            .replaceAll(new RegExp(r'\n|\t'), '');
         List<String> tags = [];
-        var tag = CommonUtil.replaceStr(infoEle.getElementsByClassName('sort').first.text);
+        var tag = CommonUtil.replaceStr(
+            infoEle.getElementsByClassName('sort').first.text);
         tags.add(tag.replaceAll('类别：', ''));
-        NovelDetailInfo novelDetailInfo = new NovelDetailInfo(bookId, title, author,cover,0,wordCount,tags,longIntro);
+        NovelDetailInfo novelDetailInfo = new NovelDetailInfo(
+            bookId, title, author, cover, 0, wordCount, tags, longIntro);
         Rating rating = new Rating(0, 0, '', false);
         novelDetailInfo.rating = rating;
         novelDetailInfo.latelyFollower = 0;
@@ -218,7 +304,8 @@ class NovelApi {
         novelDetailInfo.lastChapter = lastChapter;
         result.data = novelDetailInfo;
         List<recommend.Books> recommendBook = [];
-        result.data.novelBookRecommend = NovelBookRecommend(recommendBook,false);
+        result.data.novelBookRecommend =
+            NovelBookRecommend(recommendBook, false);
       } catch (e) {
         print("$e");
       }
@@ -344,56 +431,57 @@ class NovelApi {
   Future<BaseResponse<NovelBookChapter>> getNovelCatalog(
       String sourceId) async {
     BaseResponse<NovelBookChapter> result = BaseResponse()..isSuccess = false;
-    if(HomePage.inLsj){
+    if (HomePage.inLsj) {
       try {
-        String url = '${ApiConstant.bookUrl2}/book/${sourceId.substring(0,3)}/$sourceId/';
-        var response = await NetUtil.getHtmlData(url);
+        String url =
+            '${sourceId.replaceAll('articleinfo', 'reader').replaceAll('?id', '?aid')}';
+        var response = await PornHubUtil.getHtmlFromHttpDeugger(url);
         var doc = parse(response);
-        var cateList = doc.getElementsByTagName('li');
+        var cateList = doc.getElementsByClassName('index').first.getElementsByTagName('dd');
         List<Chapters> list = [];
         int index = 1;
         cateList.forEach((element) {
           var aEle = element.getElementsByTagName('a').first;
-          String title = aEle.text;
+          String title = CommonUtil.replaceStr(aEle.text);
           String time = '';
-          String targetUrl = ApiConstant.bookUrl2 + aEle.attributes['href'];
-          var ids = targetUrl.split(new RegExp(r'\/|.html'));
-          String id = ids[ids.length - 2];
-          Chapters chapters = new Chapters(sourceId, title, targetUrl, id, time, 'chapterCover', 10, 0, index, 0,
-              false, false);
+          String targetUrl = aEle.attributes['href'];
+          Chapters chapters = new Chapters(sourceId, title, targetUrl, '', time,
+              'chapterCover', 10, 0, index, 0, false, false);
           list.add(chapters);
           index++;
         });
-        NovelBookChapter novelBookChapter = new NovelBookChapter(sourceId, 'name', 'source', sourceId, url, list, '1', 'host');
+        NovelBookChapter novelBookChapter = new NovelBookChapter(
+            sourceId, 'name', 'source', sourceId, url, list, '1', 'host');
         result.isSuccess = true;
         result.data = novelBookChapter;
       } catch (e) {
         print("$e");
       }
-    }else{
+    } else {
       try {
         String url = '${ApiConstant.bookUrl3}${sourceId}all.html';
         var response = await NetUtil.getHtmlData(url);
         var doc = parse(response);
-        var cateList = doc.getElementById('chapterlist').getElementsByTagName('p');
+        var cateList =
+            doc.getElementById('chapterlist').getElementsByTagName('p');
         List<Chapters> list = [];
         int index = 1;
         cateList.forEach((element) {
           var aEle = element.getElementsByTagName('a').first;
           String targetUrl = aEle.attributes['href'];
-          if(!targetUrl.contains('bottom')){
+          if (!targetUrl.contains('bottom')) {
             String title = aEle.text;
             String time = '';
             String id = targetUrl.replaceAll('.html', '');
             targetUrl = ApiConstant.bookUrl3 + targetUrl;
-            Chapters chapters = new Chapters(sourceId, title, targetUrl, id, time, 'chapterCover', 10, 0, index, 0,
-                false, false);
+            Chapters chapters = new Chapters(sourceId, title, targetUrl, id,
+                time, 'chapterCover', 10, 0, index, 0, false, false);
             list.add(chapters);
             index++;
           }
-
         });
-        NovelBookChapter novelBookChapter = new NovelBookChapter(sourceId, 'name', 'source', sourceId, url, list, '1', 'host');
+        NovelBookChapter novelBookChapter = new NovelBookChapter(
+            sourceId, 'name', 'source', sourceId, url, list, '1', 'host');
         result.isSuccess = true;
         result.data = novelBookChapter;
       } catch (e) {

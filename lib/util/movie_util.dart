@@ -13,44 +13,48 @@ class MovieUtil {
       MovieBean movieBean = MovieBean();
       String body = response;
       var document = parse.parse(body);
-      var element = document.getElementsByClassName("myui-content__list sort-list clearfix").first;
-      var infoElement =
-          document.getElementsByClassName("myui-content__detail").first;
-      movieBean.name = infoElement.getElementsByClassName('title text-fff').first.text;
-      movieBean.info = '${movieBean.name}';
-      for (var value in infoElement.getElementsByClassName('data')) {
-        movieBean.info = '${movieBean.info}\n${value.text}';
-      }
-      movieBean.des =
-          '剧情介绍\n${document.getElementsByClassName('desc text-collapse hidden-xs').first.text}';
-      movieBean.imgUrl = document
-          .getElementsByClassName('myui-content__thumb')
-          .first.getElementsByTagName('img').first
-          .attributes['data-original'];
-      if (element != null) {
-        String id = '';
-        var eleIds = document.getElementsByClassName('nav nav-tabs active').first.getElementsByTagName('li');
-        eleIds.forEach((element) {
-          if(element.text.contains('m3u8')){
-            id = element.getElementsByTagName('a').first.attributes['href'].replaceAll('#', '');
-          }
-        });
-        if(id.isEmpty && eleIds.length > 0){
-          id = eleIds[0].getElementsByTagName('a').first.attributes['href'].replaceAll('#', '');
-        }
-        var itemElements = document.getElementById(id)
-            .getElementsByTagName('li');
-        List<MovieItemBean> list = List();
-        for (var value in itemElements) {
-          MovieItemBean movieItemBean = MovieItemBean();
-          movieItemBean.name = value.getElementsByTagName('a').first.text;
-          movieItemBean.targetUrl = ApiConstant.movieBaseUrl +
-              value.getElementsByTagName('a').first.attributes['href'];
-          list.add(movieItemBean);
-        }
-        movieBean.list = list;
-        if (list.length > 0) movieBean.number = list[0].name;
-        return movieBean;
+      try {
+        var element = document.getElementsByClassName("myui-content__list sort-list clearfix").first;
+        var infoElement =
+                  document.getElementsByClassName("myui-content__detail").first;
+        movieBean.name = infoElement.getElementsByClassName('title text-fff').first.text;
+        movieBean.info = '${movieBean.name}';
+        for (var value in infoElement.getElementsByClassName('data')) {
+                movieBean.info = '${movieBean.info}\n${value.text}';
+              }
+        movieBean.des =
+                  '剧情介绍\n${document.getElementsByClassName('desc text-collapse hidden-xs').first.text}';
+        movieBean.imgUrl = document
+                  .getElementsByClassName('myui-content__thumb')
+                  .first.getElementsByTagName('img').first
+                  .attributes['data-original'];
+        if (element != null) {
+                String id = '';
+                var eleIds = document.getElementsByClassName('nav nav-tabs active').first.getElementsByTagName('li');
+                eleIds.forEach((element) {
+                  if(element.text.contains('m3u8')){
+                    id = element.getElementsByTagName('a').first.attributes['href'].replaceAll('#', '');
+                  }
+                });
+                if(id.isEmpty && eleIds.length > 0){
+                  id = eleIds[0].getElementsByTagName('a').first.attributes['href'].replaceAll('#', '');
+                }
+                var itemElements = document.getElementById(id)
+                    .getElementsByTagName('li');
+                List<MovieItemBean> list = List();
+                for (var value in itemElements) {
+                  MovieItemBean movieItemBean = MovieItemBean();
+                  movieItemBean.name = value.getElementsByTagName('a').first.text;
+                  movieItemBean.targetUrl = ApiConstant.movieBaseUrl +
+                      value.getElementsByTagName('a').first.attributes['href'];
+                  list.add(movieItemBean);
+                }
+                movieBean.list = list;
+                if (list.length > 0) movieBean.number = list[0].name;
+                return movieBean;
+              }
+      } catch (e) {
+        print(e);
       }
       return movieBean;
     });
@@ -61,29 +65,23 @@ class MovieUtil {
       MovieBean movieBean = MovieBean();
       String body = response;
       var document = parse.parse(body);
-      var imgEle = document.getElementsByClassName('vodImg').first.getElementsByTagName('img').first;
+      var imgEle = document.getElementsByClassName('img-thumbnail').first;
       movieBean.imgUrl = imgEle.attributes['src'];
       movieBean.name = imgEle.attributes['alt'];
-      movieBean.info = document.getElementsByClassName('vodinfobox').first.text;
-      movieBean.des = document.getElementsByClassName('vodplayinfo').first.text;
-      var playEle = document.getElementsByClassName('vodplayinfo');
+      movieBean.info = document.getElementsByClassName('col-md-9 col-xs-7').first.text;
+      movieBean.des = document.getElementsByClassName('detail').first.text;
+      var playEle = document.getElementsByClassName('play-list');
       List<MovieItemBean> list = [];
       for (var value in playEle) {
           var inputs = value.getElementsByTagName('li');
           if(inputs.length > 0){
             for (var li in inputs) {
-              var input = li.getElementsByTagName('input').first;
-              var value = input.attributes['value'];
-              if(value != null && (value.contains('.m3u8') || value.contains('http'))){
-                MovieItemBean movieItemBean = new MovieItemBean();
-                movieItemBean.name = li.text;
-                if(movieItemBean.name.contains("\$")){
-                  var strings = movieItemBean.name.split('\$');
-                  movieItemBean.name = '${strings[0]} ${value.contains('.m3u8')?'m3u8':value.contains('.m3u8')?'mp4':''}';
-                }
-                movieItemBean.targetUrl = value;
-                list.add(movieItemBean);
-              }
+              var input = li.getElementsByTagName('a').first;
+              var value = input.attributes['href'];
+              MovieItemBean movieItemBean = new MovieItemBean();
+              movieItemBean.name = input.text;
+              movieItemBean.targetUrl = "${ApiConstant.movieBaseUrl1}$value";
+              list.add(movieItemBean);
             }
           }
       }

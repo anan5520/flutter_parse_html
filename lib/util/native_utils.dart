@@ -18,6 +18,7 @@ class NativeUtils {
   static const goToUcBrowser = const MethodChannel("GO_TO_UC_BROWSER");
   static const goToDownload = const MethodChannel("GO_TO_DOWNLOAD");
   static const goToPlay = const MethodChannel("GO_TO_PLAY");
+  static const localGoToPlay = const MethodChannel("LOCAL_GO_TO_PLAY");
   static const goDouYin = const MethodChannel("GO_TO_DOU_YIN");
   static const _channel_gallery = const MethodChannel("arvin_gallery_saver");
   static const counterPlugin = const EventChannel('native/plugin');
@@ -71,6 +72,11 @@ class NativeUtils {
   static void goToVideoPlay(String url, String title, bool isLive) {
     goToPlay.invokeMethod(
         'GO_TO_PLAY', {'url': url, 'title': title, 'isLive': isLive});
+  }
+
+  static void goToLocalVideoPlay(String url, String title, bool isLive) {
+    localGoToPlay.invokeMethod(
+        'LOCAL_GO_TO_PLAY', {'url': url, 'title': title, 'isLive': isLive});
   }
 
   static void goToDouYin(String type) {

@@ -39,8 +39,8 @@ class PageStateProvider extends BaseProvider {
 
   @override
   Widget getProviderContainer() {
-    //  return ChangeNotifierProvider(builder: (BuildContext context,Widget child) {
-    //   return PageStateProvider();
-    // });
+     return ChangeNotifierProvider(builder: (BuildContext context,Widget child) {
+      return PageStateProvider().mLoadingView;
+    }, create: (BuildContext context) {  },);
   }
 }

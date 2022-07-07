@@ -62,7 +62,7 @@ class PornHubUtil {
   }
 
   //从Jsonp代理 获取网页内容
-  static Future<String> getHtmlFromJsonp(String url, {bool isMobile = true,bool isGbk = false}) {
+  static Future<String> getHtmlFromJsonp(String url, {bool isMobile = true,Map<String, dynamic> params,bool isGbk = false}) {
     var header = isMobile
         ? {
             "User-Agent":
@@ -72,33 +72,6 @@ class PornHubUtil {
             "User-Agent":
                 "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_0) AppleWebKit/535.11 (KHTML, like Gecko) Chrome/17.0.963.56 Safari/535.11",
           };
-    return NetUtil.getHtmlData('$_jsonpUrl$url', header: header,isGbk: isGbk);
-  }
-
-  //从HttpDeugger代理 获取网页内容
-  static Future<String> getHtmlFromHttpDeugger(String url,
-      {bool isMobile = true,
-      Map<String, dynamic> params,
-      Map<String, String> header,
-      String referer,bool isGbk,
-      bool isXvideos = false}) {
-    print('请求url:$url');
-    var paras = isMobile
-        ? {
-            "UrlBox": url,
-            "AgentList": "Custom...",
-            "AgentBox":
-                "Mozilla/5.0 (Linux; U; Android 2.3.6; zh-cn; GT-S5660 Build/GINGERBREAD) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1 MicroMessenger/4.5.255",
-            "VersionsList": "HTTP/1.1",
-            "MethodList": "GET",
-          }
-        : {
-            "UrlBox": url,
-            "AgentList": "Google Chrome",
-            "VersionsList": "HTTP/1.1",
-            "MethodList": "GET",
-          };
-
     if (params == null) {
       params = new Map<String, dynamic>();
     }
@@ -111,6 +84,45 @@ class PornHubUtil {
     if (url.endsWith('&')) {
       url = url.substring(0, url.length - 1);
     }
+    return NetUtil.getHtmlData('$_jsonpUrl$url', header: header,isGbk: isGbk);
+  }
+
+  //从HttpDeugger代理 获取网页内容
+  static Future<String> getHtmlFromHttpDeugger(String url,
+      {bool isMobile = true,
+      Map<String, dynamic> params,
+      Map<String, String> header,
+      String referer,bool isGbk,
+      bool isXvideos = false}) {
+    if (params == null) {
+      params = new Map<String, dynamic>();
+    }
+    if (params.length > 0) {
+      url = '$url?';
+    }
+    params.forEach((key, value) {
+      url = '$url$key=$value&';
+    });
+    if (url.endsWith('&')) {
+      url = url.substring(0, url.length - 1);
+    }
+    print('请求url:$url');
+    var paras = isMobile
+        ? {
+            "UrlBox": url,
+            "AgentList": "Custom...",
+            "AgentBox":
+                "Mozilla/5.0 (Linux; U; Android 2.3.6; zh-cn; GT-S5660 Build/GINGERBREAD) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1 MicroMessenger/4.5.255",
+            "VersionsList": "HTTP/1.1",
+            "MethodList": "GET",
+          }
+        : {
+            "UrlBox": url,
+            "AgentList": "Internet Explorer",
+            "VersionsList": "HTTP/1.1",
+            "MethodList": "GET",
+          };
+
     String headerStr = '';
     header?.forEach((key, value) {
       headerStr = '$key:$value,';
@@ -121,6 +133,7 @@ class PornHubUtil {
       "Pragma": "no-cache",
       "RefererBox": referer,
       "HeadersBox": headerStr,
+      "Accept-Language":"zh-CN,zh;q=0.9",
       "Referer": "http://www.httpdebugger.com/tools/ViewHttpHeaders.aspx",
       "Upgrade-Insecure-Requests": "1",
     },isGbk: isGbk).then((response) async {
@@ -128,7 +141,7 @@ class PornHubUtil {
         Document doc = parse(response);
         var videoEle = doc.getElementById('ResultData');
         String resultText = videoEle == null ? response : videoEle.text;
-        return resultText;
+        return resultText.replaceAll('Response Content', '');
       } else {
         if (isXvideos) {
           response = await getHtmlFromCors(url);

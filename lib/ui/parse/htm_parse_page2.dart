@@ -3,9 +3,10 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_parse_html/model/button_bean.dart';
-import 'package:flutter_parse_html/model/movie_bean.dart';
 import 'package:flutter_parse_html/model/video_list_item.dart';
 import 'package:flutter_parse_html/net/net_util.dart';
+import 'package:flutter_parse_html/ui/parse/book_list3_page.dart';
+import 'package:flutter_parse_html/ui/parse/book_list_4_page.dart';
 import 'package:flutter_parse_html/ui/parse/htm_parse_page1.dart';
 import 'package:flutter_parse_html/ui/pornhub/pornhub_util.dart';
 import 'package:flutter_parse_html/util/common_util.dart';
@@ -20,9 +21,10 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_parse_html/ui/parse/book_page.dart';
 import 'package:unicorndial/unicorndial.dart';
-import 'package:flutter_parse_html/ui/video_play.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_parse_html/api/api_constant.dart';
+
+import 'gif_list_lsj_page.dart';
 
 class HtmlParsePage2 extends StatelessWidget {
   @override
@@ -45,6 +47,9 @@ class HomePageState extends State<ParseHomePage>
   TabController _tabController;
 
   List<String> titles = [
+    '小说',
+    '小说1',
+    '图片gif',
     '图片',
     '小说',
     '视频',
@@ -91,8 +96,9 @@ class HomePageState extends State<ParseHomePage>
             Tab(text: "${titles[6]}"),
             Tab(text: "${titles[7]}"),
             Tab(text: "${titles[8]}"),
-            // Tab(text: "${titles[9]}"),
-            // Tab(text: "${titles[10]}"),
+            Tab(text: "${titles[9]}"),
+            Tab(text: "${titles[10]}"),
+            Tab(text: "${titles[11]}"),
             // Tab(text: "${titles[11]}"),
           ],
           controller: _tabController,
@@ -100,6 +106,9 @@ class HomePageState extends State<ParseHomePage>
       ),
       body: TabBarView(
         children: <Widget>[
+          BookList4Page(''),
+          BookList3Page(),
+          GifListLsjPage(),
           HtmlParse2Page(HtmlParse2Type.image),
           HtmlParse2Page(HtmlParse2Type.book),
           HtmlParse2Page(HtmlParse2Type.video),
@@ -181,7 +190,6 @@ class ParseState extends State<ParsePage> with AutomaticKeepAliveClientMixin {
           if (childBtnValues.length > 0) {
             //有选项再显示
             _showDialog();
-//        NativeUtils.toXfPlay('xfplay://dna=DwjbAwfdmwLWDZiWAZfdBdiZAZx2m0m4AGeXmeDXEdjbAZmYAZxZmt|dx=450062105|mz=JUY-794_CH_SD_onekeybatch.mp4|zx=nhE0pdOVl3P5AY5xqzD5Ac5wo206BGa4mc94MzXPozS|zx=nhE0pdOVl3Ewpc5xqzD4AF5wo206BGa4mc94MzXPozS');
           }
         },
         child: Icon(Icons.add),

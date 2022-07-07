@@ -1,4 +1,6 @@
 
+import 'dart:ui';
+
 import 'package:flutter_parse_html/ui/home_page.dart';
 import 'package:flutter_parse_html/ui/parse/htm_parse_page1.dart';
 import 'package:flutter_parse_html/ui/parse/image_page.dart';
@@ -6,12 +8,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_parse_html/ui/parse/show_staggered_image_page.dart';
 import 'package:flutter_parse_html/ui/splash_page.dart';
 void main() => runApp(MyApp());
-
+const Set<PointerDeviceKind> _kTouchLikeDeviceTypes = <PointerDeviceKind>{
+  PointerDeviceKind.touch,
+  PointerDeviceKind.mouse,
+  PointerDeviceKind.stylus,
+  PointerDeviceKind.invertedStylus,
+  PointerDeviceKind.unknown
+};
 class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      scrollBehavior: const MaterialScrollBehavior().copyWith(
+          scrollbars: true,
+          dragDevices: _kTouchLikeDeviceTypes
+      ),
       title: '老司机',
       theme: ThemeData(
         // This is the theme of your application.

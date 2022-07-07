@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_parse_html/book/base/structure/provider/state_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:provider/single_child_widget.dart';
 
 import 'base_provider.dart';
 
@@ -35,8 +36,8 @@ class APPInfoProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  List<Widget> getProvidersList(BuildContext context) {
-    List<Widget> providers = [];
+  List<SingleChildStatelessWidget> getProvidersList(BuildContext context) {
+    List<SingleChildStatelessWidget> providers = [];
 
     for (BaseProvider currentProvider in _currentProviders) {
       providers.add(currentProvider.getProviderContainer());

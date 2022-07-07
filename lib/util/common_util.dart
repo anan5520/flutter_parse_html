@@ -50,10 +50,30 @@ class CommonUtil {
           context: context,
           builder: (context) {
             return SimpleDialog(
-              title:Text('选择播放器'),
-              children: [isDownLoad ? Container():
+              title:Text('选择播放器(打不开或资源慢的可以选择跳转浏览器)'),
+              children: [
                 FlatButton(
-                  child: Text("普通播放器"),
+                  child: Text(title),
+                  onPressed: () {
+
+                  },
+                ),
+                isDownLoad ? Container():
+                FlatButton(
+                  child: Text("ij播放器(推荐)"),
+                  onPressed: () {
+                    if(Platform.isAndroid){
+                      print('播放:$playUrl');
+                      Navigator.pop(context);
+                      NativeUtils.goToVideoPlay(playUrl, '',false);
+                    }else{
+                      ToastUtils.showToast("不支持ios");
+                    }
+                  },
+                ),
+                isDownLoad ? Container():
+                FlatButton(
+                  child: Text("内置播放器"),
                   onPressed: () {
                     Navigator.pop(context);
                     Navigator.of(context).push(
@@ -62,28 +82,8 @@ class CommonUtil {
                         }));
                   },
                 ),
-                isDownLoad ? Container():FlatButton(
-                  child: Text("ijk播放器"),
-                  onPressed: () {
-                    Navigator.pop(context);
-                    NativeUtils.goToVideoPlay(playUrl, title,isLive);
-                  },
-                ),
-                isDownLoad ? Container():FlatButton(
-                  child: Text("x5播放器"),
-                  onPressed: () {
-                    if(Platform.isAndroid){
-                      print('播放:$playUrl');
-                      Navigator.pop(context);
-                      NativeUtils.toX5Play(playUrl, '');
-                    }else{
-                      ToastUtils.showToast("不支持ios");
-                    }
-
-                  },
-                ),
                 FlatButton(
-                  child: Text("uc浏览器播放下载(推荐)"),
+                  child: Text("跳转uc浏览器播放下载"),
                   onPressed: () {
                     if(Platform.isAndroid){
                       print('播放:$playUrl');
@@ -96,12 +96,37 @@ class CommonUtil {
                   },
                 ),
                 FlatButton(
-                  child: Text("qq浏览器播放下载"),
+                  child: Text("跳转qq浏览器播放下载(推荐)"),
                   onPressed: () {
                     if(Platform.isAndroid){
                       print('播放:$playUrl');
                       Navigator.pop(context);
                       NativeUtils.startQBrowser(playUrl);
+                    }else{
+                      ToastUtils.showToast("不支持ios");
+                    }
+
+                  },
+                ),
+                FlatButton(
+                  child: Text("本机播放"),
+                  onPressed: () {
+                    if(Platform.isAndroid){
+                      print('播放:$playUrl');
+                      Navigator.pop(context);
+                      NativeUtils.goToLocalVideoPlay(playUrl, '',false);
+                    }else{
+                      ToastUtils.showToast("不支持ios");
+                    }
+                  },
+                ),
+                isDownLoad ? Container():FlatButton(
+                  child: Text("x5播放器"),
+                  onPressed: () {
+                    if(Platform.isAndroid){
+                      print('播放:$playUrl');
+                      Navigator.pop(context);
+                      NativeUtils.toX5Play(playUrl, '');
                     }else{
                       ToastUtils.showToast("不支持ios");
                     }

@@ -1,6 +1,8 @@
 
 
 
+import 'dart:math';
+
 class ApiConstant {
   static final String pornCookie = '533988140=27945f5frEtYICg8Uiq8y%2BMNFNAvdNSgIuKtkOJ7; CLIPSHARE=ur1v15ef0irv4j2bs31memkeo1';
 
@@ -17,8 +19,8 @@ class ApiConstant {
   static String movieBaseUrl = 'http://4kbo.com';
   static String movieBaseUrl2 = 'https://www.mhapi123.com/inc/api_mac10.php';
   static String movieSearchUrl = '$movieBaseUrl/index.php/vod/search.html';
-  static String movieBaseUrl1 = 'https://www.okzyw.com';
-  static String movieSearchUrl1 = '$movieBaseUrl1/index.php?m=vod-search';
+  static String movieBaseUrl1 = 'https://www.iikk.org';
+  static String movieSearchUrl1 = '$movieBaseUrl1/vodsearch/';
   static String movieSearchUrl2 = '$movieBaseUrl2?ac=list&wd=';
   static String liveUrl = 'http://api.hclyz.com:81/mf/json.txt';
 
@@ -65,6 +67,8 @@ class ApiConstant {
 
   static String videoList10Url = 'http://www.0008hd.com';//http://www.fabu28.com/
 
+  static String videoList13Url = 'http://jd21j0i93ygrh9gamyn7.pipiapps.com';
+
   static String xianFeng2Url = 'https://sexdaye.net';
 
   static String xianFeng3Url = 'http://www.avscj006.com';
@@ -75,9 +79,18 @@ class ApiConstant {
 
   static String xianFeng6Url = 'http://www.wuppp.com';
 
+
+  static String dongManDaoUrl = 'http://www.88dmw.com';
+
   static String bookUrl1 = 'http://book.wweebb.cn';
-  static String bookUrl2 = 'http://www.fuguodu4.net';
+  static String bookUrl2 = 'https://tti23.cyou';
   static String bookUrl3 = 'http://m.tycqxs.com';
+
+
+  static String liFanUrl1 = 'https://www.acg.rw/';
+  static String liFanUrl2 = 'https://www.ycylf.men';
+
+  static String bookList3 = 'https://yazhouse8.com/';
 
 
   static String douYinUrl = 'https://mm.diskgirl.com/get/get';//'http://sv.ismicool.cn/dyvideo.php'
@@ -85,16 +98,22 @@ class ApiConstant {
 
   static String bookList1Url = 'http://wenzi.tjshihui.com/api/bookdata.ashx';
   static String bookList2Url = ApiConstant.yaSeUrl+"/novel/";
+  static String bookList4Url = "https://yueliang.cyou";
   static String tvUrl = 'http://cdn.dianshihome.com/tvlive/apk/channel/3rd.json';
 
   static String gif1 = 'http://www.wowant.com';
   static String gif2 = 'http://www.gifcc.com';
 
-  static String yaSeUrl = 'https://w.huasea1.com';//www.yasehub.com  www.yase775.com www.yase2020.com
+  static String yaSeUrl = 'https://www.yase162.com';//www.yasehub.com  www.yase775.com www.yase2020.com
 
   static String xVideosKey = '女神';
   static String abjUrl = 'http://www.aibj.me';
 
+
+  static String getRandomImg() {
+    var urlIndex = ['1', '2', '3', '2', '1'];
+    return 'https://api.uomg.com/api/rand.img${urlIndex[Random().nextInt(urlIndex.length)]}';
+  }
 
   static String getYaSeSelf() {
     return '$yaSeUrl/pic';

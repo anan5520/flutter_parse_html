@@ -84,7 +84,7 @@ class Books extends Object {
   Highlight highlight;
 
 
-
+  Books.empty();
   Books(this.id,this.hasCp,this.title,this.aliases,this.cat,this.author,this.site,this.cover,this.shortIntro,this.lastChapter,this.retentionRatio,this.banned,this.allowMonthly,this.latelyFollower,this.wordCount,this.contentType,this.superscript,this.sizetype,this.highlight,);
 
   factory Books.fromJson(Map<String, dynamic> srcJson) => _$BooksFromJson(srcJson);

@@ -96,53 +96,53 @@ class AbjListState extends State<AbjListPage>
 //    Utf8Decoder utf8decoder = new Utf8Decoder();
     var body = await NetUtil.getHtmlData(url,
         isGbk: true,
-        saveCookie: false,isWeb: false);
+        saveCookie: false,isWeb: true);
 //    String body = await NetUtil.getHtmlData(url);
     _refreshController.refreshCompleted();
     _refreshController.loadComplete();
     var doc = parse.parse(body);
-
-    var tdElements1 =
-        doc.getElementById('threadlisttableid').getElementsByTagName('tbody');
-    if (_page == 1) {
-      var tdElements =
-          doc.getElementById('top_lists_c').getElementsByTagName('tbody');
-      for (var value in tdElements) {
-        try {
-          if (value.attributes['id'].contains('normalthread')) {
-            VideoListItem item = VideoListItem();
-            String title = value.getElementsByClassName('s xst').first.text;
-            var xst = value.getElementsByClassName('s xst').first;
-            String href =
-                '${ApiConstant.abjUrl}/${value.getElementsByClassName('s xst').first.attributes['href']}';
-            item.title = CommonUtil.replaceStr(title);
-            item.targetUrl = href;
-            item.des = value.getElementsByClassName('by').first.text;
-            if (item.title.contains("大家好")) {
-              _data.add(item);
+    print('返回：$body');
+    try {
+      var tdElements1 =
+              doc.getElementById('threadlisttableid').getElementsByTagName('tbody');
+      if (_page == 1) {
+            var tdElements =
+                doc.getElementById('top_lists_c').getElementsByTagName('tbody');
+            for (var value in tdElements) {
+              if (value.attributes['id'].contains('normalthread')) {
+                VideoListItem item = VideoListItem();
+                String title = value.getElementsByClassName('s xst').first.text;
+                var xst = value.getElementsByClassName('s xst').first;
+                String href =
+                    '${ApiConstant.abjUrl}/${value.getElementsByClassName('s xst').first.attributes['href']}';
+                item.title = CommonUtil.replaceStr(title);
+                item.targetUrl = href;
+                item.des = value.getElementsByClassName('by').first.text;
+                if (item.title.contains("大家好")) {
+                  _data.add(item);
+                }
+              }
             }
           }
-        } catch (e) {
-          print(e);
-        }
-      }
-    }
-    for (var value in tdElements1) {
-      try {
-        if (value.attributes['id'].contains('normalthread')) {
-          VideoListItem item = VideoListItem();
-          String title = value.getElementsByClassName('s xst').first.text;
-          var xst = value.getElementsByClassName('s xst').first;
-          String href =
-              '${ApiConstant.abjUrl}/${value.getElementsByClassName('s xst').first.attributes['href']}';
-          item.title = CommonUtil.replaceStr(title);
-          item.targetUrl = href;
-          item.des = value.getElementsByClassName('by').first.text;
-          _data.add(item);
-        }
-      } catch (e) {
-        print(e);
-      }
+      for (var value in tdElements1) {
+            try {
+              if (value.attributes['id'].contains('normalthread')) {
+                VideoListItem item = VideoListItem();
+                String title = value.getElementsByClassName('s xst').first.text;
+                var xst = value.getElementsByClassName('s xst').first;
+                String href =
+                    '${ApiConstant.abjUrl}/${value.getElementsByClassName('s xst').first.attributes['href']}';
+                item.title = CommonUtil.replaceStr(title);
+                item.targetUrl = href;
+                item.des = value.getElementsByClassName('by').first.text;
+                _data.add(item);
+              }
+            } catch (e) {
+              print(e);
+            }
+          }
+    } catch (e) {
+      print(e);
     }
 
     setState(() {});

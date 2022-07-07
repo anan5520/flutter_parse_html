@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_parse_html/ui/pornhub/pornhub_util.dart';
+import 'package:flutter_parse_html/widget/dialog_page.dart';
+import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' as parse;
 import 'package:flutter_html/flutter_html.dart';
@@ -14,11 +16,11 @@ class BookHomePage extends StatefulWidget {
   var url;
   int type = 0;
 
+
   BookHomePage(this.url, this.type);
 
   @override
   State<StatefulWidget> createState() {
-    // TODO: implement createState
     return BookState(url);
   }
 }
@@ -27,12 +29,12 @@ class BookState extends State<BookHomePage> {
   String content = '';
   var url;
   var showLoading = true;
-
+  ScrollController _controller;
   BookState(this.url);
 
   @override
   void initState() {
-    // TODO: implement initState
+    _controller = ScrollController();
     super.initState();
     if (widget.type == 0) {
       getData();
@@ -46,6 +48,10 @@ class BookState extends State<BookHomePage> {
       getData4();
     } else if (widget.type == 5) {
       getData5();
+    } else if (widget.type == 6) {
+      getBookList4Data();
+    } else if (widget.type == 7) {
+      getBookList7Data();
     } else {
       getBookList3Data();
     }
@@ -53,8 +59,9 @@ class BookState extends State<BookHomePage> {
 
   @override
   Widget build(BuildContext context) {
+
     Widget contentWidge =
-        widget.type == 1 ? Text(content) : Html(data: content);
+        widget.type == 1 || widget.type == 7 ? Text(content) : Html(data: content);
     return Scaffold(
       appBar: AppBar(
         title: Text('text'),
@@ -72,6 +79,7 @@ class BookState extends State<BookHomePage> {
               child: Stack(
                 children: <Widget>[
                   new CustomScrollView(
+                    controller: _controller,
                     shrinkWrap: true,
                     // 内容
                     slivers: <Widget>[
@@ -98,6 +106,12 @@ class BookState extends State<BookHomePage> {
           ],
         ),
       ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            _showDialog();
+          },
+          child: Icon(Icons.menu),
+        )
     );
   }
 
@@ -191,5 +205,43 @@ class BookState extends State<BookHomePage> {
     setState(() {
       showLoading = false;
     });
+  }
+
+  void getBookList4Data() async {
+    var body = await PornHubUtil.getHtmlFromHttpDeugger(url);
+    var document = parse.parse(body);
+    var articles = document.getElementsByClassName("articleList");
+    articles.forEach((element) { 
+      if(element.getElementsByClassName('nav nav-pills').length == 0){
+        content = element.outerHtml;
+      }
+    });
+    setState(() {
+      showLoading = false;
+    });
+  }
+
+  void getBookList7Data() async {
+    var body = await PornHubUtil.getHtmlFromHttpDeugger(url);
+    var document = parse.parse(body);
+    var articles = document.getElementsByClassName("post-content-post").first;
+    content = articles.text;
+    setState(() {
+      showLoading = false;
+    });
+  }
+
+  void _showDialog() async {
+    double progress = await showDialog(
+        context: context,
+        builder: (context) {
+          return new AlertDialog(
+            content: ProgressDialog(_controller.offset / _controller.position.maxScrollExtent),
+          );
+        });
+      if(progress > 0){
+        print("进度>>$progress");
+        _controller.animateTo(_controller.position.maxScrollExtent * progress, duration: Duration(milliseconds: 500), curve: Curves.ease);
+      }
   }
 }

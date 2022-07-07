@@ -3,6 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_parse_html/model/video_list_item.dart';
 import 'package:flutter_parse_html/ui/movie/movie_detail_page.dart';
+import 'package:flutter_parse_html/ui/parse/video_lifan2_page.dart';
+import 'package:flutter_parse_html/ui/parse/video_lifan_page.dart';
+import 'package:flutter_parse_html/ui/parse/video_list11_page.dart';
+import 'package:flutter_parse_html/ui/parse/yase_porn_page.dart';
 import 'package:flutter_parse_html/ui/xianfeng/xian_feng_page.dart';
 import 'package:flutter_parse_html/ui/xianfeng/xian_feng_page3.dart';
 import 'package:flutter_parse_html/ui/xianfeng/xian_feng_page5.dart';
@@ -38,7 +42,7 @@ class XianFeng2tate extends State<XianFeng2Page>
     "index_4_1_",
     "index_4_1_",
   ];
-  List<String> _titleName = ['视频1','视频2','视频3','视频4'];
+  List<String> _titleName = ['视频','视频1','里番','里番2','视频3','视频4'];
 
   @override
   void initState() {
@@ -105,12 +109,16 @@ class XianFeng2tate extends State<XianFeng2Page>
 
   Widget getPageItem(BuildContext context, int index) {
     if(index == 0)
-      return XianFeng6Page();
+      return YaSePornPage();
     if(index == 1)
-      return XianFengPage(0);
+      return VideoList11Page(0);
     if(index == 2)
-      return XianFengPage(1);
+      return VideoLiFanPage();
     if(index == 3)
+      return VideoLiFan2Page();
+    if(index == 4)
+      return XianFengPage(0);
+    if(index == 5)
       return XianFeng3Page();
   }
 }

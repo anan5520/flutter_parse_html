@@ -19,21 +19,17 @@ class YaSeHelper {
   //解析视频
   static List<VideoListItem> parseVideo(Document html) {
     List<VideoListItem> list = [];
-    var videoEle = html.getElementsByClassName('video-list');
-    if (videoEle == null || videoEle.length == 0) {
-      videoEle = html.getElementsByClassName('video-box');
-    }
-    var elements = videoEle.first.getElementsByTagName('li');
+    var elements = html.getElementsByTagName('colVideoList');
     try {
       for (var value in elements) {
         VideoListItem videoListItem = VideoListItem();
         videoListItem.targetUrl =
             value.getElementsByTagName('a').first.attributes['href'];
-        videoListItem.title = value.getElementsByTagName('a').first.text;
+        videoListItem.title = value.text;
         String url = '';
         var imgEle = value.getElementsByTagName('img');
         if (imgEle != null && imgEle.length != 0) {
-          url = value.getElementsByTagName('img').first.attributes['data-src'];
+          url = value.getElementsByTagName('img').first.attributes['data-original'];
         }
         if (url == null || url == '') {
           url = value

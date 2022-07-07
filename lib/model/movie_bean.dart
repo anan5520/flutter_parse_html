@@ -375,3 +375,4 @@ class DetailItem {
     return data;
   }
 }
+

@@ -52,12 +52,11 @@ class PornHelper {
   //解析论坛版块
   static Future<List<PornForumItem>> parsePornForum(String fid, int page) {
     Map<String, dynamic> param = {'fid': fid, 'page': page};
-    return NetUtil.getHtmlData(
+    return PornHubUtil.getHtmlFromHttpDeugger(
       fid == 'index'
           ? ApiConstant.getPornForumHomeUrl()
           : ApiConstant.getPornForumUrl(),
-      paras: param,
-    ).then((onValue) {
+      params: param).then((onValue) {
       return fid == 'index'
           ? _parsePornIndexForum(onValue)
           : _parsePornForum(onValue, page);
@@ -66,8 +65,8 @@ class PornHelper {
 
   static Future<PornForumContent> parsePornForumContent(int tid) {
     Map<String, dynamic> param = {'tid': tid};
-    return NetUtil.getHtmlData(ApiConstant.getPornForumContentUrl(),
-            paras: param)
+    return PornHubUtil.getHtmlFromHttpDeugger(ApiConstant.getPornForumContentUrl(),
+            params: param)
         .then((onValue) {
       return parsePornForumContentImg(onValue);
     });
@@ -92,12 +91,37 @@ class PornHelper {
       videoResult.id = VideoResult.OUT_OF_WATCH_TIMES;
       return videoResult;
     }
+    var reg ;
+    if(html.contains("strencode2")){
+      reg = RegExp(r'document.write\(strencode2\("|"\)\);');
+    }else {
+      reg = RegExp(r'document.write\(strencode\("|"\)\);');
+    }
+    var strings = html.split(reg);
 
-    RegExp regExp = RegExp(r'document.write\(strencode2\("|"\)\);');
-    var strings = html.split(regExp);
     if (strings.length > 1) {
       String s = strings[1];
-      s = EscapeUnescape.unescape(s);
+      if(html.contains("strencode2")){
+        s = EscapeUnescape.unescape(s);
+      }else{
+        var urlArray = s.split('","');
+        s = urlArray[0];
+        var s1 = urlArray[1];
+        var s2 = urlArray[2];
+        if(s2.substring(s2.length - 1) == "2"){
+          var t = s;
+          s = s1;
+          s1 = t;
+        }
+        s = String.fromCharCodes(base64Decode(s));
+        var len = s1.length;
+        var code = "";
+        for(var i = 0; i< s.length;i++ ){
+          var k = i % len;
+          code += String.fromCharCode(s.codeUnitAt(i) ^ s1.codeUnitAt(k));
+        }
+        s = String.fromCharCodes(base64Decode(code));
+      }
       var document = parse.parse(s);
       String videoUrl =
           document.querySelectorAll('source').first.attributes['src'];
@@ -342,92 +366,96 @@ class PornHelper {
 
   static List<PornForumItem> _parsePornForum(String html, int page) {
     List<PornForumItem> list = [];
-    var doc = parse.parse(html);
-    var table = doc.getElementsByClassName('datatable').first;
-    var tbBodys = table.querySelectorAll('tbody');
-    bool contentStart = false;
-    for (var tbody in tbBodys) {
-      PornForumItem item = PornForumItem();
-      var th = tbody.querySelectorAll('th').first;
-      if (!contentStart && page == 1) {
-        if (th.text.contains('版块主题')) {
-          contentStart = true;
-        }
-        continue;
-      }
-
-      if (th != null) {
-        String title = th.querySelectorAll('a').first.text;
-        item.title = title.replaceAll('\n', '');
-        String contentUrl = th.querySelectorAll('a').first.attributes['href'];
-        int startIndex = contentUrl.indexOf('tid=');
-        int endIndex = contentUrl.indexOf('&');
-        String tidStr = contentUrl.substring(startIndex + 4, endIndex);
-        if (tidStr != null && tidStr.isNotEmpty) {
-          item.tid = int.parse(tidStr);
-        }
-        var imageElements = th.querySelectorAll('img');
-        List<String> stringList;
-        for (var value in imageElements) {
-          if (stringList == null) {
-            stringList = [];
-          }
-          stringList.add(value.attributes['src']);
-        }
-        item.imageList = stringList;
-
-        var agreeElements = th.querySelectorAll('font');
-        if (agreeElements != null && agreeElements.length >= 1) {
-          String agreeCount = th.querySelectorAll('font').last.text;
-          item.agreeCount = agreeCount;
-        }
-        var tds = tbody.querySelectorAll('td');
-        for (var td in tds) {
-          try {
-            String className = td.className;
-            switch (className) {
-              case "folder":
-                String folder =
-                    td.querySelectorAll("img").first.attributes["src"];
-                item.folder = folder;
-                break;
-              case "icon":
-                var iconElement = td.querySelectorAll("img").first;
-                if (iconElement != null) {
-                  String icon = iconElement.attributes["src"];
-                  item.icon = icon;
-                }
-                break;
-              case "author":
-                String author = td.querySelectorAll("a").first.text;
-                String authorPublishTime = td.querySelectorAll("em").first.text;
-                item.author = author;
-                item.authorPublishTime = authorPublishTime;
-                break;
-              case "nums":
-                String replyCount = td.querySelectorAll("strong").first.text;
-                String viewCount = td.querySelectorAll("em").first.text;
-                if (replyCount.isNotEmpty) {
-                  item.replyCount = int.parse(replyCount);
-                }
-                if (viewCount.isNotEmpty) {
-                  item.viewCount = int.parse(viewCount);
-                }
-                break;
-              case "lastpost":
-                String lastPostAuthor = td.querySelectorAll("a").first.text;
-                String lastPostTime = td.querySelectorAll("em").first.text;
-                item.lastPostAuthor = lastPostAuthor;
-                item.lastPostTime = lastPostTime;
-                break;
-              default:
+    try {
+      var doc = parse.parse(html);
+      var table = doc.getElementsByClassName('datatable').first;
+      var tbBodys = table.querySelectorAll('tbody');
+      bool contentStart = false;
+      for (var tbody in tbBodys) {
+            PornForumItem item = PornForumItem();
+            var th = tbody.querySelectorAll('th').first;
+            if (!contentStart && page == 1) {
+              if (th.text.contains('版块主题')) {
+                contentStart = true;
+              }
+              continue;
             }
-          } catch (e) {
-            print(e);
+
+            if (th != null) {
+              String title = th.querySelectorAll('a').first.text;
+              item.title = title.replaceAll('\n', '');
+              String contentUrl = th.querySelectorAll('a').first.attributes['href'];
+              int startIndex = contentUrl.indexOf('tid=');
+              int endIndex = contentUrl.indexOf('&');
+              String tidStr = contentUrl.substring(startIndex + 4, endIndex);
+              if (tidStr != null && tidStr.isNotEmpty) {
+                item.tid = int.parse(tidStr);
+              }
+              var imageElements = th.querySelectorAll('img');
+              List<String> stringList;
+              for (var value in imageElements) {
+                if (stringList == null) {
+                  stringList = [];
+                }
+                stringList.add(value.attributes['src']);
+              }
+              item.imageList = stringList;
+
+              var agreeElements = th.querySelectorAll('font');
+              if (agreeElements != null && agreeElements.length >= 1) {
+                String agreeCount = th.querySelectorAll('font').last.text;
+                item.agreeCount = agreeCount;
+              }
+              var tds = tbody.querySelectorAll('td');
+              for (var td in tds) {
+                try {
+                  String className = td.className;
+                  switch (className) {
+                    case "folder":
+                      String folder =
+                          td.querySelectorAll("img").first.attributes["src"];
+                      item.folder = folder;
+                      break;
+                    case "icon":
+                      var iconElement = td.querySelectorAll("img").first;
+                      if (iconElement != null) {
+                        String icon = iconElement.attributes["src"];
+                        item.icon = icon;
+                      }
+                      break;
+                    case "author":
+                      String author = td.querySelectorAll("a").first.text;
+                      String authorPublishTime = td.querySelectorAll("em").first.text;
+                      item.author = author;
+                      item.authorPublishTime = authorPublishTime;
+                      break;
+                    case "nums":
+                      String replyCount = td.querySelectorAll("strong").first.text;
+                      String viewCount = td.querySelectorAll("em").first.text;
+                      if (replyCount.isNotEmpty) {
+                        item.replyCount = int.parse(replyCount);
+                      }
+                      if (viewCount.isNotEmpty) {
+                        item.viewCount = int.parse(viewCount);
+                      }
+                      break;
+                    case "lastpost":
+                      String lastPostAuthor = td.querySelectorAll("a").first.text;
+                      String lastPostTime = td.querySelectorAll("em").first.text;
+                      item.lastPostAuthor = lastPostAuthor;
+                      item.lastPostTime = lastPostTime;
+                      break;
+                    default:
+                  }
+                } catch (e) {
+                  print(e);
+                }
+              }
+              list.add(item);
+            }
           }
-        }
-        list.add(item);
-      }
+    } catch (e) {
+      print(e);
     }
     return list;
   }

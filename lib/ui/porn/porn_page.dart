@@ -278,7 +278,7 @@ class PornState extends State<PornPage> with AutomaticKeepAliveClientMixin {
           .attributes['src'];
       String contentUrl = value.querySelectorAll('a').first.attributes['href'];
       String viewKey = '';
-      if(contentUrl.contains("&")){
+      if(contentUrl.contains("?viewkey")){
         contentUrl = contentUrl.substring(0, contentUrl.indexOf('&'));
         viewKey = contentUrl.substring(contentUrl.indexOf('=') + 1);
       }else{

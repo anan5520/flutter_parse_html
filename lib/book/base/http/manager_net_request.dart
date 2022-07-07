@@ -27,20 +27,21 @@ class NetRequestManager {
       receiveTimeout: 100000,
     ));
 
-    // _dio.interceptors
-    //     .add(InterceptorsWrapper(onRequest: (RequestOptions options) {
-    //   print("请求之前");
-    //   // Do something before request is sent
-    //   return options; //continue
-    // }, onResponse: (Response response) {
-    //   print("响应之前");
-    //   // Do something with response data
-    //   return response; // continue
-    // }, onError: (DioError e) {
-    //   print("错误之前");
-    //   // Do something with response error
-    //   return e; //continue
-    // }));
+    _dio.interceptors
+        .add(InterceptorsWrapper(onRequest: (  RequestOptions options,
+        RequestInterceptorHandler handler) {
+      print("请求之前");
+      // Do something before request is sent
+    }, onResponse: (  Response e,
+        ResponseInterceptorHandler handler) {
+      print("响应之前");
+      // Do something with response data
+    }, onError: (  DioError e,
+        ErrorInterceptorHandler handler) {
+      print("错误之前");
+      // Do something with response error
+      return e; //continue
+    }));
   }
 
   Future<Response<T>> getRequest<T>(

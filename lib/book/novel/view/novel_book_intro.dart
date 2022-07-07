@@ -66,58 +66,56 @@ class _NovelBookIntroViewState
     }
 
     return Scaffold(
-      // body: NestedScrollView(pinnedHeaderSliverHeightBuilder: () {
-      //   return pinnedHeaderHeight;
-      // }, headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-      //   return _headerSliverBuilder(context, detailInfo);
-      // }, body: Builder(builder: (context) {
-      //   return Container(
-      //     color: Colors.grey[200],
-      //     child: Column(
-      //       children: <Widget>[
-      //         Expanded(
-      //           child: ListView.separated(
-      //             padding: EdgeInsets.fromLTRB(0, 3, 0, 3),
-      //             itemBuilder: (context, index) {
-      //               switch (index) {
-      //                 case 0:
-      //                   return NovelIntroShortCommentView(commentInfo);
-      //                   break;
-      //                 case 1:
-      //                   return NovelIntroBookReviewView(bookReview);
-      //                   break;
-      //                 case 2:
-      //                   return NovelIntroBookRecommendView(bookRecommend);
-      //                   break;
-      //                 case 3:
-      //                   return Container(
-      //                     color: Colors.white,
-      //                       height: 50,
-      //                       width: double.infinity,
-      //                       alignment: Alignment.center,
-      //                       child: Text('${detailInfo?.copyrightDesc}',
-      //                           style: TextStyle(
-      //                               fontSize: 16, color: Colors.grey)));
-      //                   break;
-      //                 default:
-      //                   return null;
-      //                   break;
-      //               }
-      //             },
-      //             itemCount: 4,
-      //             separatorBuilder: (context, index) {
-      //               return Divider(
-      //                 height: 3,
-      //                 color: Colors.transparent,
-      //               );
-      //             },
-      //           ),
-      //         ),
-      //         NovelIntroBottomMenuView(detailInfo)
-      //       ],
-      //     ),
-      //   );
-      // })),
+      body: NestedScrollView( headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+        return _headerSliverBuilder(context, detailInfo);
+      }, body: Builder(builder: (context) {
+        return Container(
+          color: Colors.grey[200],
+          child: Column(
+            children: <Widget>[
+              Expanded(
+                child: ListView.separated(
+                  padding: EdgeInsets.fromLTRB(0, 3, 0, 3),
+                  itemBuilder: (context, index) {
+                    switch (index) {
+                      case 0:
+                        return NovelIntroShortCommentView(commentInfo);
+                        break;
+                      case 1:
+                        return NovelIntroBookReviewView(bookReview);
+                        break;
+                      case 2:
+                        return NovelIntroBookRecommendView(bookRecommend);
+                        break;
+                      case 3:
+                        return Container(
+                          color: Colors.white,
+                            height: 50,
+                            width: double.infinity,
+                            alignment: Alignment.center,
+                            child: Text('${detailInfo?.copyrightDesc}',
+                                style: TextStyle(
+                                    fontSize: 16, color: Colors.grey)));
+                        break;
+                      default:
+                        return null;
+                        break;
+                    }
+                  },
+                  itemCount: 4,
+                  separatorBuilder: (context, index) {
+                    return Divider(
+                      height: 3,
+                      color: Colors.transparent,
+                    );
+                  },
+                ),
+              ),
+              NovelIntroBottomMenuView(detailInfo)
+            ],
+          ),
+        );
+      })),
     );
   }
 

@@ -5,6 +5,7 @@ import 'package:flutter_parse_html/resources/shared_preferences_keys.dart';
 import 'package:flutter_parse_html/ui/douyin/dou_yin_page.dart';
 import 'package:flutter_parse_html/ui/home_page.dart';
 import 'package:flutter_parse_html/ui/parse/htm_parse_page2.dart';
+import 'package:flutter_parse_html/ui/parse/html_parse_page5.dart';
 import 'package:flutter_parse_html/ui/xianfeng/xian_feng_2_page.dart';
 import 'package:flutter_parse_html/ui/yaSe/ya_se.dart';
 import 'package:flutter_parse_html/util/shared_preferences.dart';
@@ -35,8 +36,9 @@ class HomeOtherState extends State<HomeOtherPage> {
   List _tabData = [
     {'text': '老司机', 'icon': Icon(Icons.directions_car)},
     {'text': '91porn', 'icon': Icon(Icons.music_video)},
+    {'text': '视频', 'icon': Icon(Icons.music_video)},
     {'text': '直播', 'icon': Icon(Icons.live_tv)},
-    {'text': '先锋', 'icon': Icon(Icons.videocam)},
+    {'text': '里番', 'icon': Icon(Icons.videocam)},
     {'text': '老司机3', 'icon': Icon(Icons.directions_bus)},
     // {'text': '下载', 'icon': Icon(Icons.file_download)},
   ];
@@ -55,8 +57,9 @@ class HomeOtherState extends State<HomeOtherPage> {
     return Scaffold(
       body: PageView(
         children: <Widget>[
-          new HtmlParsePage1(),
+          new HtmlParsePage5(),
           new PornHomePage(),
+          new HtmlParsePage1(),
           new LivePage(),
           new XianFeng2Page(),
           new HtmlParsePage2(),

@@ -250,7 +250,7 @@ class NovelReaderViewModel extends BaseViewModel {
 
     String parsedString = '';
     if(HomePage.inLsj){
-      parsedString = document.getElementsByClassName('nr_nr').first.text;
+      parsedString = document.getElementsByClassName('acontent').first.text;
     }else{
       parsedString = document.getElementById('content').text;
     }

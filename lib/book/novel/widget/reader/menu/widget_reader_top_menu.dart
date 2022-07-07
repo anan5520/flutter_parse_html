@@ -8,12 +8,9 @@ class NovelTopMenu extends StatelessWidget {
       child: InkWell(
         child: Padding(
             padding: const EdgeInsets.all(20),
-            child: Text(
-              "top menu",
-              style: TextStyle(fontSize: 14, color: Colors.grey),
-            )),
+            child: Icon(Icons.arrow_back_ios,color: Colors.white,)),
         onTap: () {
-          print("menuItem clicked");
+          Navigator.pop(context);
         },
       ),
     );

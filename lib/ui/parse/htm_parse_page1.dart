@@ -8,7 +8,9 @@ import 'package:flutter_parse_html/model/movie_bean.dart';
 import 'package:flutter_parse_html/model/video_list_item.dart';
 import 'package:flutter_parse_html/resources/shared_preferences_keys.dart';
 import 'package:flutter_parse_html/ui/parse/abj_list_page.dart';
+import 'package:flutter_parse_html/ui/parse/gif_list_lsj_page.dart';
 import 'package:flutter_parse_html/ui/parse/video_list10_page.dart';
+import 'package:flutter_parse_html/ui/parse/video_list16_page.dart';
 import 'package:flutter_parse_html/ui/parse/video_list2_page.dart';
 import 'package:flutter_parse_html/ui/parse/video_list3_page.dart';
 import 'package:flutter_parse_html/ui/parse/video_list4_page.dart';
@@ -53,7 +55,7 @@ class ParseHomePage extends StatefulWidget {
 class HomePageState extends State<ParseHomePage>
     with SingleTickerProviderStateMixin {
   TabController _tabController;
-  List<String> titles = ['视频1','视频2', '国产', '视频4','番号', '视频5', '视频10', '视频7', '视频8'];
+  List<String> titles = ['视频1','视频2', '视频4','番号', '视频5', '视频10', '视频7', '视频8'];
 
   @override
   void initState() {
@@ -76,9 +78,12 @@ class HomePageState extends State<ParseHomePage>
                     }));
               }),
           TextButton(
-              child: Text("抖音",style: TextStyle(color: Colors.white),),
+              child: Text("图片gif",style: TextStyle(color: Colors.white),),
               onPressed: () {
-                NativeUtils.goToDouYin("1");
+                Navigator.push(context,
+                    new MaterialPageRoute(builder: (context) {
+                      return GifListLsjPage();
+                    }));
               }),
           IconButton(
               icon: Icon(Icons.book),
@@ -104,7 +109,6 @@ class HomePageState extends State<ParseHomePage>
             Tab(text: "${titles[5]}"),
             Tab(text: "${titles[6]}"),
             Tab(text: "${titles[7]}"),
-            Tab(text: "${titles[8]}"),
           ],
           controller: _tabController,
         ),
@@ -113,13 +117,12 @@ class HomePageState extends State<ParseHomePage>
         children: <Widget>[
           VideoList10Page(),
           VideoList2Page(),
-          VideoList3Page(),
           VideoList4Page(),
           VideoList6Page(''),
           VideoList8Page(),
           VideoList7Page(),
           VideoList9Page(),
-          VideoList1Page(),
+          VideoList16Page(),
 
           // HtmlParse2Page(HtmlParse2Type.video),
         ],

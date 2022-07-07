@@ -33,11 +33,11 @@ class MoviePresenterImpl implements MoviePresenter {
 
   @override
   loadMovieList(String url, int pageNum, MovieType type, bool isRefresh,
-      int baseType) async {
+      int baseType,{isType = false}) async {
     if (baseType == 1) {
       _load4kMovie(url, pageNum, type, isRefresh);
     } else {
-      _loadOkMovie(url, pageNum, type, isRefresh);
+      _loadOkMovie(url, pageNum, type, isRefresh,isType);
     }
   }
 
@@ -58,14 +58,15 @@ class MoviePresenterImpl implements MoviePresenter {
     var videoUrl = "$url-$pageNum.html";
     List<ButtonBean> btns = [];
     var body = await NetUtil.getHtmlData(videoUrl);
-    var document = parse.parse(body);
-    var elements = document
-        .getElementsByClassName("myui-vodlist clearfix")
-        .first
-        .getElementsByClassName("myui-vodlist__box");
-    List<VideoListItem> list = [];
-    List<VideoListItem> bannerList = [];
+    print('返回结果=$body');
     try {
+      var document = parse.parse(body);
+      var elements = document
+          .getElementsByClassName("myui-vodlist clearfix")
+          .first
+          .getElementsByClassName("myui-vodlist__box");
+      List<VideoListItem> list = [];
+      List<VideoListItem> bannerList = [];
       var bannerEle = document
           .getElementsByClassName("myui-panel radius-0 clearfix")
           .first
@@ -112,66 +113,57 @@ class MoviePresenterImpl implements MoviePresenter {
           }
         }
       }
+      _view.loadMovieListSuc(list, btns, isRefresh,bannerList: bannerList);
+      LogUtils.d("http", "返回${list}");
     } catch (e) {
       _view.loadMovieListFail();
       print(e);
     }
-    _view.loadMovieListSuc(list, btns, isRefresh,bannerList: bannerList);
-    LogUtils.d("http", "返回${list}");
   }
 
   void _loadOkMovie(
-      String url, int pageNum, MovieType type, bool isRefresh) async {
-    var videoUrl = "${url}-pg-${pageNum}.html";
-    if (url.endsWith('.html')) {
-      videoUrl = "${url.substring(0, url.length - 5)}-pg-${pageNum}.html";
-    }
+      String url, int pageNum, MovieType type, bool isRefresh,bool isType) async {
+    var videoUrl = "${url}${isType ?"-----${pageNum}---.html":'${pageNum}.html'}";
+    print('加载$videoUrl');
     try {
       var response = await _dio.get(videoUrl);
       if (response.statusCode == HttpStatus.ok) {
         var body = response.data;
         var document = parse.parse(body);
-        String id = "m1";
-        switch (type) {
-          case MovieType.movie:
-            id = "m1";
-            break;
-          case MovieType.tv:
-            id = "m2";
-            break;
-          case MovieType.variety:
-            id = "m3";
-            break;
-          case MovieType.comic:
-            id = "m4";
-            break;
-        }
         List<ButtonBean> btns = [];
         List<VideoListItem> list = [];
-        var btnsEle = document.getElementById(id).getElementsByTagName('a');
+        var btnsEle = document.getElementsByClassName('panel-body query-box').first.getElementsByClassName('clearfix');
         for (var value in btnsEle) {
-          ButtonBean buttonBean = new ButtonBean();
-          buttonBean.value = value.attributes['href'];
-          buttonBean.title = value.text;
-          btns.add(buttonBean);
+          if(value.text.contains('按类型')){
+            value.getElementsByTagName('span').forEach((element) {
+              var aEle = element.getElementsByTagName('a').first;
+              ButtonBean buttonBean = new ButtonBean();
+              buttonBean.value = aEle.attributes['href'];
+              buttonBean.title = aEle.text;
+              btns.add(buttonBean);
+            });
+
+          }
+
         }
         var items = document
-            .getElementsByClassName('xing_vb')
+            .getElementsByClassName('cards video-list')
             .first
-            .getElementsByTagName('ul');
+            .getElementsByClassName('col-md-2 col-xs-4');
         for (var value1 in items) {
           var aEle = value1.getElementsByTagName('a');
           if (aEle.length > 0) {
-            var target = aEle.first.attributes['target'];
-            if (target == null || target != "_self") {
+            var target = aEle.first.attributes['href'];
+            var imgEle = aEle.first.getElementsByTagName('img')?.first;
+            if (target != null && imgEle != null) {
               VideoListItem listItem = new VideoListItem();
               listItem.targetUrl =
-                  ApiConstant.movieBaseUrl1 + aEle.first.attributes['href'];
-              listItem.title = aEle.first.text;
-              var v5 = value1.getElementsByClassName('xing_vb5');
-              var v6 = value1.getElementsByClassName('xing_vb6');
-              if (v5.length > 0 && v6.length > 0) {
-                listItem.des = "${v5.first.text}   ${v6.first.text}";
+                  ApiConstant.movieBaseUrl1 + target;
+              listItem.title = imgEle.attributes['alt'];
+              listItem.imageUrl = imgEle.attributes['data-original'];
+              var v5 = value1.getElementsByClassName('card-content text-ellipsis text-muted');
+              if (v5.length > 0) {
+                listItem.des = "${v5.first.text}";
               } else {
                 listItem.des = "";
               }

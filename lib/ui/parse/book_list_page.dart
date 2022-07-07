@@ -32,7 +32,7 @@ class BookListState extends State<BookListPage>
 
   RefreshController _refreshController;
   int _page = 1;
-  String _currentKey = HomePage.inLsj?'doushi':'/ph/month';
+  String _currentKey = HomePage.inLsj?'/modules/article/toplist.php?order=allvisit':'/ph/month';
   bool _isSearch = false;
   TextEditingController _editingController;
 
@@ -138,12 +138,13 @@ class BookListState extends State<BookListPage>
                                           SizedBox(
                                             width: 5,
                                           ),
-                                          Text(
-                                            _data[index]?.author,
-                                            style: TextStyle(
-                                                fontSize: 14,
-                                                color: Colors.grey),
-                                          )
+                                         Expanded(child:  Text(
+                                           _data[index]?.author,
+                                           style: TextStyle(
+                                               fontSize: 14,
+                                               color: Colors.grey),
+                                           maxLines: 1,
+                                         ))
                                         ],
                                       ),
                                     ],
@@ -173,7 +174,7 @@ class BookListState extends State<BookListPage>
   //获取数据
   void _getData() async {
     String url = HomePage.inLsj
-        ? '${ApiConstant.bookUrl2}/$_currentKey/page/$_page'
+        ? '${_currentKey.startsWith('http')?'':ApiConstant.bookUrl2}$_currentKey&page=$_page'
         : "${ApiConstant.bookUrl3}${_currentKey}_$_page.html";
     String response = await NetUtil.getHtmlData(url);
     if(HomePage.inLsj){
@@ -297,38 +298,59 @@ class BookListState extends State<BookListPage>
   void parseDataBookLsj(String response) {
     var doc = parse.parse(response);
     try {
-      var tdElements = doc.getElementsByClassName('section1 inner mt30').first.getElementsByTagName('li');
-      for (var value in tdElements) {
-        var aEles = value.getElementsByTagName('a');
-        var aEle = aEles.first;
-        VideoListItem item = VideoListItem();
-        String href = aEle.attributes['href'];
-        item.imageUrl =
-        ApiConstant.bookUrl2 + CommonUtil.replaceStr(aEle.getElementsByTagName('img').first.attributes['src']);
-        item.title = CommonUtil.replaceStr(
-            value.getElementsByTagName('h2').first.text);
-        item.author = CommonUtil.replaceStr(
-            value.getElementsByClassName('book-meta').first.text);
-        item.des = CommonUtil.replaceStr(
-            value.getElementsByTagName('p').first.text);
-        var strings = href.split('\/');
-        item.targetUrl = strings[strings.length - 1];
-        _data.add(item);
+      var tdElements = doc.getElementById('jieqi_page_contents').getElementsByTagName('tr');
+      if(tdElements != null && tdElements.length <= 0){
+        var divElements = doc.getElementsByClassName('c_row cf');
+        divElements.forEach((value) {
+          var aEles = value.getElementsByTagName('a');
+          var aEle = aEles.first;
+          VideoListItem item = VideoListItem();
+          String href = aEle.attributes['href'];
+          item.imageUrl = value.getElementsByTagName('img').first.attributes['src'];
+          item.title = CommonUtil.replaceStr(
+              value.getElementsByClassName('c_subject').first.text);
+          item.author = CommonUtil.replaceStr(
+              value.getElementsByClassName('c_tag').first.text);
+          item.des = CommonUtil.replaceStr(
+              value.getElementsByClassName('c_description').first.text);
+          item.targetUrl = href;
+          _data.add(item);
+        });
+      }else{
+        for (var value in tdElements) {
+          var aEles = value.getElementsByTagName('a');
+          var aEle = aEles.first;
+          VideoListItem item = VideoListItem();
+          String href = aEle.attributes['href'];
+          item.imageUrl = '';
+          item.title = CommonUtil.replaceStr(
+              value.getElementsByTagName('td').first.text);
+          item.author = CommonUtil.replaceStr(
+              value.getElementsByTagName('td')[2].text);
+          item.des = CommonUtil.replaceStr(
+              value.text);
+          item.targetUrl = href;
+          _data.add(item);
+        }
       }
+
       if (_btns == null) {
         _btns = [];
         var sddms = doc
-            .getElementsByClassName('header-menu')
+            .getElementsByClassName('subnav')
             .first
-            .getElementsByTagName('li');
+            .getElementsByTagName('a');
         sddms.forEach((value1) {
-          var aEle = value1.getElementsByTagName('a').first;
-          ButtonBean buttonBean = ButtonBean();
-          buttonBean.title = aEle.text;
-          if(!buttonBean.title.contains('首页')){
-            var strings = aEle.attributes['href'].split('\/');
-            buttonBean.value = strings[strings.length - 1];
-            _btns.add(buttonBean);
+          try {
+            ButtonBean buttonBean = ButtonBean();
+            buttonBean.title = value1.text;
+            if(!buttonBean.title.contains('首页')){
+                        buttonBean.value = value1.attributes['href'];
+                        buttonBean.value = buttonBean.value.replaceAll('&page=1', 'replace');
+                        _btns.add(buttonBean);
+                      }
+          } catch (e) {
+            print(e);
           }
         });
       }

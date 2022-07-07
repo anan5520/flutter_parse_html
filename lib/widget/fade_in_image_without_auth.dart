@@ -12,6 +12,7 @@ import 'package:flutter/src/widgets/basic.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/image.dart';
 import 'package:flutter/src/widgets/ticker_provider.dart';
+import 'package:flutter_parse_html/widget/image_provider_net_memory.dart';
 import 'image_provider_without_auth.dart';
 
 // Examples can assume:
@@ -200,6 +201,39 @@ class FadeInImageWithoutAuth extends StatefulWidget {
         assert(repeat != null),
         assert(matchTextDirection != null),
         image = NetworkImageWithoutAuth(image, scale: imageScale),
+        super(key: key);
+
+  FadeInImageWithoutAuth.base64Network({
+    Key key,
+    @required String placeholder,
+    @required String image,
+    AssetBundle bundle,
+    double placeholderScale,
+    double imageScale = 1.0,
+    this.fadeOutDuration = const Duration(milliseconds: 300),
+    this.fadeOutCurve = Curves.easeOut,
+    this.fadeInDuration = const Duration(milliseconds: 700),
+    this.fadeInCurve = Curves.easeIn,
+    this.width,
+    this.height,
+    this.fit,
+    this.alignment = Alignment.center,
+    this.repeat = ImageRepeat.noRepeat,
+    this.matchTextDirection = false,
+  }) : assert(placeholder != null),
+        assert(image != null),
+        placeholder = placeholderScale != null
+            ? ExactAssetImage(placeholder, bundle: bundle, scale: placeholderScale)
+            : AssetImage(placeholder, bundle: bundle),
+        assert(imageScale != null),
+        assert(fadeOutDuration != null),
+        assert(fadeOutCurve != null),
+        assert(fadeInDuration != null),
+        assert(fadeInCurve != null),
+        assert(alignment != null),
+        assert(repeat != null),
+        assert(matchTextDirection != null),
+        image = NetworkImageMemory(image, scale: imageScale),
         super(key: key);
 
   /// Image displayed while the target [image] is loading.

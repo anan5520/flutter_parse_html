@@ -68,7 +68,7 @@ class _RegisteredElement extends ProxyElement {
   void mount(Element parent, dynamic newSlot) {
     super.mount(parent, newSlot);
     final _InheritedRegistryWidget _inheritedRegistryWidget =
-        dependOnInheritedWidgetOfExactType<_InheritedRegistryWidget>();
+    dependOnInheritedWidgetOfExactType(aspect: _InheritedRegistryWidget);
     _registryWidgetState = _inheritedRegistryWidget.state;
     _registryWidgetState.registeredElements.add(this);
     _registryWidgetState.widget.elementNotifier?.value =
@@ -79,7 +79,7 @@ class _RegisteredElement extends ProxyElement {
   void didChangeDependencies() {
     super.didChangeDependencies();
     final _InheritedRegistryWidget _inheritedRegistryWidget =
-        dependOnInheritedWidgetOfExactType<_InheritedRegistryWidget>();
+    dependOnInheritedWidgetOfExactType(aspect: _InheritedRegistryWidget);
     _registryWidgetState = _inheritedRegistryWidget.state;
     _registryWidgetState.registeredElements.add(this);
     _registryWidgetState.widget.elementNotifier?.value =

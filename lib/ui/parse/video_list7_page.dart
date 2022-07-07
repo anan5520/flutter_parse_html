@@ -283,7 +283,7 @@ class VideoList7State extends State<VideoList7Page>
     // }
 
     Navigator.pop(context);
-    CommonUtil.toVideoPlay(url, context);
+    CommonUtil.toVideoPlay(url, context,title: data.title);
     // Navigator.of(context)
     //     .push(new MaterialPageRoute(builder: (BuildContext context) {
     //   return MovieDetailPage(1, movieBean);

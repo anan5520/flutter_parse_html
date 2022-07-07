@@ -150,12 +150,12 @@ class SearchState extends State<SearchResultPage>
 
   void getData(String query) async {
     var videoUrl = widget.type == 1 ? '${ApiConstant.movieBaseUrl}'
-        '/search.php?page=1&searchword=${Uri.encodeComponent(_query)}' : ApiConstant
-        .movieSearchUrl1;
+        '/search.php?page=1&searchword=${Uri.encodeComponent(_query)}' : "${ApiConstant
+        .movieSearchUrl1}${Uri.encodeComponent(_query)}----------1---.html";
     try {
       Map<String, String> param = {'submit': '', 'wd': query};
       var body = widget.type == 1?await NetUtil.getHtmlData(videoUrl)
-          : await NetUtil.getHtmlDataPost(videoUrl, paras: param);
+          : await NetUtil.getHtmlData(videoUrl);
       var document = parse.parse(body);
       List<VideoListItem> list = [];
       if (widget.type == 1) {
@@ -178,22 +178,23 @@ class SearchState extends State<SearchResultPage>
       } else {
 
         var items = document
-            .getElementsByClassName('xing_vb')
+            .getElementsByClassName('cards video-list')
             .first
-            .getElementsByTagName('ul');
+            .getElementsByClassName('col-md-2 col-xs-4');
         for (var value1 in items) {
           var aEle = value1.getElementsByTagName('a');
           if (aEle.length > 0) {
-            var target = aEle.first.attributes['target'];
-            if (target == null || target != "_self") {
+            var target = aEle.first.attributes['href'];
+            var imgEle = value1.getElementsByTagName('img').first;
+            if (target != null) {
               VideoListItem listItem = new VideoListItem();
               listItem.targetUrl =
-                  ApiConstant.movieBaseUrl1 + aEle.first.attributes['href'];
-              listItem.title = aEle.first.text;
-              var v5 = value1.getElementsByClassName('xing_vb5');
-              var v6 = value1.getElementsByClassName('xing_vb6');
-              if (v5.length > 0 && v6.length > 0) {
-                listItem.des = "${v5.first.text}   ${v6.first.text}";
+                  ApiConstant.movieBaseUrl1 + target;
+              listItem.title = imgEle.attributes['alt'];
+              listItem.imageUrl = 'https${imgEle.attributes['data-original'].split('https').last}';
+              var v5 = value1.getElementsByClassName('card-content text-ellipsis text-muted');
+              if (v5.length > 0) {
+                listItem.des = "${v5.first.text}";
               } else {
                 listItem.des = "";
               }
@@ -265,7 +266,7 @@ class SearchState extends State<SearchResultPage>
     Navigator.pop(context);
     Navigator.of(context)
         .push(new MaterialPageRoute(builder: (BuildContext context) {
-      return MovieDetailPage(1, movieBean);
+      return MovieDetailPage(widget.type == 2?9:1, movieBean);
     }));
   }
 

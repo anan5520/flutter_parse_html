@@ -213,17 +213,15 @@ class VideoList3State extends State<VideoList3Page>
     var body = await PornHubUtil.getHtmlFromHttpDeugger(data.targetUrl);
     try {
       var doc = parse.parse(body);
-      var sources = doc.getElementsByTagName('source');
+      var sources = doc.getElementById('player-fluid');
       String playUrl = '';
-      sources.forEach((element) {
-        var src = element.attributes['src'];
-        if(src.contains('720') && src.contains("file=")){
-          var urls = src.split('file=');
-          playUrl = 'https://storage.banyinjia8.com/media/videos${urls[1]}';
-        }else if(src.contains('.m3u8')){
-          playUrl = src;
-        }
-      });
+      var src = sources.attributes['style'];
+      if(src.contains('player')){
+        var urls = src.split(new RegExp(r'/tmb|player'));
+        playUrl = 'https://storage.banyinjia8.com/media/videos/hls${urls[1]}playlist.m3u8';
+      }else if(src.contains('.m3u8')){
+        playUrl = src;
+      }
       if(playUrl.contains('.trailer')){
         playUrl = playUrl.replaceAll('.trailer', '');
       }
@@ -283,7 +281,7 @@ class VideoList3State extends State<VideoList3Page>
                 child: Text(
                   '${item.title}',
                   style: TextStyle(fontSize: 12),
-                  maxLines: 1,
+                  maxLines: _isVideoList?2:1,
                 ),
               )
             ],
