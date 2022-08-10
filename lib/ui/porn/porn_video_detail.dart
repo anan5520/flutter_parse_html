@@ -58,14 +58,17 @@ class PornVideoDetailState extends State<PornVideoDetailPage> {
         title: Text('视频详情'),
         actions: <Widget>[
           FlatButton(
-            child: Text('查看所有作品',style: TextStyle(color: Colors.white,fontSize: 12),),
-            onPressed: (){
+            child: Text(
+              '查看所有作品',
+              style: TextStyle(color: Colors.white, fontSize: 12),
+            ),
+            onPressed: () {
               //跳转查看作者其他作品
               Navigator.pop(context);
-              Navigator.of(context).push(
-                  new MaterialPageRoute(builder: (BuildContext context) {
-                    return PornPage.authorId(widget._videoResult.ownerId);
-                  }));
+              Navigator.of(context)
+                  .push(new MaterialPageRoute(builder: (BuildContext context) {
+                return PornPage.authorId(widget._videoResult.ownerId);
+              }));
             },
           ),
           GestureDetector(
@@ -125,10 +128,13 @@ class PornVideoDetailState extends State<PornVideoDetailPage> {
               children: <Widget>[
                 Padding(
                   padding: EdgeInsets.only(bottom: 5, left: 5, right: 5),
-                  child: Text(
-                    '${widget._videoResult.videoName}',
-                    style: TextStyle(color: Colors.white),
-                  ),
+                  child: widget._videoResult.videoName.startsWith('http')
+                      ? CachedNetworkImage(
+                          imageUrl: widget._videoResult.videoName)
+                      : Text(
+                          '${widget._videoResult.videoName}',
+                          style: TextStyle(color: Colors.white),
+                        ),
                 ),
                 Padding(
                   padding: EdgeInsets.only(left: 5, right: 5),
@@ -136,10 +142,10 @@ class PornVideoDetailState extends State<PornVideoDetailPage> {
                     onTap: () {
                       //跳转查看作者其他作品
                       Navigator.pop(context);
-                      Navigator.of(context).push(
-                          new MaterialPageRoute(builder: (BuildContext context) {
-                            return PornPage.authorId(widget._videoResult.ownerId);
-                          }));
+                      Navigator.of(context).push(new MaterialPageRoute(
+                          builder: (BuildContext context) {
+                        return PornPage.authorId(widget._videoResult.ownerId);
+                      }));
                     },
                     child: Text(
                       '${widget._videoResult.userOtherInfo}',

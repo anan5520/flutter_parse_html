@@ -183,12 +183,7 @@ class PornHelper {
         videoResult.thumbImgUrl = thumbImg;
       }
 
-      String videoName =
-          doc.getElementsByClassName('login_register_header').first.text;
-      videoName = videoName.replaceAll('\s', '');
-      videoName = videoName.replaceAll('\t', '');
-      videoName = videoName.replaceAll('\n', '');
-      videoResult.videoName = videoName;
+      videoResult.videoName = item.title;
       videoResult.viewKey = viewKey;
     } else {
       try {
@@ -316,49 +311,51 @@ class PornHelper {
 //
 //       }
       for (var element in elements) {
-        PornForumItem pornForumItem = new PornForumItem();
-        String allInfo = element.attributes['title'].replaceAll('\n', '');
-        int titeleIndex = allInfo.indexOf('主题标题:');
-        int authorIndex = allInfo.indexOf('主题作者:');
-        int authorPublishTimeIndex = allInfo.indexOf('发表时间:');
-        int viewCountIndex = allInfo.indexOf('浏览次数:');
-        int replyCountIndex = allInfo.indexOf('回复次数:');
-        int lastPostTimeIndex = allInfo.indexOf('最后回复:');
-        int lastPostAuthorIndex = allInfo.indexOf('最后发表:');
+        if(td.outerHtml.contains('title')){
+          PornForumItem pornForumItem = new PornForumItem();
+          String allInfo = element.attributes['title'].replaceAll('\n', '');
+          int titeleIndex = allInfo.indexOf('主题标题:');
+          int authorIndex = allInfo.indexOf('主题作者:');
+          int authorPublishTimeIndex = allInfo.indexOf('发表时间:');
+          int viewCountIndex = allInfo.indexOf('浏览次数:');
+          int replyCountIndex = allInfo.indexOf('回复次数:');
+          int lastPostTimeIndex = allInfo.indexOf('最后回复:');
+          int lastPostAuthorIndex = allInfo.indexOf('最后发表:');
 
-        String title = allInfo.substring(titeleIndex + 5, authorIndex);
-        String author =
-            allInfo.substring(authorIndex + 5, authorPublishTimeIndex);
-        String authorPublishTime =
-            allInfo.substring(authorPublishTimeIndex + 5, viewCountIndex);
-        String viewCount = allInfo
-            .substring(viewCountIndex + 5, replyCountIndex)
-            .replaceAll('次', '')
-            .trim();
-        String replyCount = allInfo
-            .substring(replyCountIndex + 5, lastPostTimeIndex)
-            .replaceAll('次', '')
-            .trim();
-        String lastPostTime =
-            allInfo.substring(lastPostTimeIndex + 5, lastPostAuthorIndex);
-        String lastPostAuthor =
-            allInfo.substring(lastPostAuthorIndex + 5, allInfo.length);
+          String title = allInfo.substring(titeleIndex + 5, authorIndex);
+          String author =
+          allInfo.substring(authorIndex + 5, authorPublishTimeIndex);
+          String authorPublishTime =
+          allInfo.substring(authorPublishTimeIndex + 5, viewCountIndex);
+          String viewCount = allInfo
+              .substring(viewCountIndex + 5, replyCountIndex)
+              .replaceAll('次', '')
+              .trim();
+          String replyCount = allInfo
+              .substring(replyCountIndex + 5, lastPostTimeIndex)
+              .replaceAll('次', '')
+              .trim();
+          String lastPostTime =
+          allInfo.substring(lastPostTimeIndex + 5, lastPostAuthorIndex);
+          String lastPostAuthor =
+          allInfo.substring(lastPostAuthorIndex + 5, allInfo.length);
 
-        pornForumItem.lastPostTime = lastPostTime;
-        pornForumItem.lastPostAuthor = lastPostAuthor;
-        pornForumItem.title = title;
-        pornForumItem.author = author;
-        pornForumItem.viewCount = int.parse(viewCount);
-        pornForumItem.replyCount = int.parse(replyCount);
-        pornForumItem.authorPublishTime = authorPublishTime;
+          pornForumItem.lastPostTime = lastPostTime;
+          pornForumItem.lastPostAuthor = lastPostAuthor;
+          pornForumItem.title = title;
+          pornForumItem.author = author;
+          pornForumItem.viewCount = int.parse(viewCount);
+          pornForumItem.replyCount = int.parse(replyCount);
+          pornForumItem.authorPublishTime = authorPublishTime;
 
-        String contentUrl = element.attributes['href'];
-        int startIndex = contentUrl.indexOf('tid=');
-        String tidStr = contentUrl.substring(startIndex + 4, contentUrl.length);
-        if (tidStr.isNotEmpty) {
-          pornForumItem.tid = int.parse(tidStr);
+          String contentUrl = element.attributes['href'];
+          int startIndex = contentUrl.indexOf('tid=');
+          String tidStr = contentUrl.substring(startIndex + 4, contentUrl.length);
+          if (tidStr.isNotEmpty) {
+            pornForumItem.tid = int.parse(tidStr);
+          }
+          list.add(pornForumItem);
         }
-        list.add(pornForumItem);
       }
     }
     return list;

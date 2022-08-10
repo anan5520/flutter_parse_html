@@ -69,6 +69,8 @@ class ApiConstant {
 
   static String videoList13Url = 'http://jd21j0i93ygrh9gamyn7.pipiapps.com';
 
+  static String videoList17Url = 'https://www.fanhaocx.com';
+
   static String xianFeng2Url = 'https://sexdaye.net';
 
   static String xianFeng3Url = 'http://www.avscj006.com';
@@ -87,8 +89,8 @@ class ApiConstant {
   static String bookUrl3 = 'http://m.tycqxs.com';
 
 
-  static String liFanUrl1 = 'https://www.acg.rw/';
-  static String liFanUrl2 = 'https://www.ycylf.men';
+  static String liFanUrl1 = 'https://www.acgrw.net';
+  static String liFanUrl2 = 'https://www.ycylf.net';
 
   static String bookList3 = 'https://yazhouse8.com/';
 

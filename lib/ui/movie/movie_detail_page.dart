@@ -246,10 +246,10 @@ class MovieDetailState extends State<MovieDetailPage> {
     print(url);
     showLoading();
     var pageBody = await PornHubUtil.getHtmlFromHttpDeugger(url);
-    var playUrls = pageBody.split(RegExp(r';var now="|.m3u8'));
+    var playUrls = pageBody.split(RegExp(r'var now=unescape\(\"|.m3u8'));
     Navigator.pop(context);
     if(playUrls.length > 0){
-      var playUrl = '${playUrls[1]}.m3u8';
+      var playUrl = '${EscapeUnescape.unescape(playUrls[1])}.m3u8';
       if(playUrl.isNotEmpty ){
         CommonUtil.toVideoPlay(playUrl, context);
       }

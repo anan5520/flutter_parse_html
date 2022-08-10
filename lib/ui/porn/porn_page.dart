@@ -1,7 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/widgets.dart';
 import 'package:flutter_parse_html/model/porn_bean.dart';
 import 'package:flutter_parse_html/ui/pornhub/porn_hub_page.dart';
 import 'package:flutter_parse_html/ui/pornhub/pornhub_util.dart';
+import 'package:flutter_parse_html/util/common_util.dart';
+import 'package:flutter_parse_html/util/escapeu_unescape.dart';
 import 'package:provider/provider.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
@@ -28,7 +32,7 @@ class PornHomePage extends StatefulWidget {
 class PornHomePageState extends State<PornHomePage>
     with SingleTickerProviderStateMixin {
   TabController _tabController;
-  List<String> titles = ['最近加精','最热', '最新', '10分钟以上', '高清'];
+  List<String> titles = ['最近加精', '最热', '最新', '10分钟以上', '高清'];
 
   @override
   void initState() {
@@ -41,7 +45,7 @@ class PornHomePageState extends State<PornHomePage>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("porn"),
+        title: Text("porn(国内播放慢可以挂vpn)"),
         bottom: TabBar(
           isScrollable: true,
           tabs: <Widget>[
@@ -84,7 +88,6 @@ class PornHomePageState extends State<PornHomePage>
   }
 }
 
-
 class PornPage extends StatefulWidget {
   // v.php?category=hot&viewtype=basic
 
@@ -92,9 +95,10 @@ class PornPage extends StatefulWidget {
 
   String _authorId;
 
-
   PornPage(this._type, this._authorId);
-  PornPage.authorId(String _authorId):this(5,_authorId);
+
+  PornPage.authorId(String _authorId) : this(5, _authorId);
+
   PornPage.type(this._type);
 
   @override
@@ -136,33 +140,42 @@ class PornState extends State<PornPage> with AutomaticKeepAliveClientMixin {
           _page++;
           getData();
         },
-        child:
-        ListView.builder(itemCount: _data.length, itemBuilder: getItem),
+        child: ListView.builder(itemCount: _data.length, itemBuilder: getItem),
       ),
     );
-    return widget._type == 5?Scaffold(
-        appBar: AppBar(
-          title: Text("用户的视频"),),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (context) {
-            return PornForumPage();
-          }));
-        },
-        child: Text('论坛',style: TextStyle(color: Colors.white),),
-      ),
-      body: container,
-    ):Scaffold(
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (context) {
-            return PornForumPage();
-          }));
-        },
-        child: Text('论坛',style: TextStyle(color: Colors.white),),
-      ),
-      body: container,
-    );
+    return widget._type == 5
+        ? Scaffold(
+            appBar: AppBar(
+              title: Text("用户的视频"),
+            ),
+            floatingActionButton: FloatingActionButton(
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return PornForumPage();
+                }));
+              },
+              child: Text(
+                '论坛',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+            body: container,
+          )
+        : Scaffold(
+
+            floatingActionButton: FloatingActionButton(
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return PornForumPage();
+                }));
+              },
+              child: Text(
+                '论坛',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+            body: container,
+          );
   }
 
   Widget getItem(BuildContext context, int index) {
@@ -212,10 +225,16 @@ class PornState extends State<PornPage> with AutomaticKeepAliveClientMixin {
               Expanded(
                 child: Column(
                   children: <Widget>[
+                    item.title.startsWith("http")
+                        ? CachedNetworkImage(imageUrl: item.title)
+                        : Text(
+                            '${item.title}',
+                            style: TextStyle(color: Colors.blueAccent),
+                          ),
                     Padding(
                       padding: EdgeInsets.only(bottom: 5),
                       child: Text(
-                        '${item.title}(${item.duration})',
+                        '(${item.duration})',
                         style: TextStyle(color: Colors.blueAccent),
                       ),
                     ),
@@ -235,7 +254,7 @@ class PornState extends State<PornPage> with AutomaticKeepAliveClientMixin {
 
   void getData() async {
     var key = '';
-    switch(widget._type){
+    switch (widget._type) {
       case 1:
         key = 'hot';
         break;
@@ -249,56 +268,192 @@ class PornState extends State<PornPage> with AutomaticKeepAliveClientMixin {
         key = 'hd';
         break;
     }
-    Map<String, dynamic> param = widget._type != 5?{'category': key, 'page': '$_page'}:{'page': '$_page'};
-    String data =
-        await NetUtil.getHtmlData(widget._type == 5?ApiConstant.getAuthorVideosUrl(widget._authorId):
-        ApiConstant.getPornVideoUrl(), paras: param,header: {"Cookie":ApiConstant.pornCookie},isWeb: true);
+    Map<String, dynamic> param = widget._type != 5
+        ? {'category': key, 'page': '$_page'}
+        : {'page': '$_page'};
+    String data = await NetUtil.getHtmlData(
+        widget._type == 5
+            ? ApiConstant.getAuthorVideosUrl(widget._authorId)
+            : ApiConstant.getPornVideoUrl(),
+        paras: param,
+        header: {"Cookie": ApiConstant.pornCookie},
+        isWeb: true);
     _controller.loadComplete();
     _controller.refreshCompleted();
     LogUtils.d('porn', data);
     _data.addAll(parseByCategory(data));
-    setState(() {
-
-    });
+    setState(() {});
   }
 
   List<PornItem> parseByCategory(String html) {
     List<PornItem> list = [];
     var document = parse.parse(html);
-    var body = document.getElementById('wrapper');
-    var items =
-        body.getElementsByClassName('col-xs-12 col-sm-4 col-md-3 col-lg-3');
-    for (var value in items) {
-      String title = value.querySelectorAll('a').first.text.replaceAll(new RegExp('\t|\n| '), '');
-      String imgUrl = value
-          .querySelectorAll('a')
-          .first
-          .querySelectorAll('img')
-          .first
-          .attributes['src'];
-      String contentUrl = value.querySelectorAll('a').first.attributes['href'];
-      String viewKey = '';
-      if(contentUrl.contains("?viewkey")){
-        contentUrl = contentUrl.substring(0, contentUrl.indexOf('&'));
-        viewKey = contentUrl.substring(contentUrl.indexOf('=') + 1);
-      }else{
-        viewKey = contentUrl.split("viewkey=")[1];
+    var body =
+        document.getElementsByClassName('col-xs-12 col-sm-4 col-md-3 col-lg-3');
+    if (body.length > 0) {
+      var items = document
+          .getElementsByClassName('col-xs-12 col-sm-4 col-md-3 col-lg-3');
+      for (var value in items) {
+        try {
+          String title = '';
+          var titleEle =
+              value.getElementsByClassName('video-title title-truncate m-t-5');
+          if (titleEle.length > 0) {
+            var titleImg = titleEle.first.getElementsByTagName('img');
+            if(titleImg.length > 0){
+              title = titleEle.first
+                  .getElementsByTagName('img')
+                  .first
+                  .attributes['src'];
+            }else{
+              title = CommonUtil.replaceStr(titleEle.first.text);
+            }
+
+          } else {
+            title = value
+                .querySelectorAll('a')
+                .first
+                .text
+                .replaceAll(new RegExp('\t|\n| '), '');
+          }
+          String imgUrl = value
+              .querySelectorAll('a')
+              .first
+              .querySelectorAll('img')
+              .first
+              .attributes['src'];
+          String contentUrl =
+              value.querySelectorAll('a').first.attributes['href'];
+          String viewKey = '';
+          if (contentUrl.contains("?viewkey")) {
+            contentUrl = contentUrl.substring(0, contentUrl.indexOf('&'));
+            viewKey = contentUrl.substring(contentUrl.indexOf('=') + 1);
+          } else {
+            viewKey = contentUrl.split("viewkey=")[1];
+          }
+          String allInfo = value.text;
+          String duration =
+              '时长:${value.getElementsByClassName('duration').first.text}';
+          String info = '';
+          if (allInfo.contains('添加时间')) {
+            info = allInfo.substring(allInfo.indexOf('添加时间'));
+            info = info.replaceAll('\n', '');
+            info = info.replaceAll('\s', '');
+            info = info.replaceAll('\t', '');
+            info = info.replaceAll(' ', '').trim();
+          }
+          PornItem pornItem =
+              new PornItem(viewKey, title, imgUrl, duration, info);
+          list.add(pornItem);
+        } catch (e) {
+          print(e);
+        }
       }
-      String allInfo = value.text;
-      int index = allInfo.indexOf('时长');
-      String duration = allInfo.substring(index + 3, index + 8);
-      String info = '';
-      if(allInfo.contains('添加时间')){
-        info = allInfo.substring(allInfo.indexOf('添加时间'));
-        info = info.replaceAll('\n', '');
-        info = info.replaceAll('\s', '');
-        info = info.replaceAll('\t', '');
-        info = info.replaceAll(' ', '').trim();
+    } else {
+      var items = document.getElementsByTagName('script');
+      var first = true;
+      for (var i = 0; i < items.length; i++) {
+        var value = items[i];
+        if (value.outerHtml.contains('strencode')) {
+          value.innerHtml = _getStrCode(value.outerHtml);
+        }
       }
-      PornItem pornItem = new PornItem(viewKey, title, imgUrl, duration, info);
-      list.add(pornItem);
+      document = parse.parse(
+          document.outerHtml.replaceAll(RegExp(r'<script>|<\script>'), ''));
+      var bodyHtml = document.outerHtml;
+      var divs =
+          document.getElementsByClassName('well well-sm videos-text-align');
+      for (var i = 0; i < divs.length; i++) {
+        var value = divs[i];
+        String viewKey = '';
+        String imgUrl = "";
+        String contentUrl =
+            value.getElementsByTagName('a')[i == 0 ? 0 : 1].attributes['href'];
+        if (contentUrl.contains("?viewkey")) {
+          contentUrl = contentUrl.substring(0, contentUrl.indexOf('&'));
+          viewKey = contentUrl.substring(contentUrl.indexOf('=') + 1);
+        } else {
+          viewKey = contentUrl.split("viewkey=")[1];
+        }
+        imgUrl = value.getElementsByTagName('img').first.attributes['src'];
+        String title = '';
+        value.getElementsByTagName("span").forEach((element) {
+          var childTitle = element.text;
+          if (!childTitle.contains('添加时间:') &&
+              !childTitle.contains('作者:') &&
+              !childTitle.contains('查看:') &&
+              !childTitle.contains('收藏:') &&
+              !childTitle.contains('留言:') &&
+              !childTitle.contains('积分:'))
+            title = title + CommonUtil.replaceStr(childTitle);
+        });
+        var scripts = value.getElementsByTagName('script');
+
+        scripts.forEach((script) {
+          String scriptStr = _getStrCode(script.text);
+          var scriptEle = parse.parse(scriptStr);
+          if (scriptStr.contains("<a")) {
+          } else if (scriptStr.contains("<img")) {
+            imgUrl =
+                scriptEle.getElementsByTagName('img').first.attributes['src'];
+          }
+        });
+
+        String allInfo = value.text;
+        String duration =
+            '时长:${value.getElementsByClassName('duration').first.text}';
+        String info = '';
+        if (allInfo.contains('添加时间')) {
+          info = allInfo.substring(allInfo.indexOf('添加时间'));
+          info = info.replaceAll('\n', '');
+          info = info.replaceAll('\s', '');
+          info = info.replaceAll('\t', '');
+          info = info.replaceAll(' ', '').trim();
+        }
+        PornItem pornItem =
+            new PornItem(viewKey, title, imgUrl, duration, info);
+        list.add(pornItem);
+      }
     }
     return list;
+  }
+
+  String _getStrCode(String html) {
+    var reg;
+    if (html.contains("strencode2")) {
+      reg = RegExp(r'document.write\(strencode2\("|"\)\);');
+    } else {
+      reg = RegExp(r'document.write\(strencode\("|"\)\);');
+    }
+    var strings = html.split(reg);
+
+    if (strings.length > 1) {
+      String s = strings[1];
+      if (html.contains("strencode2")) {
+        s = EscapeUnescape.unescape(s);
+      } else {
+        var urlArray = s.split('","');
+        s = urlArray[0];
+        var s1 = urlArray[1];
+        var s2 = urlArray[2];
+        if (s2.substring(s2.length - 1) == "2") {
+          var t = s;
+          s = s1;
+          s1 = t;
+        }
+        s = String.fromCharCodes(base64Decode(s));
+        var len = s1.length;
+        var code = "";
+        for (var i = 0; i < s.length; i++) {
+          var k = i % len;
+          code += String.fromCharCode(s.codeUnitAt(i) ^ s1.codeUnitAt(k));
+        }
+        s = String.fromCharCodes(base64Decode(code));
+      }
+
+      return s;
+    }
+    return "";
   }
 
   List<PornItem> parseHome(String html) {

@@ -13,10 +13,14 @@ import android.widget.ImageView;
 
 import com.arvin.flutter_parse_html.video.SampleVideo;
 import com.shuyu.gsyvideoplayer.GSYVideoManager;
+import com.shuyu.gsyvideoplayer.cache.CacheFactory;
+import com.shuyu.gsyvideoplayer.player.PlayerFactory;
 import com.shuyu.gsyvideoplayer.utils.OrientationUtils;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.ViewCompat;
+import tv.danmaku.ijk.media.exo2.Exo2PlayerManager;
+import tv.danmaku.ijk.media.exo2.ExoPlayerCacheManager;
 
 public class PlayActivity extends AppCompatActivity {
 
@@ -50,6 +54,8 @@ public class PlayActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        PlayerFactory.setPlayManager(Exo2PlayerManager.class);
+        CacheFactory.setCacheManager(ExoPlayerCacheManager.class);
         setContentView(R.layout.activity_play);
         videoPlayer = findViewById(R.id.video_player);
         isTransition = getIntent().getBooleanExtra(TRANSITION, false);
@@ -70,6 +76,7 @@ public class PlayActivity extends AppCompatActivity {
         imageView.setImageResource(R.mipmap.ic_launcher);
         videoPlayer.setThumbImageView(imageView);
         videoPlayer.setIsTouchWiget(!isLive);
+        videoPlayer.setSeekRatio(5);
         //增加title
         videoPlayer.getTitleTextView().setVisibility(View.VISIBLE);
         //videoPlayer.setShowPauseCover(false);

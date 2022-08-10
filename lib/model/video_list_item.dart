@@ -8,6 +8,7 @@ class VideoListItem {
   String des;
   String author;
   bool show = true;
+  bool isVideo = false;
 
   VideoListItem();
 

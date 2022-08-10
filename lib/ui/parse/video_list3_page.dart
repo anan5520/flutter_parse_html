@@ -53,7 +53,6 @@ class VideoList3State extends State<VideoList3Page>
 
   @override
   void initState() {
-    // _baseUrl = "https://banyinjia16.com";
     _refreshController = new RefreshController(initialRefresh: true);
     _editingController = new TextEditingController(text: _currentKey);
     super.initState();

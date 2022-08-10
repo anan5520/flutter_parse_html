@@ -75,9 +75,15 @@ class PornForumItem {
 class PornForumContent {
   String content;
   List<String> imageList;
+  List<CiLiUrl> ciLiList;
 
   @override
   String toString() {
     return 'PornForumContent{content: $content, imageList: $imageList}';
   }
+}
+
+class CiLiUrl{
+  String title;
+  String url;
 }

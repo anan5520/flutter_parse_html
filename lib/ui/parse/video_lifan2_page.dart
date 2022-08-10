@@ -167,7 +167,7 @@ class VideoLiFan2State extends State<VideoLiFan2Page>
           VideoListItem item = VideoListItem();
           String href = ApiConstant.liFanUrl2 +  aEle.attributes['href'];
           item.title = aEle.attributes['title'];
-          item.imageUrl = ApiConstant.liFanUrl2 + aEle.attributes['data-original'];
+          item.imageUrl = aEle.attributes['data-original'];
           item.targetUrl = href;
           _data.add(item);
         }

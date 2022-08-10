@@ -123,7 +123,6 @@ public class SampleVideo extends StandardGSYVideoPlayer {
                 }
             }
         });
-
         //镜像旋转
         mChangeTransform.setOnClickListener(new View.OnClickListener() {
             @Override

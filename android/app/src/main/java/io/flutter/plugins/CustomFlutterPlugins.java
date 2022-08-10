@@ -17,6 +17,8 @@ import com.arvin.flutter_parse_html.MyApplication;
 import com.arvin.flutter_parse_html.PlayActivity;
 import com.tencent.smtt.export.external.TbsCoreSettings;
 import com.tencent.smtt.sdk.QbSdk;
+import com.tencent.smtt.sdk.TbsDownloader;
+import com.tencent.smtt.sdk.TbsListener;
 import com.umeng.analytics.MobclickAgent;
 
 import org.jetbrains.annotations.NotNull;
@@ -49,6 +51,7 @@ public class CustomFlutterPlugins {
     public static final String UMENG_CHANNEL = "umeng_channel";
     public static final String GO_TO_BROWSER = "GO_TO_BROWSER";
     public static final String GO_TO_PLAY = "GO_TO_PLAY";
+    public static final String LOCAL_GO_TO_PLAY = "LOCAL_GO_TO_PLAY";
     public static final String GO_TO_DOU_YIN = "GO_TO_DOU_YIN";
     public static final String GO_TO_UC_BROWSER = "GO_TO_UC_BROWSER";
     public static final String INIT_X5 = "initX5";
@@ -186,6 +189,7 @@ public class CustomFlutterPlugins {
         });
     }
 
+
     static private void postHttp() {
         OkHttpClient client = new OkHttpClient();//创建OkHttpClient对象。
         Request request = new Request.Builder()//创建Request 对象。
@@ -207,12 +211,29 @@ public class CustomFlutterPlugins {
         });//回调方法的使用与get异步请求相同，此时略。
     }
 
+    public static void registerLocalVideoPlay(FlutterEngine flutterEngine, Activity act) {
+        new MethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger(),LOCAL_GO_TO_PLAY).setMethodCallHandler((methodCall, result) -> {
+            String url = methodCall.argument("url");
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+
+            String type = "video/*";
+
+            Uri uri = Uri.parse(url);
+
+            intent.setDataAndType(uri, type);
+
+            act.startActivity(intent);
+
+        });
+    }
+
     public static void registerVideoPlay(FlutterEngine flutterEngine, Activity act) {
         new MethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger(), GO_TO_PLAY).setMethodCallHandler((methodCall, result) -> {
             String url = methodCall.argument("url");
             String title = methodCall.argument("title");
             boolean isLive = methodCall.argument("isLive");
             PlayActivity.startAct(url,title,isLive,act);
+
         });
     }
 
@@ -276,6 +297,23 @@ public class CustomFlutterPlugins {
 
     public static void initX5Web(FlutterEngine flutterEngine, Activity act) {
         new MethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger(), INIT_X5).setMethodCallHandler((methodCall, result) -> {
+            QbSdk.setTbsListener(new TbsListener() {
+                @Override
+                public void onDownloadFinish(int i) {
+                }
+                @Override
+                public void onInstallFinish(int i) {
+                    Log.e("app", "onInstallFinish: 内核下载成功" );
+                }
+                @Override
+                public void onDownloadProgress(int i) {
+                }
+            });
+            boolean needDownload = TbsDownloader.needDownload(act, TbsDownloader.DOWNLOAD_OVERSEA_TBS);
+            Log.e("app", "onCreate: "+needDownload );
+            if (needDownload) {
+                TbsDownloader.startDownload(act);
+            }
 
             HashMap map = new HashMap();
             map.put(TbsCoreSettings.TBS_SETTINGS_USE_SPEEDY_CLASSLOADER, true);
@@ -289,7 +327,7 @@ public class CustomFlutterPlugins {
                     // TODO Auto-generated method stub
                     //x5內核初始化完成的回调，为true表示x5内核加载成功，否则表示x5内核加载失败，会自动切换到系统内核。
                     Log.d("app", " onViewInitFinished is " + arg0);
-                    Toast.makeText(act,"x5内核初始化"+ (arg0?"成功":"失败"),Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(act,"x5内核初始化"+ (arg0?"成功":"失败"),Toast.LENGTH_SHORT).show();
                 }
 
                 @Override

@@ -22,6 +22,7 @@ import 'package:flutter_parse_html/ui/parse/video_list12_page.dart';
 import 'package:flutter_parse_html/ui/parse/video_list13_page.dart';
 import 'package:flutter_parse_html/ui/parse/video_list15_page.dart';
 import 'package:flutter_parse_html/ui/parse/video_list16_page.dart';
+import 'package:flutter_parse_html/ui/parse/video_list17_page.dart';
 import 'package:flutter_parse_html/ui/parse/video_list2_page.dart';
 import 'package:flutter_parse_html/ui/parse/video_list3_page.dart';
 import 'package:flutter_parse_html/ui/parse/video_list4_page.dart';
@@ -59,64 +60,26 @@ class HomePage extends StatefulWidget {
 
   void initUrl() async {
     SpUtil sp = await SpUtil.getInstance();
-    String localStr = '''{
-        "4kMovie":"http://4kbo.com",
-    "pornForum":"https://f616.wonderfulday27.live/",
-    "pornVideo":"https://1012.91p51.live/",
-    "lsjUrl":"https://www.exn5.com",
-    "liveUrl":"http://api.hclyz.com:81/mf/json.txt",
-    "searchUrl":"https://zhima998.com/infolist.php?q=",
-    "searchNiMaUrl":"http://www.nms000.com/l/",
-    "fanHao1":"http://www.fanhaow.com/",
-    "fanHao2":"http://www.acg3.cc/whole/",
-    "fanHao3":"https://www.66hoho.com/",
-    "xianFengUrl":"http://www.uuzy9.com",
-    "videoList1Url":"http://www.suduzy6.com:777",
-    "videoList2Url":"http://dongwx15.vip",
-    "videoList3Url":"https://www.byj4.tv",
-    "videoList4Url":"https://2110--271433.aug-aiy.unasdwarfs.com:21805",
-    "videoList5Url":"http://www.hdsq5.com",
-    "videoList6Url":"https://mnysm8.com",
-    "videoList7Url":"https://mgaa15.com",
-    "videoList8Url":"http://www.avtb2173.com",
-    "videoList9Url":"https://bbixx3.com",
-    "videoList10Url":"http://www.dfj22.com",
-    "douYinUrl":"https://mm.diskgirl.com/get/get",
-    "douYin2Url":"https://xn--pru35wv4hgss92q.xyz/json/",
-    "yaSeUrl":"https://yase162.com",
-    "parse2Url":"https://www.bv2ha5.de",
-    "parse3Url":"https://www.s33y.com",
-    "parse4Url":"http://aa.anzz1.com",
-    "parse5Url":"https://xx139.vip",
-    "movieBaseUrl1":"https://www.iikk.org",
-    "gif1":"https://www.wogif.com",
-    "gif2":"http://www.gifcc.com",
-    "xianFeng3Url":"http://www.scjzyz3.com",
-    "xianFeng4Url":"http://sevovo5.com",
-    "abjUrl":"http://www.aibj.pro",
-    "isUpSiSeUrl":false,
-    "goToFuLi":true,
-    "version":168
-  }''';
+    String localStr = sp.getString(SharedPreferencesKeys.urls);
     UrlsBean localUrl;
     if (localStr != null && localStr.isNotEmpty) {
       localUrl = UrlsBean.fromJson(json.decode(localStr));
       updateUrl(localUrl);
-      goToFuLi = localUrl.goToFuLi;
     }
-
-
-//     String urlJson =
-//         await NetUtil.getHtmlData(ApiConstant.urlsUrl, isWeb: true);
-//     UrlsBean urlsBean = UrlsBean.fromJson(json.decode(urlJson));
-//     goToFuLi = urlsBean.goToFuLi;
-//     if (localUrl == null || urlsBean.version > localUrl.version) {
-//       sp.putString(SharedPreferencesKeys.urls, json.encode(urlsBean));
-//       updateUrl(urlsBean);
-//       if (urlsBean.isUpSiSeUrl != null && urlsBean.isUpSiSeUrl) {
-//         sp.putString(SharedPreferencesKeys.htmlUrl1, '');
-//       }
-//     }
+//    var response = await http.get(ApiConstant.urlsUrl);
+//    Utf8Decoder utf8decoder = new Utf8Decoder();
+//    var body = utf8decoder.convert(response.bodyBytes);
+    String urlJson =
+    await NetUtil.getHtmlData(ApiConstant.urlsUrl, isWeb: true);
+    UrlsBean urlsBean = UrlsBean.fromJson(json.decode(urlJson));
+    goToFuLi = urlsBean.goToFuLi;
+    if (localUrl == null || urlsBean.version > localUrl.version) {
+      sp.putString(SharedPreferencesKeys.urls, json.encode(urlsBean));
+      updateUrl(urlsBean);
+      if (urlsBean.isUpSiSeUrl != null && urlsBean.isUpSiSeUrl) {
+        sp.putString(SharedPreferencesKeys.htmlUrl1, '');
+      }
+    }
   }
 
   //更新地址
@@ -246,6 +209,7 @@ class HomeState extends State<HomePage> with WidgetsBindingObserver {
 //         BookList4Page(''),
 //           GifListLsjPage(),
 //         PornHomePage(),
+//         VideoList17Page(),
           new MoviePage(MovieType.movie),
           new GifPage(),
           // tvPage,

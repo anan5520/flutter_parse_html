@@ -152,7 +152,7 @@ class VideoLiFanState extends State<VideoLiFanPage>
   void _getData() async {
     String url = _isSearch
         ? '${ApiConstant.liFanUrl1}/vodsearch/${Uri.encodeComponent(_currentKey)}----------$_page---.html'
-        : "${ApiConstant.liFanUrl1}/category/lifan/$_page";
+        : "${ApiConstant.liFanUrl1}/category/lifan/$_page/";
     String response =  await NetUtil.getHtmlData(url);
     _refreshController.refreshCompleted();
     _refreshController.loadComplete();

@@ -647,6 +647,7 @@
 #------------------  下方是共性的排除项目         ----------------
 # 方法名中含有“JNI”字符的，认定是Java Native Interface方法，自动排除
 # 方法名中含有“JRI”字符的，认定是Java Reflection Interface方法，自动排除
+-keep class org.videolan.libvlc.** { *; }
 
 -keepclasseswithmembers class * {
     ... *JNI*(...);
@@ -668,3 +669,4 @@
 -keep class com.tencent.tbs.** {
     *;
 }
+-keep class com.tencent.** { *; }

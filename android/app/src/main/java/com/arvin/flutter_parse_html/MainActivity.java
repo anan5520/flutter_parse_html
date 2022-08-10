@@ -19,7 +19,6 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Toast;
 
 import com.tencent.smtt.sdk.QbSdk;
 import com.umeng.commonsdk.UMConfigure;
@@ -58,6 +57,7 @@ public class MainActivity extends FlutterActivity {
     CustomFlutterPlugins.registerUmeng(flutterEngine, com.arvin.flutter_parse_html.MainActivity.this);
     CustomFlutterPlugins.startQBrowser(flutterEngine, com.arvin.flutter_parse_html.MainActivity.this);
     CustomFlutterPlugins.registerVideoPlay(flutterEngine, com.arvin.flutter_parse_html.MainActivity.this);
+    CustomFlutterPlugins.registerLocalVideoPlay(flutterEngine, com.arvin.flutter_parse_html.MainActivity.this);
     CustomFlutterPlugins.registerDouYin(flutterEngine, com.arvin.flutter_parse_html.MainActivity.this);
     CustomFlutterPlugins.strEncodeChange(flutterEngine, com.arvin.flutter_parse_html.MainActivity.this);
     CustomFlutterPlugins.startUcBrowser(flutterEngine, com.arvin.flutter_parse_html.MainActivity.this);
@@ -87,16 +87,16 @@ public class MainActivity extends FlutterActivity {
         // TODO Auto-generated method stub
         //x5內核初始化完成的回调，为true表示x5内核加载成功，否则表示x5内核加载失败，会自动切换到系统内核。
         Log.d("app", " onViewInitFinished is " + arg0);
-                Toast.makeText(getApplicationContext(),"初始化"+arg0,Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getApplicationContext(),"初始化"+arg0,Toast.LENGTH_SHORT).show();
       }
 
       @Override
       public void onCoreInitFinished() {
-        // TODO Auto-generated method stub
+
       }
     };
     //x5内核初始化接口
-//    QbSdk.initX5Environment(getApplicationContext(),  cb);
+    QbSdk.initX5Environment(getApplicationContext(),  cb);
   }
 
   public void setStatus(Activity activity){
