@@ -177,7 +177,7 @@ class ShowImageDialogState extends State {
         width: MediaQuery.of(context).size.width,
         child: Container(
           child: GestureDetector(
-            child: CachedNetworkImage(imageUrl: url,),
+            child: url.startsWith('http')?CachedNetworkImage(imageUrl: url,):Image.file(File(url)),
             onLongPressStart: (detail) {
               _showMenu(context, detail, url);
             },

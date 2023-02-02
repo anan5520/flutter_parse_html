@@ -38,7 +38,7 @@ class CommonUtil {
       {String title = '',
       bool isLive = false,
       List<MovieItemBean> movieList,
-      bool toWebPlay = false,bool isDownLoad = false}) async {
+      bool toWebPlay = false,bool isDownLoad = false,bool onlyWeb = false}) async {
     MovieBean movieBean = MovieBean();
     movieBean.playUrl = playUrl;
     movieBean.name = title;

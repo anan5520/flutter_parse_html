@@ -15,7 +15,7 @@ class VideoResult {
 
   String videoId;
 
-  String ownerId;
+  String ownerId = '';
 
   String authorId;
 
@@ -74,6 +74,7 @@ class PornForumItem {
 
 class PornForumContent {
   String content;
+  String videoUrl = '';
   List<String> imageList;
   List<CiLiUrl> ciLiList;
 

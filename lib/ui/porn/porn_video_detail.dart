@@ -138,18 +138,21 @@ class PornVideoDetailState extends State<PornVideoDetailPage> {
                 ),
                 Padding(
                   padding: EdgeInsets.only(left: 5, right: 5),
-                  child: GestureDetector(
-                    onTap: () {
-                      //跳转查看作者其他作品
-                      Navigator.pop(context);
-                      Navigator.of(context).push(new MaterialPageRoute(
-                          builder: (BuildContext context) {
-                        return PornPage.authorId(widget._videoResult.ownerId);
-                      }));
-                    },
-                    child: Text(
-                      '${widget._videoResult.userOtherInfo}',
-                      style: TextStyle(color: Colors.white70, fontSize: 11),
+                  child: Visibility(
+                    visible: widget._videoResult.ownerId.isNotEmpty,
+                    child: GestureDetector(
+                      onTap: () {
+                        //跳转查看作者其他作品
+                        Navigator.pop(context);
+                        Navigator.of(context).push(new MaterialPageRoute(
+                            builder: (BuildContext context) {
+                          return PornPage.authorId(widget._videoResult.ownerId);
+                        }));
+                      },
+                      child: Text(
+                        '${widget._videoResult.userOtherInfo}',
+                        style: TextStyle(color: Colors.white70, fontSize: 11),
+                      ),
                     ),
                   ),
                 ),

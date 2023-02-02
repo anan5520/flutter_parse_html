@@ -1,9 +1,11 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_parse_html/book/base/util/utils_toast.dart';
+import 'package:flutter_parse_html/model/YsgcVideoBean.dart';
 import 'package:flutter_parse_html/model/movie_bean.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_parse_html/model/movie_detail2.dart';
@@ -226,16 +228,19 @@ class MovieDetailState extends State<MovieDetailPage> {
       CommonUtil.toVideoPlay(playUrl, context);
     }
   }
-
+  //player_aaaa= </script>
   void getVideoUrlWithType9(String url)async{
     print(url);
     showLoading();
     var pageBody = await NetUtil.getHtmlData(url);
-    var pageDocument = parse.parse(pageBody);
-    var playUrls = pageDocument.getElementsByClassName('play-window').first.getElementsByTagName('script').first.text.split('=')[1];
+    var urls = pageBody.split(RegExp(r'player_aaaa=|}</script>'));
+    var jsonStr = '${urls[1]}}';
+    YsgcVideoBean ysgcVideoBean = YsgcVideoBean.fromJson(json.decode(jsonStr));
+    var key = await NetUtil.getHtmlData('${ApiConstant.movieBaseUrl}/static/player/ffzy.php?url=${ysgcVideoBean.url}');
+    var playUrls = key.split(RegExp(r"urls = '|=';"));
     Navigator.pop(context);
-    var detail = MovieDetail2.fromJson(convert.json.decode(playUrls));
-    var playUrl = detail.url;
+    List<int> bytes = base64Decode('${playUrls[1]}=');
+    var playUrl = 'https${String.fromCharCodes(bytes).split(RegExp(r'https|.m3u8'))[1]}.m3u8';
       if(playUrl.isNotEmpty ){
         CommonUtil.toVideoPlay(playUrl, context);
       }

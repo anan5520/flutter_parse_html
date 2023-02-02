@@ -7,6 +7,8 @@ class VideoListItem {
   String vid;
   String des;
   String author;
+  String base64Img;
+  int index = -1;
   bool show = true;
   bool isVideo = false;
 

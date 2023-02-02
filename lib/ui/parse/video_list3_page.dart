@@ -226,7 +226,7 @@ class VideoList3State extends State<VideoList3Page>
       }
       Navigator.pop(context);
       if (playUrl.startsWith('http')) {
-        CommonUtil.toVideoPlay(playUrl, context,title:data.title);
+        CommonUtil.toVideoPlay(playUrl, context,title:data.title,isDownLoad: true);
       }
     } catch (e) {
       Navigator.pop(context);

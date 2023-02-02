@@ -64,11 +64,11 @@ class MoviePresenterImpl implements MoviePresenter {
       var elements = document
           .getElementsByClassName("myui-vodlist clearfix")
           .first
-          .getElementsByClassName("myui-vodlist__box");
+          .getElementsByClassName("col-lg-7 col-md-6 col-sm-4 col-xs-3");
       List<VideoListItem> list = [];
       List<VideoListItem> bannerList = [];
       var bannerEle = document
-          .getElementsByClassName("myui-panel radius-0 clearfix")
+          .getElementsByClassName("myui-panel active clearfix")
           .first
           .getElementsByClassName("myui-vodlist__box");
       initBanner(bannerList,bannerEle);
@@ -222,10 +222,7 @@ void initBanner(List<VideoListItem> bannerList, List<html.Element> bannerEle) {
   for (var value in bannerEle) {
     VideoListItem videoListItem = new VideoListItem();
     var imgEle = value.getElementsByTagName('a').first;
-    videoListItem.imageUrl = imgEle.attributes["style"]; //图片地址
-    var imgs = videoListItem.imageUrl.split(new RegExp(r'\)|\('));
-    videoListItem.imageUrl = imgs[1].startsWith("http")?imgs[1]:
-    '${ApiConstant.movieBaseUrl}${imgs[1]}';
+    videoListItem.imageUrl = imgEle.attributes["data-original"]; //图片地址
     videoListItem.title = imgEle.attributes['title'];
     videoListItem.targetUrl = '${ApiConstant.movieBaseUrl}${imgEle.attributes['href']}';
     bannerList.add(videoListItem);

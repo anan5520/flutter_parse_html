@@ -358,7 +358,7 @@ class _MyHomePageState extends State<MoviePage>
     Navigator.pop(context);
     Navigator.of(context)
         .push(new MaterialPageRoute(builder: (BuildContext context) {
-      return MovieDetailPage(_type == 2?9:1, movieBean);
+      return MovieDetailPage(_type == 1?9:1, movieBean);
     }));
   }
 
@@ -370,19 +370,19 @@ class _MyHomePageState extends State<MoviePage>
       switch (widget._type) {
         case MovieType.movie:
           _title = '电影';
-          _videoUrl = '${ApiConstant.movieBaseUrl}/list/?5.html';
+          _videoUrl = '${ApiConstant.movieBaseUrl}/vodtype/1.html';
           break;
         case MovieType.tv:
           _title = '电视剧';
-          _videoUrl = '${ApiConstant.movieBaseUrl}/list/?2.html';
+          _videoUrl = '${ApiConstant.movieBaseUrl}/vodtype/2.html';
           break;
         case MovieType.variety:
           _title = '综艺';
-          _videoUrl = '${ApiConstant.movieBaseUrl}/list/?3.html';
+          _videoUrl = '${ApiConstant.movieBaseUrl}/vodtype/3.html';
           break;
         case MovieType.comic:
           _title = '动漫';
-          _videoUrl = '${ApiConstant.movieBaseUrl}/list/?4.html';
+          _videoUrl = '${ApiConstant.movieBaseUrl}/vodtype/4.html';
           break;
       }
     } else {

@@ -69,7 +69,9 @@ class ApiConstant {
 
   static String videoList13Url = 'http://jd21j0i93ygrh9gamyn7.pipiapps.com';
 
-  static String videoList17Url = 'https://www.fanhaocx.com';
+  static String videoList18Url = 'https://zztt30.com';
+
+  static String videoList17Url = 'https://www.chafanfan1.xyz';//https://wanku520.com/
 
   static String xianFeng2Url = 'https://sexdaye.net';
 

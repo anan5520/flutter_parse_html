@@ -17,13 +17,13 @@ class MovieUtil {
         var element = document.getElementsByClassName("myui-content__list sort-list clearfix").first;
         var infoElement =
                   document.getElementsByClassName("myui-content__detail").first;
-        movieBean.name = infoElement.getElementsByClassName('title text-fff').first.text;
+        movieBean.name = infoElement.getElementsByClassName('title').first.text;
         movieBean.info = '${movieBean.name}';
         for (var value in infoElement.getElementsByClassName('data')) {
                 movieBean.info = '${movieBean.info}\n${value.text}';
               }
-        movieBean.des =
-                  '剧情介绍\n${document.getElementsByClassName('desc text-collapse hidden-xs').first.text}';
+        // movieBean.des =
+        //           '剧情介绍\n${document.getElementsByClassName('desc text-collapse hidden-xs').first.text}';
         movieBean.imgUrl = document
                   .getElementsByClassName('myui-content__thumb')
                   .first.getElementsByTagName('img').first

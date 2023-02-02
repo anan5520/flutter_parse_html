@@ -135,11 +135,15 @@ class PornHelper {
       }
       //解析作者
       var doc = parse.parse(html);
-      String ownerUrl =
-          doc.querySelectorAll('a[href*=UID]').first.attributes['href'];
-      String ownerId =
-          ownerUrl.substring(ownerUrl.indexOf('=') + 1, ownerUrl.length);
-      videoResult.ownerId = ownerId;
+      try {
+        String ownerUrl =
+                  doc.querySelectorAll('a[href*=UID]').first.attributes['href'];
+        String ownerId =
+                  ownerUrl.substring(ownerUrl.indexOf('=') + 1, ownerUrl.length);
+        videoResult.ownerId = ownerId;
+      } catch (e) {
+        print(e);
+      }
 
       var element =
           doc.getElementById('addToFavLink').querySelectorAll('a').first;
@@ -154,8 +158,12 @@ class PornHelper {
 //      LogUtils.d(_tag, 'authorId=====$authorId');
 //      videoResult.authorId = authorId;
 
-      String ownerName = doc.querySelector('a[href*=UID]').text;
-      videoResult.ownerName = ownerName;
+      try {
+        String ownerName = doc.querySelector('a[href*=UID]').text;
+        videoResult.ownerName = ownerName;
+      } catch (e) {
+        print(e);
+      }
       var infos = doc.getElementsByClassName('videodetails-yakov');
       infos.forEach((value) {
         if (value.text.contains('添加时间')) {

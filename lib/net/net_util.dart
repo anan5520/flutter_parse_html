@@ -28,6 +28,9 @@ class NetUtil {
       receiveTimeout: 20000,
       followRedirects: true));
 
+
+  static Dio get dio => _dio;
+
   /// 代理设置，方便抓包来进行接口调节
 
   static void setProxy() {
