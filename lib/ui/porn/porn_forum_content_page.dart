@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_parse_html/model/button_bean.dart';
 import 'package:flutter_parse_html/model/heiliao_video_entity.dart';
 import 'package:flutter_parse_html/ui/pornhub/pornhub_util.dart';
 import 'package:flutter_parse_html/util/common_util.dart';
@@ -10,6 +11,7 @@ import 'package:flutter_parse_html/model/porn_bean.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_parse_html/ui/parse/image_page.dart';
 import 'package:flutter_parse_html/util/ya_se_helper.dart';
+import 'package:flutter_parse_html/widget/dialog_page.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:html/parser.dart' as parse;
@@ -82,28 +84,33 @@ class PornForumContentState extends State<PornForumContentPage> {
               bottom: 20,
               right: 20,
               child: Column(
-            children: [
-              MaterialButton(
-                  color: Colors.blue,
-                  textColor: Colors.white,
-                  onPressed: () {
-                    if (_forumContent != null) {
-                      Navigator.pushNamed(context, "/ShowStaggeredImagePage",
-                          arguments: {"list": _forumContent.imageList,'type':widget._type == 2?1:0});
-                    }
-                  },
-                  child: Text('看图片')),
-              Visibility(
-                  visible:_forumContent != null &&  _forumContent.videoUrl != null && _forumContent.videoUrl.isNotEmpty,
-                  child: MaterialButton(
+                children: [
+                  MaterialButton(
                       color: Colors.blue,
                       textColor: Colors.white,
                       onPressed: () {
-                        CommonUtil.toVideoPlay(_forumContent.videoUrl, context);
+                        if (_forumContent != null && _forumContent.imageList.isNotEmpty) {
+                          Navigator.pushNamed(
+                              context, "/ShowStaggeredImagePage", arguments: {
+                            "list": _forumContent.imageList,
+                            'type': widget._type == 2 ? 1 : 0
+                          });
+                        }
                       },
-                      child: Text('看视频')))
-            ],
-          ))
+                      child: Text('看图片')),
+                  Visibility(
+                      visible: _forumContent != null &&
+                          _forumContent.videoList != null &&
+                          _forumContent.videoList.isNotEmpty,
+                      child: MaterialButton(
+                          color: Colors.blue,
+                          textColor: Colors.white,
+                          onPressed: () {
+                            _showVideoDialog();
+                          },
+                          child: Text('看视频')))
+                ],
+              ))
         ],
       ),
     );
@@ -144,26 +151,53 @@ class PornForumContentState extends State<PornForumContentPage> {
     return PornHubUtil.getHtmlFromHttpDeugger(widget._url).then((value) {
       var doc = parse.parse(value);
       PornForumContent content = PornForumContent();
-      content.content = doc.getElementById('post').outerHtml;
+      content.content = doc.getElementsByClassName('detail-page').first.outerHtml;
       try {
         List<String> imgs = [];
         doc
-                  .getElementsByClassName('post-content')
-                  .first
-                  .getElementsByTagName('img')
-                  .forEach((element) {
-                imgs.add(element.attributes['data-src']);
-              });
+            .getElementsByTagName('img')
+            .forEach((imgEle) {
+              if(imgEle.attributes.containsKey('onload') ){
+                var onload = imgEle.attributes['onload'];
+                if(onload.contains('https')){
+                  var loads = imgEle.attributes['onload'].split('https')[1];
+                  if(loads.endsWith('\')')){
+                    imgs.add('https${loads.split("'")[0]}');
+                  }
+                }
+              }
+        });
         content.imageList = imgs;
-        var videoDataConfig =
-                  doc.getElementsByClassName('dplayer').first.attributes['data-config'];
-        HeiliaoVideoEntity videoEntity =
-                  HeiliaoVideoEntity.fromJson(json.decode(videoDataConfig));
-        content.videoUrl = videoEntity.video.url == null?'':videoEntity.video.url;
+        doc.getElementsByClassName('dplayer').forEach((element) {
+          var videoDataConfig = element.attributes['config'];
+          HeiliaoVideoEntity videoEntity =
+              HeiliaoVideoEntity.fromJson(json.decode(videoDataConfig));
+          content.videoList
+              .add(videoEntity.video.url == null ? '' : videoEntity.video.url);
+        });
       } catch (e) {
         print(e);
+        return content;
       }
       return content;
     });
+  }
+
+  void _showVideoDialog() async {
+    int start = 0;
+    List<ButtonBean> _btns = [];
+    _forumContent.videoList.forEach((element) {
+      _btns.add(ButtonBean()
+        ..title = '视频${start++}'
+        ..value = element);
+    });
+    ButtonBean buttonBean = await showDialog(
+        context: context,
+        builder: (context) {
+          return new AlertDialog(
+            content: GridViewDialog(_btns,showToPage: false,),
+          );
+        });
+    CommonUtil.toVideoPlay(buttonBean.value, context);
   }
 }

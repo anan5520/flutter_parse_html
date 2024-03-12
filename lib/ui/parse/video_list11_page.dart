@@ -162,9 +162,9 @@ class VideoList11State extends State<VideoList11Page>
     try {
       var rescont = Video11PlayBean.fromJson(json.decode(response));
       var url = rescont.rescont.videopath;
-      if(widget.type != 2 && widget.type != 4){
-        url = '${VideoList11Page.videoBase}/api/index.m3u8?m3u8=${rescont.rescont.videopath}';
-      }
+      // if(widget.type != 2 && widget.type != 4){
+      //   url = '${VideoList11Page.videoBase}/api/index.m3u8?m3u8=${rescont.rescont.videopath}';
+      // }
       Navigator.pop(context);
       CommonUtil.toVideoPlay(url, context,title: data.title);
     } catch (e) {

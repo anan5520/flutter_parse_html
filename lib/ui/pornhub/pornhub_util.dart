@@ -98,7 +98,7 @@ class PornHubUtil {
       params = new Map<String, dynamic>();
     }
     if (params.length > 0) {
-      url = '$url?';
+      url = '$url${url.contains('?')?'&':'?'}';
     }
     params.forEach((key, value) {
       url = '$url$key=$value&';

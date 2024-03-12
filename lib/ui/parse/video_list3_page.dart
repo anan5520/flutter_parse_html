@@ -91,7 +91,7 @@ class VideoList3State extends State<VideoList3Page>
     }
     String pageTag = (_isUserVideoList || _isUserList)?'?page=$_page':_page > 1?'$_page/':'';
     String listUrl = widget._videoListUrl?.isNotEmpty != null?'${widget._videoListUrl}$pageTag':
-    '$_baseUrl${_currentKey.isNotEmpty?'$_currentKey$pageTag':'/hottopic'}';
+    '$_baseUrl${_currentKey.isNotEmpty?'$_currentKey$pageTag':'/html/index_m.html'}';
     String url = _isSearch?'$_baseUrl/search/video/?s=$_currentKey&page=$_page': listUrl ;
 
     print('请求数据>>$url');

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -12,6 +14,7 @@ import 'package:flutter_parse_html/mvp/presenter/movie_presenter.dart';
 import 'package:flutter_parse_html/mvp/presenter/movie_presenter_impl.dart';
 import 'package:flutter_parse_html/net/net_util.dart';
 import 'package:flutter_parse_html/resources/shared_preferences_keys.dart';
+import 'package:flutter_parse_html/util/escapeu_unescape.dart';
 import 'package:flutter_parse_html/util/native_utils.dart';
 import 'package:flutter_parse_html/util/shared_preferences.dart';
 import 'package:flutter_parse_html/widget/dialog_page.dart';
@@ -121,7 +124,7 @@ class _MyHomePageState extends State<MoviePage>
           new DropdownButtonHideUnderline(
               child: new DropdownButton(
                   hint: new Text(
-                    '切换源(建议2)',
+                    '切换源',
                     style: TextStyle(color: Colors.white),
                   ),
                   items: generateItemList(),
@@ -233,6 +236,7 @@ class _MyHomePageState extends State<MoviePage>
   }
 
   void _showDialog() async {
+    if(_childButtons.isEmpty) return;
     ButtonBean buttonBean = await showDialog(
         context: context,
         builder: (context) {
@@ -422,7 +426,7 @@ class _MyHomePageState extends State<MoviePage>
     return SingleChildScrollView(
       child: Column(
         children: [
-          widget._type == MovieType.movie
+          (widget._type == MovieType.movie && bannerList.isNotEmpty)
               ? SizedBox(
                   height: 250,
                   child: Swiper(
@@ -490,12 +494,12 @@ class _MyHomePageState extends State<MoviePage>
       String ty = await sp.getString(SharedPreferencesKeys.movieType);
       if (ty != null) {
         int type = int.parse(ty);
-        _type = type == null ? 2 : type;
+        _type = type == null ? 1 : type;
       } else {
-        _type = 2;
+        _type = 1;
       }
     }
-
+    _type = 1;
     if (_currentKey.isEmpty) initUrl();
 
     _presenter?.loadMovieList(_videoUrl, _index, widget._type, true, _type,isType:_isType);

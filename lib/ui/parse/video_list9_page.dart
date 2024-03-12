@@ -3,10 +3,14 @@ import 'dart:convert';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_parse_html/model/Video9_list_bean.dart';
+import 'package:flutter_parse_html/model/video9_cate_bean.dart';
+import 'package:flutter_parse_html/model/video9_detail_bean.dart';
 import 'package:flutter_parse_html/model/video_list8_bean_entity.dart';
 import 'package:flutter_parse_html/model/video_list_item.dart';
 import 'package:flutter_parse_html/ui/movie/movie_detail_page.dart';
 import 'package:flutter_parse_html/ui/pornhub/pornhub_util.dart';
+import 'package:flutter_parse_html/util/aes_util.dart';
 import 'package:flutter_parse_html/util/common_util.dart';
 import 'package:flutter_parse_html/util/files.dart';
 import 'package:flutter_parse_html/util/native_utils.dart';
@@ -34,7 +38,7 @@ class VideoList9State extends State<VideoList9Page>
 
   RefreshController _refreshController;
   int _page = 1,buttonType = 0;
-  String _currentKey = '/list/20';
+  String _currentKey = '';
   bool _isSearch = false;
   TextEditingController _editingController;
 
@@ -144,7 +148,7 @@ class VideoList9State extends State<VideoList9Page>
       borderRadius: BorderRadius.circular(5),
       child: GestureDetector(
         onTap: () {
-          goToPlay(item);
+          goToDetail(item);
         },
         child: Container(
           color: Colors.white,
@@ -176,52 +180,68 @@ class VideoList9State extends State<VideoList9Page>
     );
   }
 
+  String categoryKey = '/api/v1/index/tagsandcategory';
+  String videoListKey = '/api/v1/bmlist/video-list';
+  String videoDetailKey = '/api/v1/top/info';
+  String videoSearchKey = '/api/v1/bmlist/search';
+  String videoTopListKey = '/api/v1/top/top-list-page';
+  var header = {
+    'authority':'g52gf12633.5g4k6htc.xyz',
+    'accept':' */*',
+    'accept-language': 'zh-CN,zh;q=0.9',
+    'content-type': 'application/x-www-form-urlencoded',
+    'origin': 'https://www.g768x.com',
+    'referer': 'https://www.g768x.com',
+    'sec-ch-ua': '"Not_A Brand";v="8", "Chromium";v="120", "Google Chrome";v="120"',
+    'sec-ch-ua-mobile': '?0',
+    'sec-ch-ua-platform': '"macOS"',
+    'sec-fetch-dest': 'empty',
+    'sec-fetch-mode': 'cors',
+    'sec-fetch-site': 'cross-site',
+  };
   //获取数据
   void _getData() async {
-    String url = _isSearch
-        ? '${ApiConstant.videoList9Url}/vod-search-wd-$_currentKey-p-$_page.html'
-        : "${ApiConstant.videoList9Url}$_currentKey/$_page.html";
-    String response =  await PornHubUtil.getHtmlFromJsonp(url);
-    _refreshController.refreshCompleted();
-    _refreshController.loadComplete();
-    var doc = parse.parse(response);
-    try {
-      var tdElements = doc
-          .getElementsByClassName('list g-clear').first.getElementsByTagName('li');
-      for (var value in tdElements) {
-        var aEles = value.getElementsByTagName('a');
-        if (aEles.length > 0) {
-          var aEle = aEles.first;
-          VideoListItem item = VideoListItem();
-          String hrefTemp = '';
-          var hrefs = aEle.attributes['href'].split('/');
-          for(int a = 0;a < hrefs.length;a ++ ){
-            if(hrefs[a].isNotEmpty){
-              hrefTemp = hrefTemp + '/${Uri.encodeComponent(hrefs[a])}';
-            }
-          }
-          String href = '${ApiConstant.videoList9Url}$hrefTemp';
-          var imgEle = aEle.getElementsByTagName('img').first;
-          item.title = CommonUtil.replaceStr(aEle.attributes['title']);
-          item.imageUrl = imgEle.attributes['data-src'];
-          item.targetUrl = href;
-          _data.add(item);
-        }
-      }
+    var encryptUtil = EncryptUtil();
+    if(!_isSearch && _currentKey.isEmpty){
+      String url = "${ApiConstant.videoList9Url}$categoryKey";
+      String response =  await NetUtil.getHtmlDataPost(url,paras: {'encrypt_data':"s8P0nRpxt8Vff+8ZzlLRhGbBoNuU/7HmFyfFH8bPrD0="},header: header);
+      String responseStr = encryptUtil.aesDecode1(json.decode(response)['data']);
+      Video9CateBean video9cateBean =  Video9CateBean.fromJson(json.decode(responseStr));
+      _currentKey = video9cateBean.categoryList[0].id;
       if (_btns == null) {
         _btns = [];
-        var menu = doc.getElementsByClassName('item g-clear js-listfilter-content').first;
-        var liEles = menu.getElementsByTagName('a');
-        for (var value1 in liEles) {
+        for (var value1 in video9cateBean.categoryList) {
           ButtonBean buttonBean = ButtonBean();
-          buttonBean.title = value1.text;
-          if(!value1.text.contains('首页') && !value1.text.contains('会员')){
-            buttonBean.value = value1.attributes['href'].replaceAll('.html', '');
-            _btns.add(buttonBean);
-          }
-
+          buttonBean.title = String.fromCharCodes(new Runes(value1.name));
+          buttonBean.value = value1.id;
+          _btns.add(buttonBean);
         }
+        ButtonBean buttonBean = ButtonBean();
+        buttonBean.title = '头条';
+        buttonBean.value = '头条';
+        _btns.add(buttonBean);
       }
+    }
+    String url = _isSearch
+        ? '${ApiConstant.videoList9Url}$videoSearchKey'
+        : "${ApiConstant.videoList9Url}${_currentKey == '头条'?videoTopListKey:videoListKey}";
+
+    String searchData = '{"page":$_page,"keyword":"$_currentKey","pagesize":6,"plat":"pc","type":"video","filter":"allorder,alltime,allsecond,allrange,all","idList":"269250,270350,268016,267990,239320,244592,235000,270221,270231,270232,270243,270251,270253,270257,251452","token":""}';
+    String encryData = EncryptUtil().aesEncode1(_isSearch?searchData:'{"page":$_page,"category":"$_currentKey","tags":"all","order":"new","pagesize":36,"plat":"pc","token":""}');
+    String response =  await NetUtil.getHtmlDataPost(url,paras: {'encrypt_data':Uri.encodeFull(encryData)},header: header);
+    _refreshController.refreshCompleted();
+    _refreshController.loadComplete();
+    String videoResponse = encryptUtil.aesDecode1(json.decode(response)['data']);
+    Video9ListBean video9listBean =  Video9ListBean.fromJson(json.decode(videoResponse));
+    try {
+      for (var value in video9listBean.list) {
+        VideoListItem item = VideoListItem();
+        item.title = value.title;
+        item.imageUrl = value.thumbimg;
+        item.targetUrl = value.id;
+        _data.add(item);
+      }
+
     } catch (e) {
       print(e);
     }
@@ -254,9 +274,11 @@ class VideoList9State extends State<VideoList9Page>
 
   void goToDetail(VideoListItem data) async {
     showLoading();
-    String response = await PornHubUtil.getHtmlFromHttpDeugger(data.targetUrl);
-    var doc = parse.parse(response);
-    var url = doc.getElementById('downurl').text;
+    String url = "${ApiConstant.videoList9Url}$videoDetailKey";
+    String encryData = EncryptUtil().aesEncode1('{"id":"${data.targetUrl}","token":""}');
+    String response =  await NetUtil.getHtmlDataPost(url,paras: {'encrypt_data':Uri.encodeFull(encryData)},header: header);
+    var decRes = EncryptUtil().aesDecode1(json.decode(response)['data']);
+    var detail = Video9DetailBean.fromJson(json.decode(decRes));
     // MovieBean movieBean = MovieBean();
     // try {
     //   var tbody = doc.getElementsByClassName('ibox').first;
@@ -289,7 +311,7 @@ class VideoList9State extends State<VideoList9Page>
     // }
 
     Navigator.pop(context);
-    CommonUtil.toVideoPlay(url, context,title: data.title);
+    CommonUtil.toVideoPlay(detail.info.urlS, context,title: data.title);
     // Navigator.of(context)
     //     .push(new MaterialPageRoute(builder: (BuildContext context) {
     //   return MovieDetailPage(1, movieBean);

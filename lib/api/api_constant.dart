@@ -4,7 +4,7 @@
 import 'dart:math';
 
 class ApiConstant {
-  static final String pornCookie = '533988140=27945f5frEtYICg8Uiq8y%2BMNFNAvdNSgIuKtkOJ7; CLIPSHARE=ur1v15ef0irv4j2bs31memkeo1';
+  static final String pornCookie = '__utmc=136596022; CLIPSHARE=bd1033668b83ccabecab406267125854; _ga=GA1.1.989883256.1700751922; __utma=136596022.1398892819.1700751774.1700751774.1701260002.2; __utmb=136596022.0.10.1701260002; __utmz=136596022.1701260002.2.2.utmcsr=91dizhi8.com|utmccn=(referral)|utmcmd=referral|utmcct=/; _ga_K5S02BRGF0=GS1.1.1701260050.2.1.1701260968.0.0.0';
 
   static final String noticeUrl =
       'https://gitee.com/arvin11/json/raw/master/notice.json';
@@ -16,7 +16,7 @@ class ApiConstant {
       'https://gitee.com/arvin11/json/raw/master/updateKey.json';
 
   static String xianFengDownUrl = 'http://phone.xfplay.com/';
-  static String movieBaseUrl = 'http://4kbo.com';
+  static String movieBaseUrl = 'https://www.ysgc3.cc';
   static String movieBaseUrl2 = 'https://www.mhapi123.com/inc/api_mac10.php';
   static String movieSearchUrl = '$movieBaseUrl/index.php/vod/search.html';
   static String movieBaseUrl1 = 'https://www.iikk.org';
@@ -28,7 +28,7 @@ class ApiConstant {
 
   static String fanHao1 = 'http://www.fanhaow.com/';
   static String fanHao2 = 'http://www.acg3.cc/whole/';
-  static String fanHao3 = 'https://www.66hoho.com/';
+  static String fanHao3 = 'http://haoren.sxylmzs.xyz:8080/?u=aHR0cDovL3d3dy4zMzQ0eXIuY29t&p=Lw==';
 
   static String pornBaseUrl = 'https://810.workarea7.live/';
   static String pornForumBaseUrl = 'http://f.wonderfulday25.live/';
@@ -61,15 +61,15 @@ class ApiConstant {
 
   static String videoList7Url = 'https://mgaa99.com';
 
-  static String videoList8Url = 'http://www.avtb2047.com';//http://www.avtbdizhi.org/
+  static String videoList8Url = 'https://www.u9t3n.com';//https://www.a7w4c.com/
 
-  static String videoList9Url = 'https://bbixx2.com';//bbixx245@gmail.com
+  static String videoList9Url = 'https://g52gf12633.5g4k6htc.xyz';//bbixx245@gmail.com
 
   static String videoList10Url = 'http://www.0008hd.com';//http://www.fabu28.com/
 
   static String videoList13Url = 'http://jd21j0i93ygrh9gamyn7.pipiapps.com';
 
-  static String videoList18Url = 'https://zztt30.com';
+  static String videoList18Url = 'https://eufdu.vwyag.com';
 
   static String videoList17Url = 'https://www.chafanfan1.xyz';//https://wanku520.com/
 

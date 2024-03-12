@@ -33,7 +33,6 @@ class ShowStaggeredImagePage extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    // TODO: implement createState
     imgs = arguments['list'];
     type = arguments['type'] == null ? 0 : arguments['type'];
     addHeader = arguments['addHeader'] == null ? false : arguments['addHeader'];
@@ -74,6 +73,11 @@ class BookState extends State<ShowStaggeredImagePage> {
         _getImage(i);
       }
     }
+    if (widget.type == 2) {
+      for (int i = 0; i < widget.imgs.length; i++) {
+        _getSiseImage(i);
+      }
+    }
     return Scaffold(
       appBar: AppBar(
         title: Text('图片'),
@@ -100,7 +104,7 @@ class BookState extends State<ShowStaggeredImagePage> {
                 child: StreamBuilder(
                   stream: imgeStream.stream,
                   builder: (context, snap) {
-                    return widget.type == 1
+                    return (widget.type == 1|| widget.type == 2)
                         ? (imgs[index].startsWith('http')
                             ? Image.asset('images/video_bg.png')
                             : Image.file(
@@ -208,20 +212,43 @@ class BookState extends State<ShowStaggeredImagePage> {
     String url = widget.imgs[index];
     Directory tempDir = await getTemporaryDirectory();
     var path = '${tempDir.path}/${md5.convert(new Utf8Encoder().convert(url))}';
-    Widget image = await NetUtil.dio.download(url, path).then((value) async {
-      var file = File(path);
-      return await file.readAsBytes().then((value) {
-        String old = base64Encode(value);
-        String base64 = EncryptUtil().aesDecode(old);
-        file.writeAsBytes(base64Decode(base64)).then((value){
+
+    if(await File(path).exists()){
+      widget.imgs[index] = path;
+      imgeStream.sink.add(widget.imgs);
+    }else{
+      await NetUtil.dio.download(url, path).then((value) async {
+        var file = File(path);
+        return await file.readAsBytes().then((value) {
+          String old = base64Encode(value);
+          String base64 = EncryptUtil().aesDecode(old);
+          file.writeAsBytes(base64Decode(base64)).then((value){
+            widget.imgs[index] = path;
+            imgeStream.sink.add(widget.imgs);
+          });
+
+          return;
+        });
+      });
+    }
+  }
+
+  _getSiseImage(int index) async {
+    String url = widget.imgs[index];
+    Directory tempDir = await getTemporaryDirectory();
+    var path = '${tempDir.path}/${md5.convert(new Utf8Encoder().convert(url))}';
+    if(await File(path).exists()){
+      widget.imgs[index] = path;
+      imgeStream.sink.add(widget.imgs);
+    }else{
+      NetUtil.getHtmlData(url).then((value) {
+        value = value.replaceAll('data:image/jpg;base64,', '');
+        new File(path).writeAsBytes(base64Decode(value)).then((value) {
           widget.imgs[index] = path;
           imgeStream.sink.add(widget.imgs);
         });
-
-        return;
       });
-    });
-    return image;
+    }
   }
 
   _selectValueChange(String value, String url) {

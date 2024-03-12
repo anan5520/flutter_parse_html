@@ -238,12 +238,31 @@ class MovieDetailState extends State<MovieDetailPage> {
     YsgcVideoBean ysgcVideoBean = YsgcVideoBean.fromJson(json.decode(jsonStr));
     var key = await NetUtil.getHtmlData('${ApiConstant.movieBaseUrl}/static/player/ffzy.php?url=${ysgcVideoBean.url}');
     var playUrls = key.split(RegExp(r"urls = '|=';"));
+    if(playUrls.length <= 2){
+      playUrls = key.split(RegExp(r"urls = '|';"));
+    }
     Navigator.pop(context);
-    List<int> bytes = base64Decode('${playUrls[1]}=');
-    var playUrl = 'https${String.fromCharCodes(bytes).split(RegExp(r'https|.m3u8'))[1]}.m3u8';
+    String tempPlayUrl = '';
+    try {
+      List<int> bytes = base64Decode('${playUrls[1]}=');
+      tempPlayUrl = String.fromCharCodes(bytes);
+    } catch (e) {
+      print(e);
+      List<int> bytes = base64Decode('${playUrls[1].substring(8)}');
+      tempPlayUrl = String.fromCharCodes(bytes);
+    }
+    if(tempPlayUrl.contains('url=')){
+      var playUrl = '${tempPlayUrl.split(RegExp(r'url=|\.m3u8'))[1]}.m3u8';
       if(playUrl.isNotEmpty ){
         CommonUtil.toVideoPlay(playUrl, context);
       }
+    }else{
+      var playUrl = 'https${tempPlayUrl.split(RegExp(r'https|\.m3u8'))[1]}.m3u8';
+      if(playUrl.isNotEmpty ){
+        CommonUtil.toVideoPlay(playUrl, context);
+      }
+    }
+
 
   }
 

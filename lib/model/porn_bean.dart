@@ -77,6 +77,7 @@ class PornForumContent {
   String videoUrl = '';
   List<String> imageList;
   List<CiLiUrl> ciLiList;
+  List<String> videoList = [];
 
   @override
   String toString() {

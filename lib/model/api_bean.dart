@@ -22,6 +22,7 @@ class UrlsBean {
   String videoList8Url;
   String videoList9Url;
   String videoList10Url;
+  String videoList18Url;
   String douYinUrl;
   String douYin2Url;
   String abjUrl;
@@ -98,6 +99,7 @@ class UrlsBean {
     videoList8Url = json['videoList8Url'];
     videoList9Url = json['videoList9Url'];
     videoList10Url = json['videoList10Url'];
+    videoList18Url = json['videoList18Url'];
     xianFeng5Url = json['xianFeng5Url'];
     douYinUrl = json['douYinUrl'];
     douYin2Url = json['douYin2Url'];
@@ -140,6 +142,7 @@ class UrlsBean {
     data['videoList8Url'] = this.videoList8Url;
     data['videoList9Url'] = this.videoList9Url;
     data['videoList10Url'] = this.videoList10Url;
+    data['videoList18Url'] = this.videoList18Url;
     data['douYinUrl'] = this.douYinUrl;
     data['douYin2Url'] = this.douYin2Url;
     data['abjUrl'] = this.abjUrl;
@@ -221,18 +224,27 @@ class NoticeBean {
 class UpdateKey {
   String xVideosKey;
   String copyKey;
+  bool isJd;
+  bool onlyShowOne;
+  String spKey;
 
   UpdateKey({this.xVideosKey});
 
   UpdateKey.fromJson(Map<String, dynamic> json) {
     xVideosKey = json['xVideosKey'];
     copyKey = json['copyKey'];
+    isJd = json['isJd'];
+    spKey = json['spKey'];
+    onlyShowOne = json['onlyShowOne'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['xVideosKey'] = this.xVideosKey;
     data['copyKey'] = this.copyKey;
+    data['isJd'] = this.isJd;
+    data['spKey'] = this.spKey;
+    data['onlyShowOne'] = this.onlyShowOne;
     return data;
   }
 }

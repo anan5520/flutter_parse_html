@@ -45,7 +45,7 @@ class VideoList17State extends State<VideoList18Page>
 
   RefreshController _refreshController;
   int _page = 1, buttonType = 0;
-  String _currentKey = '';
+  String _currentKey = '1';
   bool _isSearch = false;
   TextEditingController _editingController;
   StreamController<VideoListItem> imgeStream = StreamController.broadcast();
@@ -173,50 +173,39 @@ class VideoList17State extends State<VideoList18Page>
   void _getData() async {
     String url = _isSearch
         ? '${ApiConstant.videoList18Url}/page/$_page?s=$_currentKey'
-        : "${ApiConstant.videoList18Url}/page/$_page";
+        : "${ApiConstant.videoList18Url}/category/$_currentKey/$_page.html";
     String response = await PornHubUtil.getHtmlFromHttpDeugger(url);
     _refreshController.refreshCompleted();
     _refreshController.loadComplete();
     var doc = parse.parse(response);
     try {
-      var contentEle = doc.getElementById('index').getElementsByTagName('article');
+      var contentEle = doc.getElementsByClassName('video-list').first.getElementsByClassName('video-item ');
       for (var value in contentEle) {
         var classStr = value.attributes['class'];
-        if (classStr.isEmpty) {
+        if (classStr.isNotEmpty) {
           var aEle = value.getElementsByTagName('a').first;
           VideoListItem item = VideoListItem();
           var hrefs = aEle.attributes['href'];
           String href = hrefs;
-          var imgEle = aEle.getElementsByClassName('post-card').first;
-          var titleELe = value.getElementsByClassName('post-card-title').first;
-          if(titleELe.getElementsByTagName('style').length > 0){
-            titleELe.getElementsByTagName('style').first.remove();
-          }
+          var imgEle = aEle.getElementsByTagName('img').first;
+          var titleELe = value.getElementsByClassName('title').first;
           item.title = CommonUtil.replaceStr(titleELe.text);
-          item.isVideo = aEle.getElementsByClassName("thumb-video").length > 0;
-          item.imageUrl = imgEle.attributes['data-url'];
-          String s = await NetUtil.getHtmlData(item.imageUrl);
-          item.targetUrl = href;
-          _data.add(item);
+          if(item.title.isNotEmpty){
+            // item.isVideo = aEle.getElementsByClassName("thumb-video").length > 0;
+            var loads = imgEle.attributes['onload'].split('https')[1];
+            item.imageUrl = 'https${loads.substring(0,loads.length - 2)}';
+            // String s = await NetUtil.getHtmlData(item.imageUrl);
+            item.targetUrl = href.startsWith('http')?href:"${ApiConstant.videoList18Url}$href";
+            _data.add(item);
+          }
         }
       }
       if (_btns == null) {
         _btns = [];
-        var menus = doc.getElementsByClassName('sub-menu');
-        menus.forEach((element) {
-          element.getElementsByTagName('a').forEach((value1) {
-            ButtonBean buttonBean = ButtonBean();
-            buttonBean.title = value1.text;
-            if (!value1.text.contains('区') && !value1.text.contains('会员')) {
-              buttonBean.value =
-                  value1.attributes['href'].replaceAll('.html', '');
-              _btns.add(buttonBean);
-            }
-          });
-
-        });
-        _currentKey = _btns[0].value;
-        _getData();
+        _btns.add(ButtonBean()..value = '1'..title = '热点');
+        _btns.add(ButtonBean()..value = '2'..title = '明星网红');
+        _btns.add(ButtonBean()..value = '3'..title = '奇葩');
+        _btns.add(ButtonBean()..value = '4'..title = '真实乱');
       }
     } catch (e) {
       print(e);
@@ -259,22 +248,27 @@ class VideoList17State extends State<VideoList18Page>
 
   @override
   bool get wantKeepAlive => true;
-  _getImage(VideoListItem item,int index) async{
+  void _getImage(VideoListItem item,int index) async{
     Directory tempDir = await getTemporaryDirectory();
     var path = '${tempDir.path}/${md5.convert(new Utf8Encoder().convert(item.imageUrl))}';
-    Widget image = await NetUtil.dio.download(item.imageUrl,path).then((value) async{
-      var file = File(path);
-      return await file.readAsBytes().then((value){
-        String old = base64Encode(value);
-        String base64 = EncryptUtil().aesDecode(old);
-        file.writeAsBytes(base64Decode(base64)).then((value){
-          item.index = index;
-          imgeStream.sink.add(item..imageUrl = path);
+    if(await File(path).exists()){
+      item.index = index;
+      imgeStream.sink.add(item..imageUrl = path);
+    }else{
+      await NetUtil.dio.download(item.imageUrl,path).then((value) async{
+        var file = File(path);
+        return await file.readAsBytes().then((value){
+          String old = base64Encode(value);
+          String base64 = EncryptUtil().aesDecode(old);
+          file.writeAsBytes(base64Decode(base64)).then((value){
+            item.index = index;
+            imgeStream.sink.add(item..imageUrl = path);
+          });
+          return;
         });
-        return;
       });
-    });
-   return image;
+    }
+
 
   }
 

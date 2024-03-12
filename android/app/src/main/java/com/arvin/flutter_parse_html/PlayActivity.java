@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.arvin.flutter_parse_html.video.SampleVideo;
+import com.shuyu.aliplay.AliPlayerManager;
 import com.shuyu.gsyvideoplayer.GSYVideoManager;
 import com.shuyu.gsyvideoplayer.cache.CacheFactory;
 import com.shuyu.gsyvideoplayer.player.PlayerFactory;
@@ -54,8 +55,8 @@ public class PlayActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        PlayerFactory.setPlayManager(Exo2PlayerManager.class);
-        CacheFactory.setCacheManager(ExoPlayerCacheManager.class);
+//        PlayerFactory.setPlayManager(AliPlayerManager.class);
+//        CacheFactory.setCacheManager(ExoPlayerCacheManager.class);
         setContentView(R.layout.activity_play);
         videoPlayer = findViewById(R.id.video_player);
         isTransition = getIntent().getBooleanExtra(TRANSITION, false);

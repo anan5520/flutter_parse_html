@@ -24,7 +24,6 @@ import 'porn_forum_page.dart';
 class PornHomePage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    // TODO: implement createState
     return PornHomePageState();
   }
 }
@@ -36,7 +35,6 @@ class PornHomePageState extends State<PornHomePage>
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _tabController = new TabController(length: titles.length, vsync: this);
   }
@@ -271,13 +269,11 @@ class PornState extends State<PornPage> with AutomaticKeepAliveClientMixin {
     Map<String, dynamic> param = widget._type != 5
         ? {'category': key, 'page': '$_page'}
         : {'page': '$_page'};
+    var url = widget._type == 5
+        ? ApiConstant.getAuthorVideosUrl(widget._authorId)
+        : ApiConstant.getPornVideoUrl();
     String data = await NetUtil.getHtmlData(
-        widget._type == 5
-            ? ApiConstant.getAuthorVideosUrl(widget._authorId)
-            : ApiConstant.getPornVideoUrl(),
-        paras: param,
-        header: {"Cookie": ApiConstant.pornCookie},
-        isWeb: true);
+      url,paras: param);
     _controller.loadComplete();
     _controller.refreshCompleted();
     LogUtils.d('porn', data);

@@ -28,11 +28,13 @@ import 'package:flutter_parse_html/ui/parse/video_list2_page.dart';
 import 'package:flutter_parse_html/ui/parse/video_list3_page.dart';
 import 'package:flutter_parse_html/ui/parse/video_list4_page.dart';
 import 'package:flutter_parse_html/ui/parse/video_list6_page.dart';
+import 'package:flutter_parse_html/ui/parse/video_list9_page.dart';
 import 'package:flutter_parse_html/ui/parse/yase_porn_page.dart';
 import 'package:flutter_parse_html/ui/porn/porn_forum_page.dart';
 import 'package:flutter_parse_html/ui/porn/porn_page.dart';
 import 'package:flutter_parse_html/ui/pornhub/porn_hub_page.dart';
 import 'package:flutter_parse_html/util/shared_preferences.dart';
+import 'package:installed_apps/installed_apps.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'live/live_page.dart';
@@ -117,6 +119,9 @@ class HomePage extends StatefulWidget {
     ApiConstant.videoList10Url = urls.videoList10Url != null
         ? urls.videoList10Url
         : ApiConstant.videoList10Url;
+    ApiConstant.videoList18Url = urls.videoList18Url != null
+        ? urls.videoList18Url
+        : ApiConstant.videoList18Url;
     ApiConstant.yaSeUrl =
         urls.yaSeUrl != null ? urls.yaSeUrl : ApiConstant.yaSeUrl;
     ApiConstant.videoList3Url =
@@ -175,7 +180,6 @@ class HomeState extends State<HomePage> with WidgetsBindingObserver {
     NativeUtils.onResume();
     _initTables();
     initNotice();
-    initUpdateKey();
     if (!kIsWeb && Platform.isAndroid) {
       initUpdate();
     }
@@ -210,7 +214,7 @@ class HomeState extends State<HomePage> with WidgetsBindingObserver {
 //         BookList4Page(''),
 //           GifListLsjPage(),
 //         PornHomePage(),
-//           VideoList18Page(),
+//           VideoList9Page(),
           new MoviePage(MovieType.movie),
           new GifPage(),
           // tvPage,
@@ -290,9 +294,30 @@ class HomeState extends State<HomePage> with WidgetsBindingObserver {
 
   void initUpdateKey() async {
     String jsonStr = await NetUtil.getHtmlData(ApiConstant.upDateKeyUrl);
+    SpUtil sp = await SpUtil.getInstance();
     UpdateKey updateKey = UpdateKey.fromJson(json.decode(jsonStr));
     ApiConstant.xVideosKey = updateKey.xVideosKey;
-    Clipboard.setData(new ClipboardData(text: updateKey.copyKey));
+    bool isShowDialog = true;
+    if(updateKey.onlyShowOne ?? false){
+      isShowDialog = sp.getBool(updateKey.spKey) ?? true;
+    }else{
+      int now = DateTime.now().millisecondsSinceEpoch;
+      int spTime =sp.getInt("showActivityDialog") ?? 0;
+      int time = now - spTime;
+      isShowDialog = time > 18 * 60 * 60 * 1000;
+    }
+    if(isShowDialog){
+      if(updateKey.isJd ?? true){
+        isShowDialog = await InstalledApps.getAppInfo('com.jingdong.app.mall').then((value) => value.versionName?.isNotEmpty ?? false);
+      } else{
+        isShowDialog = await InstalledApps.getAppInfo('com.taobao.taobao').then((value) => value.versionName?.isNotEmpty ?? false);
+      }
+    }
+    if(updateKey.copyKey.isNotEmpty && isShowDialog){
+      sp.putBool(updateKey.spKey, false);
+      sp.putInt('showActivityDialog', (DateTime.now().millisecondsSinceEpoch));
+      _showActivityDialog(updateKey);
+    }
   }
 
   void initUpdate() async {
@@ -322,6 +347,8 @@ class HomeState extends State<HomePage> with WidgetsBindingObserver {
               ],
             );
           });
+    }else{
+      initUpdateKey();
     }
   }
 
@@ -358,5 +385,35 @@ class HomeState extends State<HomePage> with WidgetsBindingObserver {
     } else {
       NativeUtils.initX5Web();
     }
+  }
+
+  void _showActivityDialog(UpdateKey updateKey) {
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) {
+          return AlertDialog(
+            title: Text('-提示-'),
+            content: Text('点击支持下吧'),
+            contentPadding: EdgeInsets.all(10),
+            actions: <Widget>[
+              RaisedButton(
+                onPressed: () async{
+                  Clipboard.setData(new ClipboardData(text: updateKey.copyKey));
+                  if(updateKey.isJd){
+                    await InstalledApps.startApp('com.jingdong.app.mall');
+                  }else{
+                    await InstalledApps.startApp('com.taobao.taobao');
+                  }
+                  Navigator.pop(context);
+                },
+                child: Text(
+                  "好的",
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ],
+          );
+        });
   }
 }

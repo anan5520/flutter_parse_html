@@ -10,10 +10,12 @@ import 'package:flutter_parse_html/ui/parse/video_list15_page.dart';
 import 'package:flutter_parse_html/ui/parse/video_list17_page.dart';
 import 'package:flutter_parse_html/ui/parse/video_list18_page.dart';
 import 'package:flutter_parse_html/ui/parse/video_list3_page.dart';
+import 'package:flutter_parse_html/ui/parse/video_list9_page.dart';
 import 'package:flutter_parse_html/util/native_utils.dart';
 
 import 'abj_list_page.dart';
 import 'gif_list_lsj_page.dart';
+import 'video_list8_page.dart';
 
 class HtmlParsePage5 extends StatelessWidget {
   @override
@@ -32,7 +34,7 @@ class ParseHomePage extends StatefulWidget {
 class HomePage5State extends State<ParseHomePage>
     with SingleTickerProviderStateMixin {
   TabController _tabController;
-  List<String> titles = ['视频1', '国产','视频2','番号','视频4','视频5','视频6',];
+  List<String> titles = ['视频1','视频2','番号','视频4','视频5','视频6',];
 
   @override
   void initState() {
@@ -84,7 +86,7 @@ class HomePage5State extends State<ParseHomePage>
             Tab(text: "${titles[3]}"),
             Tab(text: "${titles[4]}"),
             Tab(text: "${titles[5]}"),
-            Tab(text: "${titles[6]}"),
+            // Tab(text: "${titles[6]}"),
             // Tab(text: "${titles[7]}"),
             // Tab(text: "${titles[8]}"),
 
@@ -95,11 +97,11 @@ class HomePage5State extends State<ParseHomePage>
       body: TabBarView(
         children: <Widget>[
           VideoList18Page(),
-          VideoList3Page(),
+          // VideoList3Page(),
           VideoList11Page(3),
-          VideoList17Page(),
+          VideoList8Page(),
           VideoList11Page(1),
-          VideoList11Page(2),
+          VideoList9Page(),
           VideoList10Page(),
           // VideoList11Page(4),
           // VideoList13Page(),

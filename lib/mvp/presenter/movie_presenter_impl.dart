@@ -55,16 +55,31 @@ class MoviePresenterImpl implements MoviePresenter {
     if (url.endsWith('.html')) {
       url = url.replaceAll('.html', '');
     }
-    var videoUrl = "$url-$pageNum.html";
+    var videoUrl = '';
+    if(url.contains('---')){
+      if(pageNum > 1){
+        url = url.replaceAll('-----', '');
+      }
+      videoUrl = pageNum == 1?"$url.html":"$url-$pageNum---.html";
+    }else{
+      videoUrl = "$url-$pageNum.html";
+    }
     List<ButtonBean> btns = [];
     var body = await NetUtil.getHtmlData(videoUrl);
     print('返回结果=$body');
     try {
       var document = parse.parse(body);
-      var elements = document
-          .getElementsByClassName("myui-vodlist clearfix")
-          .first
-          .getElementsByClassName("col-lg-7 col-md-6 col-sm-4 col-xs-3");
+      var videoRootEles = document
+          .getElementsByClassName("myui-vodlist clearfix");
+      var elements = [];
+      videoRootEles.forEach((element) {
+        if(element.getElementsByClassName('col-lg-7 col-md-6 col-sm-4 col-xs-3').isNotEmpty){
+          elements =element.getElementsByClassName("col-lg-7 col-md-6 col-sm-4 col-xs-3");
+        }
+        if(element.getElementsByClassName('col-md-6 col-sm-4 col-xs-3').isNotEmpty){
+          elements =element.getElementsByClassName("col-md-6 col-sm-4 col-xs-3");
+        }
+      });
       List<VideoListItem> list = [];
       List<VideoListItem> bannerList = [];
       var bannerEle = document

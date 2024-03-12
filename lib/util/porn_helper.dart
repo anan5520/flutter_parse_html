@@ -13,8 +13,8 @@ class PornHelper {
 
   static Future<VideoResult> parseVideoPage(PornItem item) {
     var viewKey = item.viewKey;
-    Map<String, dynamic> param = {'viewkey': viewKey};
-    Map<String, dynamic> header = {
+    Map<String, String> param = {'viewkey': viewKey};
+    Map<String, String> header = {
       'X-Forwarded-For': _getRandomIPAddress(),
       'Referer': ApiConstant.getPornHomeUrl(),
       'Cookie': ApiConstant.pornCookie

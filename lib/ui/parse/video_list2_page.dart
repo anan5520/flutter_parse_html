@@ -219,7 +219,7 @@ class VideoList2State extends State<VideoList2Page>
     showLoading();
     var body = await PornHubUtil.getHtmlFromHttpDeugger(data.targetUrl,isMobile: false,isXvideos: true);
     try {
-      var strings = body.split(new RegExp(r"setVideoUrlLow\(\'|\'\);"));
+      var strings = body.split(new RegExp(r"setVideoHLS\(\'|\'\);"));
       String playUrl = '';
       for (var value in strings) {
         if (value.startsWith('http')) {

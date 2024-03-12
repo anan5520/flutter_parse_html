@@ -1,8 +1,17 @@
 buildscript {
     ext.kotlin_version = '1.5.20'
     repositories {
-        google()
-        jcenter()
+//        google()
+//        jcenter()
+        jcenter {
+            name = "aliyunJcenter"
+            url = uri("https://maven.aliyun.com/repository/jcenter")
+        }
+        google {
+            name = "aliyunGoogle"
+            url = uri("https://maven.aliyun.com/repository/google")
+        }
+        mavenCentral()
     }
 
     dependencies {
@@ -13,10 +22,19 @@ buildscript {
 
 allprojects {
     repositories {
-        google()
-        jcenter()
+//        google()
+//        jcenter()
+        jcenter {
+            name = "aliyunJcenter"
+            url = uri("https://maven.aliyun.com/repository/jcenter")
+        }
+        google {
+            name = "aliyunGoogle"
+            url = uri("https://maven.aliyun.com/repository/google")
+        }
         maven { url 'https://jitpack.io' }
         maven { url "https://maven.aliyun.com/repository/public" }
+        mavenCentral()
     }
 }
 
