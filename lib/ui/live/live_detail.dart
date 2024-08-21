@@ -1,13 +1,13 @@
 class LiveDetail {
-  List<Zhubo> zhubo;
+  List<Zhubo>? zhubo;
 
   LiveDetail({this.zhubo});
 
   LiveDetail.fromJson(Map<String, dynamic> json) {
     if (json['zhubo'] != null) {
-      zhubo = new List<Zhubo>();
+      zhubo = [];
       json['zhubo'].forEach((v) {
-        zhubo.add(new Zhubo.fromJson(v));
+        zhubo!.add(new Zhubo.fromJson(v));
       });
     }
   }
@@ -15,16 +15,16 @@ class LiveDetail {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     if (this.zhubo != null) {
-      data['zhubo'] = this.zhubo.map((v) => v.toJson()).toList();
+      data['zhubo'] = this.zhubo!.map((v) => v.toJson()).toList();
     }
     return data;
   }
 }
 
 class Zhubo {
-  String address;
-  String img;
-  String title;
+  String? address;
+  String? img;
+  String? title;
 
   Zhubo({this.address, this.img, this.title});
 

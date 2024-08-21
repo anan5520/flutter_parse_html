@@ -1,26 +1,33 @@
+import 'dart:convert';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_parse_html/download/history_page.dart';
+import 'package:flutter_parse_html/model/button_bean.dart';
+import 'package:flutter_parse_html/model/movie_bean.dart';
 import 'package:flutter_parse_html/model/video_list_item.dart';
 import 'package:flutter_parse_html/mvp/presenter/movie_presenter.dart';
 import 'package:flutter_parse_html/mvp/presenter/movie_presenter_impl.dart';
-import 'package:flutter_parse_html/ui/video_play.dart';
-import 'package:flutter_parse_html/widget/movie_search_bar.dart';
+import 'package:flutter_parse_html/net/net_util.dart';
+import 'package:flutter_parse_html/resources/shared_preferences_keys.dart';
+import 'package:flutter_parse_html/util/escapeu_unescape.dart';
+import 'package:flutter_parse_html/util/native_utils.dart';
+import 'package:flutter_parse_html/util/shared_preferences.dart';
+import 'package:flutter_parse_html/widget/dialog_page.dart';
+import 'package:flutter_parse_html/widget/movie_search_bar.dart' as customSearch;
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-import 'package:flutter_parse_html/ui/parse/htm_parse_page1.dart';
+import 'package:flutter_parse_html/ui/movie/movie_detail_page.dart';
+import 'package:flutter_parse_html/api/api_constant.dart';
+import 'package:flutter_parse_html/ui/home_other_page.dart';
+
+import '../home_page.dart';
 
 class MoviePage extends StatefulWidget {
+  final MovieType _type;
 
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
+  MoviePage(this._type);
 
   @override
   _MyHomePageState createState() {
@@ -31,28 +38,33 @@ class MoviePage extends StatefulWidget {
   }
 }
 
-class _MyHomePageState extends State<MoviePage>   with TickerProviderStateMixin,AutomaticKeepAliveClientMixin
+class _MyHomePageState extends State<MoviePage>
+    with TickerProviderStateMixin, AutomaticKeepAliveClientMixin
     implements MovieView {
-  int _counter = 0;
-  AnimationController controller;
-  CurvedAnimation curvedAnimation;
-  MoviePresenter _presenter;
+  late AnimationController controller;
+  late CurvedAnimation curvedAnimation;
+  late MoviePresenter _presenter;
+  late SpUtil sp;
 
   // 放大动画
-  Animation<double> animationCurved;
-  Animation<EdgeInsets> movement;
+  late Animation<double> animationCurved;
+  late Animation<EdgeInsets> movement;
   List<VideoListItem> data = [];
   var _index = 1;
-  RefreshController _refreshController;
-  Future dialogCall;
-  final String _videoUrl = 'http://4kbo.com/index.php/vod/show/id/';
-
-  int _currentIndex = 0;
+  late RefreshController _refreshController;
+  String _videoUrl = '${ApiConstant.movieBaseUrl}/index.php/vod/show/id/1/';
+  String _title = '电影';
+  List<ButtonBean>? _childButtons;
+  int _type = -1; // 1 4k     2 ok
+  String _currentKey = '';
+  int buttonType = 0;
+  List<VideoListItem> bannerList = [];
+  bool _isType = false;
 
   @override
   void initState() {
     super.initState();
-    _refreshController = new RefreshController();
+    _refreshController = new RefreshController(initialRefresh: true);
     controller = new AnimationController(
         duration: new Duration(seconds: 3), vsync: this);
     curvedAnimation =
@@ -72,96 +84,171 @@ class _MyHomePageState extends State<MoviePage>   with TickerProviderStateMixin,
         ),
       ),
     );
-
     controller.addListener(() {
       print("ppp:${movement.value}");
       setState(() {});
-    });
-    _presenter.loadMovieList(_videoUrl, _index, true);
-  }
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
     });
   }
 
   @override
   void dispose() {
-    // TODO: implement dispose
-    super.dispose();
     controller.dispose();
     _refreshController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
+    super.build(context);
     return Scaffold(
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
-        title: Text('电影'),
+        title: GestureDetector(
+          onLongPress: () {
+            if (HomePage.goToFuLi) {
+              HomePage.inLsj = true;
+              Navigator.push(context, MaterialPageRoute(builder: (context) {
+                return HomeOtherPage();
+              }));
+            }
+          },
+          child: Text(_title),
+        ),
         actions: <Widget>[
+          new DropdownButtonHideUnderline(
+              child: new DropdownButton(
+                  hint: new Text(
+                    '切换源',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  items: generateItemList(),
+                  onChanged: (value) {
+                    switch (value) {
+                      case '1':
+                        if (_type == 1) return;
+                        _type = 1;
+                        break;
+                      case '2':
+                        if (_type == 2) return;
+                        _type = 2;
+                        break;
+                    }
+                    if (sp != null)
+                      sp.putString(SharedPreferencesKeys.movieType, '$_type');
+                    initUrl();
+                    _refreshController.requestRefresh();
+                  })),
+          IconButton(
+              icon: Icon(Icons.history),
+              onPressed: () {
+                Navigator.push(context,
+                    new MaterialPageRoute(builder: (context) {
+                  return HistoryPage();
+                }));
+              }),
           IconButton(
               icon: Icon(Icons.search),
               onPressed: () {
                 // 调用写好的方法
-                showSearch(context: context, delegate: SearchBar());
+                showSearch(context: context, delegate: new customSearch.SearchBar(_type));
               })
         ],
       ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: SmartRefresher(
-          controller: _refreshController,
-          header: WaterDropMaterialHeader(),
-          footer: ClassicFooter(),
-          enablePullDown: true,
-          enablePullUp: true,
-          onRefresh: () {
-            _index = 1;
-            _presenter.loadMovieList(_videoUrl, _index, true);
-          },
-          onLoading: () {
-            _index++;
-            _presenter.loadMovieList(_videoUrl, _index, false);
-          },
-          child: GridView.builder(
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-                childAspectRatio: 0.6,
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10),
-            itemBuilder: (BuildContext context, int index) {
-              return getItem(index);
-            },
-            itemCount: data.length,
-          ),
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.of(context)
-              .push(new MaterialPageRoute(builder: (BuildContext context) {
-            return HtmlParsePage1();
-          }));
-        },
-        tooltip: 'Increment',
-        child: Icon(Icons.add_alarm),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      body: Container(
+          color: Color(0xffeeeeee),
+          // Center is a layout widget. It takes a single child and positions it
+          // in the middle of the parent.
+          child: Stack(
+            children: [
+              SmartRefresher(
+                controller: _refreshController,
+                header: WaterDropMaterialHeader(),
+                footer: ClassicFooter(),
+                enablePullDown: true,
+                enablePullUp: true,
+                onRefresh: () {
+                  _index = buttonType == 1 ? _index : 1;
+                  initType(false);
+//            _presenter.loadMovieList(
+//                _videoUrl, _index, widget._type, true, _type);
+                },
+                onLoading: () {
+                  _index++;
+                  _presenter.loadMovieList(
+                      _videoUrl, _index, widget._type, false, _type,isType:_isType);
+                },
+                child: _type == 1 ? getGridView() : getListView(),
+              ),
+              Positioned(
+                bottom: 20,
+                right: 1,
+                child: Column(
+                  children: [
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        shape: CircleBorder(), // 圆形边框
+                        backgroundColor: Colors.blue,
+                        padding: EdgeInsets.all(24), // 调整按钮大小
+                      ),
+                      onPressed: () {
+                        NativeUtils.goToDouYin("0");
+                      },
+                      child: Text("抖音",style: TextStyle(color: Colors.white),),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(top: 10),
+                      child: TextButton(
+                        style: ElevatedButton.styleFrom(
+                          shape: CircleBorder(), // 圆形边框
+                          backgroundColor: Colors.blue,
+                          padding: EdgeInsets.all(24), // 调整按钮大小
+                        ),
+                        onPressed: () {
+                          // NativeUtils.goToDouYin("1");
+                          _showDialog();
+                        },
+                        child: Icon(Icons.add,color: Colors.white,),
+                      ),
+                    )
+                  ],
+                ),
+              )
+            ],
+          )),
     );
+  }
+
+  void _showDialog() async {
+    if(_childButtons?.isEmpty ?? true) return;
+    ButtonBean buttonBean = await showDialog(
+        context: context,
+        builder: (context) {
+          return new AlertDialog(
+            content: GridViewDialog(_childButtons!),
+          );
+        });
+    if (buttonBean != null) {
+      if (buttonBean.type == 1) {
+        _index = buttonBean.page;
+        buttonType = 1;
+      } else {
+        buttonType = 0;
+        _currentKey = buttonBean.value!;
+      }
+      if (_type == 1) {
+        if (buttonBean.type == 0) {
+          _videoUrl = '${ApiConstant.movieBaseUrl}${buttonBean.value}';
+        }
+        _refreshController.requestRefresh();
+      } else {
+        if (buttonBean.type == 0) {
+          _isType = true;
+          _videoUrl = '${ApiConstant.movieBaseUrl1}${buttonBean.value!.replaceAll('--------.html', '')}';
+        }
+        _refreshController.requestRefresh();
+      }
+    }
   }
 
   Widget getItem(int position) {
@@ -169,22 +256,43 @@ class _MyHomePageState extends State<MoviePage>   with TickerProviderStateMixin,
     return new GestureDetector(
       onTap: () {
         showLoading();
-        _presenter.getVideoUrl(item.targetUrl);
+        _presenter.getVideoUrl(item.targetUrl!, _type);
       },
-      child: new Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          Expanded(
-            child: CachedNetworkImage(
-              imageUrl: item.imageUrl,
-              fit: BoxFit.cover,
-            ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(5),
+        child: Container(
+          color: Colors.white,
+          child: new Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Expanded(
+                child: Stack(
+                  children: <Widget>[
+                    ConstrainedBox(
+                      child: CachedNetworkImage(
+                        placeholder: (context, url) => new Icon(Icons.image),
+                        errorWidget: (context, url, error) =>
+                            new Icon(Icons.error),
+                        imageUrl: item.imageUrl!,
+                        fit: BoxFit.cover,
+                      ),
+                      constraints: new BoxConstraints.expand(),
+                    )
+                  ],
+                  alignment: AlignmentDirectional.bottomEnd,
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.only(top: 4, bottom: 4, left: 3, right: 3),
+                child: Text(
+                  '${item.title}',
+                  style: TextStyle(fontSize: 12),
+                  maxLines: 1,
+                ),
+              )
+            ],
           ),
-          Text(
-            '${item.title}',
-            maxLines: 1,
-          )
-        ],
+        ),
       ),
     );
   }
@@ -207,13 +315,24 @@ class _MyHomePageState extends State<MoviePage>   with TickerProviderStateMixin,
   }
 
   @override
-  loadMovieListSuc(List<VideoListItem> list, bool isRefresh) {
+  loadMovieListSuc(
+      List<VideoListItem> list, List<ButtonBean> btns, bool isRefresh,
+      {List<VideoListItem>? bannerList}) {
     if (isRefresh) {
       data.clear();
+    }
+    this.bannerList?.clear();
+    if (bannerList != null) {
+      for (var i = 0;
+          i < (bannerList.length < 15 ? bannerList.length : 15);
+          i++) {
+        this.bannerList?.add(bannerList[i]);
+      }
     }
     _refreshController.refreshCompleted();
     _refreshController.loadComplete();
     data.addAll(list);
+    initChildBtn(btns);
     setState(() {});
   }
 
@@ -223,15 +342,181 @@ class _MyHomePageState extends State<MoviePage>   with TickerProviderStateMixin,
   }
 
   @override
-  getVideoUrlSuc(String url) {
+  getVideoUrlSuc(MovieBean movieBean) {
     Navigator.pop(context);
     Navigator.of(context)
         .push(new MaterialPageRoute(builder: (BuildContext context) {
-      return VideoPlayPage(url);
+      return MovieDetailPage(_type == 1?9:1, movieBean);
     }));
   }
 
   @override
-  // TODO: implement wantKeepAlive
   bool get wantKeepAlive => true;
+
+  void initUrl() {
+    if (_type == 1) {
+      switch (widget._type) {
+        case MovieType.movie:
+          _title = '电影';
+          _videoUrl = '${ApiConstant.movieBaseUrl}/vodtype/1.html';
+          break;
+        case MovieType.tv:
+          _title = '电视剧';
+          _videoUrl = '${ApiConstant.movieBaseUrl}/vodtype/2.html';
+          break;
+        case MovieType.variety:
+          _title = '综艺';
+          _videoUrl = '${ApiConstant.movieBaseUrl}/vodtype/3.html';
+          break;
+        case MovieType.comic:
+          _title = '动漫';
+          _videoUrl = '${ApiConstant.movieBaseUrl}/vodtype/4.html';
+          break;
+      }
+    } else {
+      switch (widget._type) {
+        case MovieType.movie:
+          _title = '电影';
+          _videoUrl = '${ApiConstant.movieBaseUrl1}/vodtype/dianying-';
+          break;
+        case MovieType.tv:
+          _title = '电视剧';
+          _videoUrl = '${ApiConstant.movieBaseUrl1}/vodtype/lianxuju-';
+          break;
+        case MovieType.variety:
+          _title = '综艺';
+          _videoUrl = '${ApiConstant.movieBaseUrl1}/vodtype/zongyi-';
+          break;
+        case MovieType.comic:
+          _title = '动漫';
+          _videoUrl = '${ApiConstant.movieBaseUrl1}/vodtype/dongman-';
+          break;
+      }
+    }
+  }
+
+  void initChildBtn(List<ButtonBean> btns) {
+    if (_childButtons == null) {
+      _childButtons = [];
+    } else {
+      _childButtons?.clear();
+    }
+    for (var value in btns) {
+      _childButtons?.add(value);
+    }
+  }
+
+  getGridView() {
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          // (widget._type == MovieType.movie && bannerList.isNotEmpty)
+              // ? SizedBox(
+              //     height: 250,
+              //     child: Swiper(
+              //       autoplay: true,
+              //       autoplayDelay: 3000,
+              //       loop: true,
+              //       itemCount: bannerList.length,
+              //       viewportFraction: 0.5,
+              //       scale: 0.75,
+              //       itemBuilder: (context, index) {
+              //         return geBannerItem(index);
+              //       },
+              //     ),
+              //   )
+              // : Container(),
+          Container(),
+          GridView.builder(
+            physics: new NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            padding: EdgeInsets.all(10),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                childAspectRatio: 0.6,
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 10),
+            itemBuilder: (BuildContext context, int index) {
+              return getItem(index);
+            },
+            itemCount: data.length,
+          )
+        ],
+      ),
+    );
+  }
+
+  getListView() {
+    return  GridView.builder(
+      shrinkWrap: true,
+      padding: EdgeInsets.all(10),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 3,
+          childAspectRatio: 0.6,
+          crossAxisSpacing: 10,
+          mainAxisSpacing: 10),
+      itemBuilder: (BuildContext context, int index) {
+        return getItem(index);
+      },
+      itemCount: data.length,
+    ) ;
+  }
+
+  generateItemList() {
+    List<DropdownMenuItem<String>> items = [];
+    DropdownMenuItem<String> item1 =
+        new DropdownMenuItem(value: '1', child: new Text('数据源1'));
+    DropdownMenuItem<String> item2 =
+        new DropdownMenuItem(value: '2', child: new Text('数据源2'));
+    items.add(item1);
+    items.add(item2);
+    return items;
+  }
+
+  void initType(bool isInit) async {
+    if (_type == -1) {
+      sp = await SpUtil.getInstance();
+      String? ty = await sp.getString(SharedPreferencesKeys.movieType);
+      if (ty != null) {
+        int type = int.parse(ty);
+        _type = type == null ? 1 : type;
+      } else {
+        _type = 1;
+      }
+    }
+    _type = 1;
+    if (_currentKey.isEmpty) initUrl();
+
+    _presenter?.loadMovieList(_videoUrl, _index, widget._type, true, _type,isType:_isType);
+  }
+
+  geBannerItem(int index) {
+    var item = bannerList[index];
+    return new GestureDetector(
+      onTap: () {
+        showLoading();
+        _presenter.getVideoUrl(item.targetUrl!, _type);
+      },
+      child: Padding(
+        padding: EdgeInsets.only(left: 10, right: 10, top: 20),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(5),
+          child: Container(
+            color: Colors.white,
+            child: ConstrainedBox(
+              child: CachedNetworkImage(
+                placeholder: (context, url) => new Icon(Icons.image),
+                errorWidget: (context, url, error) => new Icon(Icons.error),
+                imageUrl: item.imageUrl!,
+                fit: BoxFit.cover,
+              ),
+              constraints: new BoxConstraints.expand(),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }
+
+enum MovieType { movie, tv, variety, comic }

@@ -9,10 +9,14 @@ class EscapeUnescape{
     while (lastPos < src.length) {
       pos = src.indexOf("%", lastPos);
       if (pos == lastPos) {
-        int code = hexToInt(src
-            .substring(pos + 1, pos + 3));
-        ch = String.fromCharCode(code) ;
-        tmp.write(ch);
+        try {
+          int code = hexToInt(src
+                      .substring(pos + 1, pos + 3));
+          ch = String.fromCharCode(code);
+          tmp.write(ch);
+        } catch (e) {
+          print(e);
+        }
         lastPos = pos + 3;
       } else {
         if (pos == -1) {
