@@ -12,7 +12,7 @@ class Video9ListBean {
     if (json['list'] != null) {
       list = [];
       json['list'].forEach((v) {
-        list.add(Video9ListItem.fromJson(v));
+        list!.add(Video9ListItem.fromJson(v));
       });
     }
     hasMore = json['hasMore'];
@@ -20,16 +20,16 @@ class Video9ListBean {
     page = json['page'];
     total = json['total'];
   }
-  List<Video9ListItem> list;
-  bool hasMore;
-  int size;
-  int page;
-  int total;
+  List<Video9ListItem>? list;
+  bool? hasMore;
+  int? size;
+  int? page;
+  int? total;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
     if (list != null) {
-      map['list'] = list.map((v) => v.toJson()).toList();
+      map['list'] = list!.map((v) => v.toJson()).toList();
     }
     map['hasMore'] = hasMore;
     map['size'] = size;

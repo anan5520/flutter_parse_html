@@ -5,7 +5,6 @@ import 'package:flutter_parse_html/model/porn_bean.dart';
 import 'package:flutter_parse_html/model/video_list_item.dart';
 import 'package:flutter_parse_html/net/net_util.dart';
 import 'package:flutter_parse_html/ui/pornhub/pornhub_util.dart';
-import 'package:gbk2utf8/gbk2utf8.dart';
 import 'package:html/dom.dart';
 import 'package:html/parser.dart' as parse;
 
@@ -29,7 +28,7 @@ class YaSeHelper {
         String url = '';
         var imgEle = value.getElementsByTagName('img');
         if (imgEle != null && imgEle.length != 0) {
-          url = value.getElementsByTagName('img').first.attributes['data-original'];
+          url = value.getElementsByTagName('img').first.attributes['data-original']!;
         }
         if (url == null || url == '') {
           url = value
@@ -37,7 +36,7 @@ class YaSeHelper {
               .first
               .getElementsByTagName('div')
               .first
-              .attributes['data-original'];
+              .attributes['data-original']!;
         }
         videoListItem.imageUrl = url;
         list.add(videoListItem);
@@ -55,7 +54,7 @@ class YaSeHelper {
     for (var value in elements) {
       VideoListItem videoListItem = VideoListItem();
       var h2 = value.getElementsByTagName('a').first;
-      videoListItem.targetUrl = ApiConstant.yaSeUrl + h2.attributes['href'];
+      videoListItem.targetUrl = ApiConstant.yaSeUrl + h2.attributes['href']!;
       videoListItem.title = h2.attributes['title'];
       videoListItem.des = value.getElementsByClassName('novel-desc').first.text;
       list.add(videoListItem);
@@ -80,7 +79,7 @@ class YaSeHelper {
             .first
             .getElementsByTagName('a')
             .first;
-        videoListItem.targetUrl = ApiConstant.yaSeUrl + h2.attributes['href'];
+        videoListItem.targetUrl = ApiConstant.yaSeUrl + h2.attributes['href']!;
         videoListItem.title = h2.attributes['title'];
         var userEle = value.getElementsByClassName('meta-cat get-userinfo');
         var vid;
@@ -99,12 +98,12 @@ class YaSeHelper {
         }
         videoListItem.vid = vid;
         String imageUrl =
-            value.getElementsByTagName('img').first.attributes['data-src'];
+            value.getElementsByTagName('img').first.attributes['data-src']!;
         if (imageUrl == null)
           imageUrl = value
               .getElementsByTagName('img')
               .first
-              .attributes['data-original'];
+              .attributes['data-original']!;
         videoListItem.imageUrl = imageUrl;
         videoListItem.des = value
             .getElementsByClassName('meta')
@@ -138,9 +137,9 @@ class YaSeHelper {
         List<String> imgList = [];
         var eles = ele.getElementsByTagName('img');
         for (var value in eles) {
-          String url = value.attributes['data-src'];
-          if (url == null) url = value.attributes['data-original'];
-          if (url == null) url = value.attributes['src'];
+          String url = value.attributes['data-src']!;
+          if (url == null) url = value.attributes['data-original']!;
+          if (url == null) url = value.attributes['src']!;
           value.attributes['src'] = url;
           if (url != null && url != "") imgList.add(url);
         }
@@ -170,9 +169,9 @@ class YaSeHelper {
         List<String> imgList = [];
         var eles = ele.getElementsByTagName('img');
         for (var value in eles) {
-          String url = value.attributes['data-src'];
-          if (url == null) url = value.attributes['data-original'];
-          if (url == null) url = value.attributes['src'];
+          String url = value.attributes['data-src']!;
+          if (url == null) url = value.attributes['data-original']!;
+          if (url == null) url = value.attributes['src']!;
           value.attributes['src'] = url;
           if (url != null && url != "") imgList.add(url);
         }
@@ -189,13 +188,13 @@ class YaSeHelper {
   //解析自拍详情
   static Future<List<VideoComment>> parseAbjContent(String url,int page) {
     var requestUrl = '$url${url.contains('?')?'&':'?'}page=$page';
-    return NetUtil.getHtmlData(requestUrl, isWeb: false,isGbk: true).then((onValue) async {
+    return NetUtil.getHtmlData(requestUrl, isWeb: false,isGbk: false).then((onValue) async {
       List<VideoComment> videoComments = [];
       Document doc = parse.parse(onValue);
       PornForumContent pornForumContent = PornForumContent();
       try {
         var postEle = doc.getElementById('postlist');
-        var eleList = postEle.getElementsByClassName('plhin');
+        var eleList = postEle!.getElementsByClassName('plhin');
         if(page == 1){
           var rootEles = doc.getElementsByClassName('pct');
           Element ele;
@@ -208,13 +207,13 @@ class YaSeHelper {
           var eles = ele.getElementsByTagName('ignore_js_op');
           for (var value in eles) {
             var imgEle = value.getElementsByTagName('img').first;
-            String url = imgEle.attributes['data-src'];
+            String? url = imgEle.attributes['data-src'];
             if (url == null) url = imgEle.attributes['data-original'];
             if (url == null) url = imgEle.attributes['zoomfile'];
             if(url != null){
               imgEle.attributes['src'] =
               '${ApiConstant.abjUrl}${!url.startsWith('/') ? '/' : ''}$url';
-              if (url != null && url != "") imgList.add(imgEle.attributes['src']);
+              if (url != null && url != "") imgList.add(imgEle.attributes['src']!);
             }
           }
           if (imgList.length == 0) {

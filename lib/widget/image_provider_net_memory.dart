@@ -19,7 +19,7 @@ class NetworkImageMemory extends image_provider.ImageProvider<image_provider.Net
   /// Creates an object that fetches the image at the given URL.
   ///
   /// The arguments [url] and [scale] must not be null.
-  const NetworkImageMemory(this.url, { this.scale = 1.0, this.headers })
+  const NetworkImageMemory(this.url, { this.scale = 1.0, this.headers = const {} })
       : assert(url != null),
         assert(scale != null);
 
@@ -38,7 +38,7 @@ class NetworkImageMemory extends image_provider.ImageProvider<image_provider.Net
   }
 
   @override
-  ImageStreamCompleter load(image_provider.NetworkImage key, image_provider.DecoderCallback decode) {
+  ImageStreamCompleter load(image_provider.NetworkImage key, image_provider.ImageDecoderCallback decode) {
     // Ownership of this controller is handed off to [_loadAsync]; it is that
     // method's responsibility to close the controller's stream when the image
     // has been loaded or an error is thrown.
@@ -66,7 +66,7 @@ class NetworkImageMemory extends image_provider.ImageProvider<image_provider.Net
 
   static final HttpClient _httpClient = HttpClient();
 
-  Future<ui.Codec> _loadAsync(NetworkImageMemory key) async {
+  Future<ui.Codec> _loadAsync(image_provider.NetworkImage key) async {
     assert(key == this);
     // //解决不安全证书校验通不过的问题
     // _httpClient.badCertificateCallback = (X509Certificate cert,String host,int port){
@@ -87,7 +87,7 @@ class NetworkImageMemory extends image_provider.ImageProvider<image_provider.Net
 
     var base64Str = "/9j${String.fromCharCodes(bytes).split("/9j")[1]}";
 
-    return PaintingBinding.instance.instantiateImageCodec(base64.decode(base64Str));
+    return PaintingBinding.instance.instantiateImageCodecFromBuffer(await ImmutableBuffer.fromUint8List(base64.decode(base64Str)));
   }
 
   @override

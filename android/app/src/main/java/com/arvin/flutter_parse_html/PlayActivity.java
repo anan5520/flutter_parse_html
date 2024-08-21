@@ -18,12 +18,11 @@ import com.shuyu.gsyvideoplayer.cache.CacheFactory;
 import com.shuyu.gsyvideoplayer.player.PlayerFactory;
 import com.shuyu.gsyvideoplayer.utils.OrientationUtils;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.view.ViewCompat;
+import android.app.Activity;
 import tv.danmaku.ijk.media.exo2.Exo2PlayerManager;
 import tv.danmaku.ijk.media.exo2.ExoPlayerCacheManager;
 
-public class PlayActivity extends AppCompatActivity {
+public class PlayActivity extends Activity {
 
     public final static String IMG_TRANSITION = "IMG_TRANSITION";
     public final static String TRANSITION = "TRANSITION";
@@ -164,7 +163,6 @@ public class PlayActivity extends AppCompatActivity {
     private void initTransition() {
         if (isTransition && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             postponeEnterTransition();
-            ViewCompat.setTransitionName(videoPlayer, IMG_TRANSITION);
             addTransitionListener();
             startPostponedEnterTransition();
         } else {

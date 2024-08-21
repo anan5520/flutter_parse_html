@@ -13,7 +13,7 @@ class PornHelper {
 
   static Future<VideoResult> parseVideoPage(PornItem item) {
     var viewKey = item.viewKey;
-    Map<String, String> param = {'viewkey': viewKey};
+    Map<String, String> param = {'viewkey': viewKey!};
     Map<String, String> header = {
       'X-Forwarded-For': _getRandomIPAddress(),
       'Referer': ApiConstant.getPornHomeUrl(),
@@ -124,7 +124,7 @@ class PornHelper {
       }
       var document = parse.parse(s);
       String videoUrl =
-          document.querySelectorAll('source').first.attributes['src'];
+          document.querySelectorAll('source').first.attributes['src']!;
       videoResult.videoUrl = videoUrl;
       try {
         var tempVideoUrl = videoUrl.substring(0, videoUrl.indexOf(".m3u8"));
@@ -137,7 +137,7 @@ class PornHelper {
       var doc = parse.parse(html);
       try {
         String ownerUrl =
-                  doc.querySelectorAll('a[href*=UID]').first.attributes['href'];
+                  doc.querySelectorAll('a[href*=UID]').first.attributes['href']!;
         String ownerId =
                   ownerUrl.substring(ownerUrl.indexOf('=') + 1, ownerUrl.length);
         videoResult.ownerId = ownerId;
@@ -146,7 +146,7 @@ class PornHelper {
       }
 
       var element =
-          doc.getElementById('addToFavLink').querySelectorAll('a').first;
+          doc.getElementById('addToFavLink')!.querySelectorAll('a').first;
       var addToFavLink = element.attributes;
 
 //      var args = addToFavLink['onclick'].split(',');
@@ -159,7 +159,7 @@ class PornHelper {
 //      videoResult.authorId = authorId;
 
       try {
-        String ownerName = doc.querySelector('a[href*=UID]').text;
+        String ownerName = doc.querySelector('a[href*=UID]')!.text;
         videoResult.ownerName = ownerName;
       } catch (e) {
         print(e);
@@ -187,7 +187,7 @@ class PornHelper {
       if (imageEles != null &&
           imageEles.attributes != null &&
           imageEles.attributes.containsKey('poster')) {
-        String thumbImg = doc.getElementById('vid').attributes['poster'];
+        String thumbImg = doc.getElementById('vid')!.attributes['poster']!;
         videoResult.thumbImgUrl = thumbImg;
       }
 
@@ -199,7 +199,7 @@ class PornHelper {
         var eles = doc.getElementsByTagName('source');
         String videoUrl = '';
         if (eles.length > 0) {
-          videoUrl = eles.first.attributes['src'];
+          videoUrl = eles.first.attributes['src']!;
         } else {
           var videos = html.split(new RegExp(r'<source src="|" type='));
           videos.forEach((element) {
@@ -221,7 +221,7 @@ class PornHelper {
         } catch (e) {
           print(e);
         }
-        String content = doc.getElementById('videodetails-content').text;
+        String content = doc.getElementById('videodetails-content')!.text;
         var times = content.split(new RegExp(r'添加时间:|作者:'));
         if (times.length > 1) {
           videoResult.addDate = times[1];
@@ -251,7 +251,7 @@ class PornHelper {
       VideoComment videoComment = VideoComment();
 
       String ownnerUrl =
-          element.querySelectorAll('a[href*=UID]').first.attributes['href'];
+          element.querySelectorAll('a[href*=UID]').first.attributes['href']!;
       String uid =
           ownnerUrl.substring(ownnerUrl.indexOf('=') + 1, ownnerUrl.length);
       videoComment.uid = uid;
@@ -265,7 +265,7 @@ class PornHelper {
           replyTime.replaceAll('(', '').replaceAll(')', '');
 
       String tmpreplyId =
-          element.querySelectorAll('div.comment-body').first.attributes['id'];
+          element.querySelectorAll('div.comment-body').first.attributes['id']!;
       String replyId = tmpreplyId.substring(
           tmpreplyId.lastIndexOf('_') + 1, tmpreplyId.length);
       videoComment.replyId = replyId;
@@ -321,7 +321,7 @@ class PornHelper {
       for (var element in elements) {
         if(td.outerHtml.contains('title')){
           PornForumItem pornForumItem = new PornForumItem();
-          String allInfo = element.attributes['title'].replaceAll('\n', '');
+          String allInfo = element.attributes['title']!.replaceAll('\n', '');
           int titeleIndex = allInfo.indexOf('主题标题:');
           int authorIndex = allInfo.indexOf('主题作者:');
           int authorPublishTimeIndex = allInfo.indexOf('发表时间:');
@@ -356,7 +356,7 @@ class PornHelper {
           pornForumItem.replyCount = int.parse(replyCount);
           pornForumItem.authorPublishTime = authorPublishTime;
 
-          String contentUrl = element.attributes['href'];
+          String contentUrl = element.attributes['href']!;
           int startIndex = contentUrl.indexOf('tid=');
           String tidStr = contentUrl.substring(startIndex + 4, contentUrl.length);
           if (tidStr.isNotEmpty) {
@@ -389,7 +389,7 @@ class PornHelper {
             if (th != null) {
               String title = th.querySelectorAll('a').first.text;
               item.title = title.replaceAll('\n', '');
-              String contentUrl = th.querySelectorAll('a').first.attributes['href'];
+              String contentUrl = th.querySelectorAll('a').first.attributes['href']!;
               int startIndex = contentUrl.indexOf('tid=');
               int endIndex = contentUrl.indexOf('&');
               String tidStr = contentUrl.substring(startIndex + 4, endIndex);
@@ -397,12 +397,12 @@ class PornHelper {
                 item.tid = int.parse(tidStr);
               }
               var imageElements = th.querySelectorAll('img');
-              List<String> stringList;
+              List<String>? stringList;
               for (var value in imageElements) {
                 if (stringList == null) {
                   stringList = [];
                 }
-                stringList.add(value.attributes['src']);
+                stringList.add(value.attributes['src']!);
               }
               item.imageList = stringList;
 
@@ -418,13 +418,13 @@ class PornHelper {
                   switch (className) {
                     case "folder":
                       String folder =
-                          td.querySelectorAll("img").first.attributes["src"];
+                          td.querySelectorAll("img").first.attributes["src"]!;
                       item.folder = folder;
                       break;
                     case "icon":
                       var iconElement = td.querySelectorAll("img").first;
                       if (iconElement != null) {
-                        String icon = iconElement.attributes["src"];
+                        String icon = iconElement.attributes["src"]!;
                         item.icon = icon;
                       }
                       break;
@@ -471,7 +471,7 @@ class PornHelper {
     var linkTag = doc.querySelectorAll('link').first;
     String address = '';
     if (linkTag != null) {
-      String href = linkTag.attributes['href'];
+      String href = linkTag.attributes['href']!;
       address = href.substring(0, href.indexOf('archiver'));
     }
 //    if(address.isNotEmpty && address != ApiConstant.pornBaseUrl){
@@ -506,7 +506,7 @@ class PornHelper {
     try {
       var imagesElements = content.querySelectorAll('img');
       for (var element in imagesElements) {
-        String imgUrl = element.attributes['src'];
+        String imgUrl = element.attributes['src']!;
         bool canUserSrcValue = imgUrl != null &&
             imgUrl.isNotEmpty &&
             imgUrl.endsWith('.jpg') &&
@@ -515,11 +515,11 @@ class PornHelper {
           imgUrl = baseUrl + imgUrl;
           element.attributes['src'] = imgUrl;
           StringList.add(imgUrl);
-        } else {
-          String fileValue = element.attributes['file'];
+        } else if(element.attributes.containsKey('file')){
+          String fileValue = element.attributes['file']!;
           if (fileValue != null && fileValue.isNotEmpty) {
             if (!fileValue.startsWith('http')) {
-              imgUrl = baseUrl + element.attributes['file'];
+              imgUrl = baseUrl + element.attributes['file']!;
             } else {
               imgUrl = fileValue;
             }

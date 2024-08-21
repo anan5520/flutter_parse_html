@@ -26,7 +26,7 @@ import 'package:flutter_parse_html/model/movie_bean.dart';
 class GifListLsjPage extends StatefulWidget {
   GifListLsjPage();
 
-  static var videoBase = "http://www.34tn.com/";
+  static var videoBase = "https://www.k8467w.com/";
 
   @override
   State<StatefulWidget> createState() {
@@ -37,13 +37,13 @@ class GifListLsjPage extends StatefulWidget {
 class GifListLsjState extends State<GifListLsjPage>
     with AutomaticKeepAliveClientMixin {
   List<VideoListItem> _data = [];
-  List<ButtonBean> _btns;
+  List<ButtonBean>? _btns;
 
-  RefreshController _refreshController;
+  late RefreshController _refreshController;
   int _page = 1, buttonType = 0;
   String _currentKey = '/vodlist/33';
   bool _isSearch = false;
-  TextEditingController _editingController;
+  late TextEditingController _editingController;
 
   @override
   void initState() {
@@ -96,7 +96,7 @@ class GifListLsjState extends State<GifListLsjPage>
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          if (_btns.length > 0) {
+          if (_btns?.isNotEmpty ?? false) {
             //有选项再显示
             _showDialog();
           }
@@ -109,14 +109,14 @@ class GifListLsjState extends State<GifListLsjPage>
   //跳转播放
   void goToPlay(VideoListItem data) async {
     showLoading();
-    var response = await PornHubUtil.getHtmlFromHttpDeugger(data.targetUrl);
+    var response = await PornHubUtil.getHtmlFromHttpDeugger(data.targetUrl!);
     try {
       var doc = parse.parse(response);
-      var imgs = List<String>();
+      var imgs = [];
       var isGif = false;
       doc.getElementsByClassName('box movie_list').first.getElementsByTagName('img').forEach((element) {
         var url = element.attributes['src'];
-        isGif = url.endsWith(".gif");
+        isGif = url!.endsWith(".gif");
         imgs.add(url);
       });
 
@@ -146,7 +146,7 @@ class GifListLsjState extends State<GifListLsjPage>
                   child: CachedNetworkImage(
                     placeholder: (context, url) => new Icon(Icons.image),
                     errorWidget: (context, url, error) => new Icon(Icons.error),
-                    imageUrl: item.imageUrl,
+                    imageUrl: item.imageUrl!,
                     fit: BoxFit.cover,
                   ),
                   constraints: new BoxConstraints.expand(),
@@ -168,7 +168,7 @@ class GifListLsjState extends State<GifListLsjPage>
   }
 
   void getBtn() async {
-    if (_btns == null || _btns.length == 0) {
+    if (_btns == null || _btns?.length == 0) {
       _btns = [];
       String response =
           await PornHubUtil.getHtmlFromHttpDeugger(GifListLsjPage.videoBase);
@@ -183,7 +183,7 @@ class GifListLsjState extends State<GifListLsjPage>
             buttonBean.title = liEle.text;
             buttonBean.value =
                 liEle.getElementsByTagName('a').first.attributes['href'];
-            _btns.add(buttonBean);
+            _btns?.add(buttonBean);
           });
         }
       });
@@ -194,12 +194,12 @@ class GifListLsjState extends State<GifListLsjPage>
             buttonBean.title = liEle.text;
             buttonBean.value =
             liEle.getElementsByTagName('a').first.attributes['href'];
-            _btns.add(buttonBean);
+            _btns?.add(buttonBean);
           });
         }
       });
-      if (_btns.length > 0) {
-        _currentKey = _btns[0].value;
+      if (_btns?.isNotEmpty ?? false) {
+        _currentKey = _btns![0].value!;
         _getData();
       }
     } else {
@@ -237,7 +237,7 @@ class GifListLsjState extends State<GifListLsjPage>
         context: context,
         builder: (context) {
           return new AlertDialog(
-            content: GridViewDialog(_btns),
+            content: GridViewDialog(_btns!),
           );
         });
     if (buttonBean != null) {
@@ -247,7 +247,7 @@ class GifListLsjState extends State<GifListLsjPage>
       } else {
         _isSearch = false;
         buttonType = 0;
-        _currentKey = buttonBean.value;
+        _currentKey = buttonBean.value!;
       }
       _refreshController.requestRefresh();
     }

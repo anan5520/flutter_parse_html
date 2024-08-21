@@ -2,7 +2,7 @@
 
 class Video12Bean {
   Video12Bean({
-      List<Data> data,}){
+      List<Data>? data,}){
     _data = data;
 }
 
@@ -10,18 +10,18 @@ class Video12Bean {
     if (json['data'] != null) {
       _data = [];
       json['data'].forEach((v) {
-        _data.add(Data.fromJson(v));
+        _data!.add(Data.fromJson(v));
       });
     }
   }
-  List<Data> _data;
+  List<Data>? _data;
 
-  List<Data> get data => _data;
+  List<Data>? get data => _data;
 
-  Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
+  Map<String?, dynamic> toJson() {
+    final map = <String?, dynamic>{};
     if (_data != null) {
-      map['data'] = _data.map((v) => v.toJson()).toList();
+      map['data'] = _data!.map((v) => v.toJson()).toList();
     }
     return map;
   }
@@ -38,13 +38,13 @@ class Video12Bean {
 
 class Data {
   Data({
-      String biaoti, 
-      String tupian, 
-      String dizhi, 
-      String diqu, 
-      String shijian, 
-      String yuyan, 
-      String leixing,}){
+      String? biaoti, 
+      String? tupian, 
+      String? dizhi, 
+      String? diqu, 
+      String? shijian, 
+      String? yuyan, 
+      String? leixing,}){
     _biaoti = biaoti;
     _tupian = tupian;
     _dizhi = dizhi;
@@ -63,24 +63,24 @@ class Data {
     _yuyan = json['yuyan'];
     _leixing = json['leixing'];
   }
-  String _biaoti;
-  String _tupian;
-  String _dizhi;
-  String _diqu;
-  String _shijian;
-  String _yuyan;
-  String _leixing;
+  String? _biaoti;
+  String? _tupian;
+  String? _dizhi;
+  String? _diqu;
+  String? _shijian;
+  String? _yuyan;
+  String? _leixing;
 
-  String get biaoti => _biaoti;
-  String get tupian => _tupian;
-  String get dizhi => _dizhi;
-  String get diqu => _diqu;
-  String get shijian => _shijian;
-  String get yuyan => _yuyan;
-  String get leixing => _leixing;
+  String? get biaoti => _biaoti;
+  String? get tupian => _tupian;
+  String? get dizhi => _dizhi;
+  String? get diqu => _diqu;
+  String? get shijian => _shijian;
+  String? get yuyan => _yuyan;
+  String? get leixing => _leixing;
 
-  Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
+  Map<String?, dynamic> toJson() {
+    final map = <String?, dynamic>{};
     map['biaoti'] = _biaoti;
     map['tupian'] = _tupian;
     map['dizhi'] = _dizhi;

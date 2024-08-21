@@ -3,8 +3,8 @@
 
 class Video9DetailBean {
   Video9DetailBean({
-      Info info, 
-      List<RoadList> roadList,}){
+      Info? info, 
+      List<RoadList>? roadList,}){
     _info = info;
     _roadList = roadList;
 }
@@ -14,27 +14,27 @@ class Video9DetailBean {
     if (json['roadList'] != null) {
       _roadList = [];
       json['roadList'].forEach((v) {
-        _roadList.add(RoadList.fromJson(v));
+        _roadList!.add(RoadList.fromJson(v));
       });
     }
   }
-  Info _info;
-  List<RoadList> _roadList;
-Video9DetailBean copyWith({  Info info,
-  List<RoadList> roadList,
+  Info? _info;
+  List<RoadList>? _roadList;
+Video9DetailBean copyWith({  Info? info,
+  List<RoadList>? roadList,
 }) => Video9DetailBean(  info: info ?? _info,
   roadList: roadList ?? _roadList,
 );
-  Info get info => _info;
-  List<RoadList> get roadList => _roadList;
+  Info? get info => _info;
+  List<RoadList>? get roadList => _roadList;
 
-  Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
+  Map<String?, dynamic> toJson() {
+    final map = <String?, dynamic>{};
     if (_info != null) {
-      map['info'] = _info.toJson();
+      map['info'] = _info!.toJson();
     }
     if (_roadList != null) {
-      map['roadList'] = _roadList.map((v) => v.toJson()).toList();
+      map['roadList'] = _roadList!.map((v) => v.toJson()).toList();
     }
     return map;
   }
@@ -48,10 +48,10 @@ Video9DetailBean copyWith({  Info info,
 
 class RoadList {
   RoadList({
-      String id, 
-      String name, 
-      String domain, 
-      String isVip,}){
+      String? id, 
+      String? name, 
+      String? domain, 
+      String? isVip,}){
     _id = id;
     _name = name;
     _domain = domain;
@@ -64,26 +64,26 @@ class RoadList {
     _domain = json['domain'];
     _isVip = json['is_vip'];
   }
-  String _id;
-  String _name;
-  String _domain;
-  String _isVip;
-RoadList copyWith({  String id,
-  String name,
-  String domain,
-  String isVip,
+  String? _id;
+  String? _name;
+  String? _domain;
+  String? _isVip;
+RoadList copyWith({  String? id,
+  String? name,
+  String? domain,
+  String? isVip,
 }) => RoadList(  id: id ?? _id,
   name: name ?? _name,
   domain: domain ?? _domain,
   isVip: isVip ?? _isVip,
 );
-  String get id => _id;
-  String get name => _name;
-  String get domain => _domain;
-  String get isVip => _isVip;
+  String? get id => _id;
+  String? get name => _name;
+  String? get domain => _domain;
+  String? get isVip => _isVip;
 
-  Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
+  Map<String?, dynamic> toJson() {
+    final map = <String?, dynamic>{};
     map['id'] = _id;
     map['name'] = _name;
     map['domain'] = _domain;
@@ -142,52 +142,52 @@ RoadList copyWith({  String id,
 
 class Info {
   Info({
-      num id, 
-      String title, 
-      String url, 
-      String urlS, 
-      num isTrans, 
-      num scores, 
-      String times, 
-      String thumbimg, 
-      String remark, 
-      num category, 
-      String tags, 
+      num? id, 
+      String? title, 
+      String? url, 
+      String? urlS, 
+      num? isTrans, 
+      num? scores, 
+      String? times, 
+      String? thumbimg, 
+      String? remark, 
+      num? category, 
+      String? tags, 
       dynamic photos, 
-      String type, 
-      num status, 
-      num isRec, 
-      num hits, 
-      num comments, 
-      num zan, 
-      num collect, 
-      num userId, 
-      String userName, 
-      String userAvatar, 
-      num userType, 
-      String subTime, 
-      String createTime, 
-      String updateTime, 
-      num isDy, 
-      num thumbType, 
-      num isVip, 
-      List<dynamic> topic, 
-      num cityId, 
-      String cityName, 
-      num isTop, 
-      String userTop, 
-      String userShow, 
-      num scoresFan, 
-      String passMsg, 
-      num passTime, 
-      String content, 
-      List<dynamic> imglist, 
-      String urlSS, 
-      num userVip, 
-      num hasZan, 
-      num hasCollect, 
-      num hasDown, 
-      num isFollow,}){
+      String? type, 
+      num? status, 
+      num? isRec, 
+      num? hits, 
+      num? comments, 
+      num? zan, 
+      num? collect, 
+      num? userId, 
+      String? userName, 
+      String? userAvatar, 
+      num? userType, 
+      String? subTime, 
+      String? createTime, 
+      String? updateTime, 
+      num? isDy, 
+      num? thumbType, 
+      num? isVip, 
+      List<dynamic>? topic, 
+      num? cityId, 
+      String? cityName, 
+      num? isTop, 
+      String? userTop, 
+      String? userShow, 
+      num? scoresFan, 
+      String? passMsg, 
+      num? passTime, 
+      String? content, 
+      List<dynamic>? imglist, 
+      String? urlSS, 
+      num? userVip, 
+      num? hasZan, 
+      num? hasCollect, 
+      num? hasDown, 
+      num? isFollow,}){
     _id = id;
     _title = title;
     _url = url;
@@ -269,7 +269,7 @@ class Info {
     if (json['topic'] != null) {
       _topic = [];
       json['topic'].forEach((v) {
-        _topic.add(v);
+        _topic!.add(v);
       });
     }
     _cityId = json['city_id'];
@@ -284,7 +284,7 @@ class Info {
     if (json['imglist'] != null) {
       _imglist = [];
       json['imglist'].forEach((v) {
-        _imglist.add(v);
+        _imglist!.add(v);
       });
     }
     _urlSS = json['url_s_s'];
@@ -294,98 +294,98 @@ class Info {
     _hasDown = json['hasDown'];
     _isFollow = json['isFollow'];
   }
-  num _id;
-  String _title;
-  String _url;
-  String _urlS;
-  num _isTrans;
-  num _scores;
-  String _times;
-  String _thumbimg;
-  String _remark;
-  num _category;
-  String _tags;
+  num? _id;
+  String? _title;
+  String? _url;
+  String? _urlS;
+  num? _isTrans;
+  num? _scores;
+  String? _times;
+  String? _thumbimg;
+  String? _remark;
+  num? _category;
+  String? _tags;
   dynamic _photos;
-  String _type;
-  num _status;
-  num _isRec;
-  num _hits;
-  num _comments;
-  num _zan;
-  num _collect;
-  num _userId;
-  String _userName;
-  String _userAvatar;
-  num _userType;
-  String _subTime;
-  String _createTime;
-  String _updateTime;
-  num _isDy;
-  num _thumbType;
-  num _isVip;
-  List<dynamic> _topic;
-  num _cityId;
-  String _cityName;
-  num _isTop;
-  String _userTop;
-  String _userShow;
-  num _scoresFan;
-  String _passMsg;
-  num _passTime;
-  String _content;
-  List<dynamic> _imglist;
-  String _urlSS;
-  num _userVip;
-  num _hasZan;
-  num _hasCollect;
-  num _hasDown;
-  num _isFollow;
-Info copyWith({  num id,
-  String title,
-  String url,
-  String urlS,
-  num isTrans,
-  num scores,
-  String times,
-  String thumbimg,
-  String remark,
-  num category,
-  String tags,
+  String? _type;
+  num? _status;
+  num? _isRec;
+  num? _hits;
+  num? _comments;
+  num? _zan;
+  num? _collect;
+  num? _userId;
+  String? _userName;
+  String? _userAvatar;
+  num? _userType;
+  String? _subTime;
+  String? _createTime;
+  String? _updateTime;
+  num? _isDy;
+  num? _thumbType;
+  num? _isVip;
+  List<dynamic>? _topic;
+  num? _cityId;
+  String? _cityName;
+  num? _isTop;
+  String? _userTop;
+  String? _userShow;
+  num? _scoresFan;
+  String? _passMsg;
+  num? _passTime;
+  String? _content;
+  List<dynamic>? _imglist;
+  String? _urlSS;
+  num? _userVip;
+  num? _hasZan;
+  num? _hasCollect;
+  num? _hasDown;
+  num? _isFollow;
+Info copyWith({  num? id,
+  String? title,
+  String? url,
+  String? urlS,
+  num? isTrans,
+  num? scores,
+  String? times,
+  String? thumbimg,
+  String? remark,
+  num? category,
+  String? tags,
   dynamic photos,
-  String type,
-  num status,
-  num isRec,
-  num hits,
-  num comments,
-  num zan,
-  num collect,
-  num userId,
-  String userName,
-  String userAvatar,
-  num userType,
-  String subTime,
-  String createTime,
-  String updateTime,
-  num isDy,
-  num thumbType,
-  num isVip,
-  List<dynamic> topic,
-  num cityId,
-  String cityName,
-  num isTop,
-  String userTop,
-  String userShow,
-  num scoresFan,
-  String passMsg,
-  num passTime,
-  String content,
-  List<dynamic> imglist,
-  String urlSS,
-  num userVip,
-  num hasZan,
-  num hasCollect,
-  num hasDown,
-  num isFollow,
+  String? type,
+  num? status,
+  num? isRec,
+  num? hits,
+  num? comments,
+  num? zan,
+  num? collect,
+  num? userId,
+  String? userName,
+  String? userAvatar,
+  num? userType,
+  String? subTime,
+  String? createTime,
+  String? updateTime,
+  num? isDy,
+  num? thumbType,
+  num? isVip,
+  List<dynamic>? topic,
+  num? cityId,
+  String? cityName,
+  num? isTop,
+  String? userTop,
+  String? userShow,
+  num? scoresFan,
+  String? passMsg,
+  num? passTime,
+  String? content,
+  List<dynamic>? imglist,
+  String? urlSS,
+  num? userVip,
+  num? hasZan,
+  num? hasCollect,
+  num? hasDown,
+  num? isFollow,
 }) => Info(  id: id ?? _id,
   title: title ?? _title,
   url: url ?? _url,
@@ -433,55 +433,55 @@ Info copyWith({  num id,
   hasDown: hasDown ?? _hasDown,
   isFollow: isFollow ?? _isFollow,
 );
-  num get id => _id;
-  String get title => _title;
-  String get url => _url;
-  String get urlS => _urlS;
-  num get isTrans => _isTrans;
-  num get scores => _scores;
-  String get times => _times;
-  String get thumbimg => _thumbimg;
-  String get remark => _remark;
-  num get category => _category;
-  String get tags => _tags;
+  num? get id => _id;
+  String? get title => _title;
+  String? get url => _url;
+  String? get urlS => _urlS;
+  num? get isTrans => _isTrans;
+  num? get scores => _scores;
+  String? get times => _times;
+  String? get thumbimg => _thumbimg;
+  String? get remark => _remark;
+  num? get category => _category;
+  String? get tags => _tags;
   dynamic get photos => _photos;
-  String get type => _type;
-  num get status => _status;
-  num get isRec => _isRec;
-  num get hits => _hits;
-  num get comments => _comments;
-  num get zan => _zan;
-  num get collect => _collect;
-  num get userId => _userId;
-  String get userName => _userName;
-  String get userAvatar => _userAvatar;
-  num get userType => _userType;
-  String get subTime => _subTime;
-  String get createTime => _createTime;
-  String get updateTime => _updateTime;
-  num get isDy => _isDy;
-  num get thumbType => _thumbType;
-  num get isVip => _isVip;
-  List<dynamic> get topic => _topic;
-  num get cityId => _cityId;
-  String get cityName => _cityName;
-  num get isTop => _isTop;
-  String get userTop => _userTop;
-  String get userShow => _userShow;
-  num get scoresFan => _scoresFan;
-  String get passMsg => _passMsg;
-  num get passTime => _passTime;
-  String get content => _content;
-  List<dynamic> get imglist => _imglist;
-  String get urlSS => _urlSS;
-  num get userVip => _userVip;
-  num get hasZan => _hasZan;
-  num get hasCollect => _hasCollect;
-  num get hasDown => _hasDown;
-  num get isFollow => _isFollow;
+  String? get type => _type;
+  num? get status => _status;
+  num? get isRec => _isRec;
+  num? get hits => _hits;
+  num? get comments => _comments;
+  num? get zan => _zan;
+  num? get collect => _collect;
+  num? get userId => _userId;
+  String? get userName => _userName;
+  String? get userAvatar => _userAvatar;
+  num? get userType => _userType;
+  String? get subTime => _subTime;
+  String? get createTime => _createTime;
+  String? get updateTime => _updateTime;
+  num? get isDy => _isDy;
+  num? get thumbType => _thumbType;
+  num? get isVip => _isVip;
+  List<dynamic>? get topic => _topic;
+  num? get cityId => _cityId;
+  String? get cityName => _cityName;
+  num? get isTop => _isTop;
+  String? get userTop => _userTop;
+  String? get userShow => _userShow;
+  num? get scoresFan => _scoresFan;
+  String? get passMsg => _passMsg;
+  num? get passTime => _passTime;
+  String? get content => _content;
+  List<dynamic>? get imglist => _imglist;
+  String? get urlSS => _urlSS;
+  num? get userVip => _userVip;
+  num? get hasZan => _hasZan;
+  num? get hasCollect => _hasCollect;
+  num? get hasDown => _hasDown;
+  num? get isFollow => _isFollow;
 
-  Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
+  Map<String?, dynamic> toJson() {
+    final map = <String?, dynamic>{};
     map['id'] = _id;
     map['title'] = _title;
     map['url'] = _url;
@@ -512,7 +512,7 @@ Info copyWith({  num id,
     map['thumb_type'] = _thumbType;
     map['is_vip'] = _isVip;
     if (_topic != null) {
-      map['topic'] = _topic.map((v) => v.toJson()).toList();
+      map['topic'] = _topic!.map((v) => v.toJson()).toList();
     }
     map['city_id'] = _cityId;
     map['city_name'] = _cityName;
@@ -524,7 +524,7 @@ Info copyWith({  num id,
     map['pass_time'] = _passTime;
     map['content'] = _content;
     if (_imglist != null) {
-      map['imglist'] = _imglist.map((v) => v.toJson()).toList();
+      map['imglist'] = _imglist!.map((v) => v.toJson()).toList();
     }
     map['url_s_s'] = _urlSS;
     map['user_vip'] = _userVip;

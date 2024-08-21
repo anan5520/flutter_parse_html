@@ -25,13 +25,13 @@ class XianFeng6Page extends StatefulWidget {
 class XianFeng6State extends State<XianFeng6Page>
     with AutomaticKeepAliveClientMixin {
   List<VideoListItem> _data = [];
-  List<ButtonBean> _btns;
+  late List<ButtonBean> _btns;
 
-  RefreshController _refreshController;
+  late RefreshController _refreshController;
   int _page = 1,buttonType = 0;
   String _currentKey = '/index.php?s=vod-show-id-1';
   bool _isSearch = false;
-  TextEditingController _editingController;
+  late TextEditingController _editingController;
 
   @override
   void initState() {
@@ -119,7 +119,7 @@ class XianFeng6State extends State<XianFeng6Page>
 
   void goToPlay(VideoListItem data) async {
     showLoading();
-    var response = await PornHubUtil.getHtmlFromHttpDeugger(data.targetUrl);
+    var response = await PornHubUtil.getHtmlFromHttpDeugger(data.targetUrl!);
     try {
       var strings = response.split(new RegExp(r'url=|.m3u8'));
       String playUrl = '';
@@ -130,7 +130,7 @@ class XianFeng6State extends State<XianFeng6Page>
       }
       Navigator.pop(context);
       if (playUrl.startsWith('http')) {
-        CommonUtil.toVideoPlay(playUrl, context,title:data.title);
+        CommonUtil.toVideoPlay(playUrl, context,title:data.title!);
       }
     } catch (e) {
       Navigator.pop(context);
@@ -156,7 +156,7 @@ class XianFeng6State extends State<XianFeng6Page>
                   child: CachedNetworkImage(
                     placeholder: (context, url) => new Icon(Icons.image),
                     errorWidget: (context, url, error) => new Icon(Icons.error),
-                    imageUrl: item.imageUrl,
+                    imageUrl: item.imageUrl!,
                     fit: BoxFit.cover,
                   ),
                   constraints: new BoxConstraints.expand(),
@@ -194,10 +194,10 @@ class XianFeng6State extends State<XianFeng6Page>
         if (aEles.length > 0) {
           var aEle = aEles.first;
           VideoListItem item = VideoListItem();
-          String href = ApiConstant.xianFeng6Url + aEle.attributes['href'];
+          String href = ApiConstant.xianFeng6Url + aEle.attributes['href']!;
           var imgEle = aEle.getElementsByTagName('img').first;
           item.title = imgEle.attributes['alt'];
-          item.imageUrl = ApiConstant.xianFeng6Url + imgEle.attributes['src'];
+          item.imageUrl = ApiConstant.xianFeng6Url + imgEle.attributes['src']!;
           item.targetUrl = href;
           _data.add(item);
         }
@@ -205,7 +205,7 @@ class XianFeng6State extends State<XianFeng6Page>
       if (_btns == null) {
         _btns = [];
         var menu = doc.getElementById('nav');
-        var liEles = menu.getElementsByTagName('li');
+        var liEles = menu!.getElementsByTagName('li');
         liEles.forEach((element) {
           var btnEles = element.getElementsByTagName('a');
           for (var value1 in btnEles) {
@@ -214,7 +214,7 @@ class XianFeng6State extends State<XianFeng6Page>
               buttonBean.title = value1.text;
               buttonBean.value = value1.text.contains('首页')
                   ? ''
-                  : value1.attributes['href'].replaceAll('.html', '');
+                  : value1.attributes['href']!.replaceAll('.html', '');
               _btns.add(buttonBean);
             }
           }
@@ -245,7 +245,7 @@ class XianFeng6State extends State<XianFeng6Page>
       }else{
         _isSearch = false;
         buttonType = 0;
-        _currentKey = buttonBean.value;
+        _currentKey = buttonBean.value!;
       }
       _refreshController.requestRefresh();
     }
@@ -253,7 +253,7 @@ class XianFeng6State extends State<XianFeng6Page>
 
   void goToDetail(VideoListItem data) async {
     showLoading();
-    String response = await PornHubUtil.getHtmlFromHttpDeugger(data.targetUrl);
+    String response = await PornHubUtil.getHtmlFromHttpDeugger(data.targetUrl!);
     Navigator.pop(context);
     var doc = parse.parse(response);
     MovieBean movieBean = MovieBean();

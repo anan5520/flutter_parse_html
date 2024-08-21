@@ -70,7 +70,7 @@ class FadeInImageWithoutAuth extends StatefulWidget {
   /// [fadeInDuration], [fadeInCurve], [alignment], [repeat], and
   /// [matchTextDirection] arguments must not be null.
   const FadeInImageWithoutAuth({
-    Key key,
+    Key? key,
     @required this.placeholder,
     @required this.image,
     this.fadeOutDuration = const Duration(milliseconds: 300),
@@ -116,9 +116,9 @@ class FadeInImageWithoutAuth extends StatefulWidget {
   ///  * [new Image.network], which has more details about loading images from
   ///    the network.
   FadeInImageWithoutAuth.memoryNetwork({
-    Key key,
-    @required Uint8List placeholder,
-    @required String image,
+    Key? key,
+    @required Uint8List? placeholder,
+    @required String? image,
     double placeholderScale = 1.0,
     double imageScale = 1.0,
     this.fadeOutDuration = const Duration(milliseconds: 300),
@@ -142,8 +142,8 @@ class FadeInImageWithoutAuth extends StatefulWidget {
         assert(alignment != null),
         assert(repeat != null),
         assert(matchTextDirection != null),
-        placeholder = MemoryImage(placeholder, scale: placeholderScale),
-        image = NetworkImage(image, scale: imageScale),
+        placeholder = MemoryImage(placeholder!, scale: placeholderScale),
+        image = NetworkImage(image!, scale: imageScale),
         super(key: key);
 
   /// Creates a widget that uses a placeholder image stored in an asset bundle
@@ -171,11 +171,11 @@ class FadeInImageWithoutAuth extends StatefulWidget {
   ///  * [new Image.network], which has more details about loading images from
   ///    the network.
   FadeInImageWithoutAuth.assetNetwork({
-    Key key,
-    @required String placeholder,
-    @required String image,
-    AssetBundle bundle,
-    double placeholderScale,
+    Key? key,
+    @required String? placeholder,
+    @required String? image,
+    AssetBundle? bundle,
+    double? placeholderScale,
     double imageScale = 1.0,
     this.fadeOutDuration = const Duration(milliseconds: 300),
     this.fadeOutCurve = Curves.easeOut,
@@ -190,8 +190,8 @@ class FadeInImageWithoutAuth extends StatefulWidget {
   }) : assert(placeholder != null),
         assert(image != null),
         placeholder = placeholderScale != null
-            ? ExactAssetImage(placeholder, bundle: bundle, scale: placeholderScale)
-            : AssetImage(placeholder, bundle: bundle),
+            ? ExactAssetImage(placeholder!, bundle: bundle, scale: placeholderScale)
+            : AssetImage(placeholder!, bundle: bundle),
         assert(imageScale != null),
         assert(fadeOutDuration != null),
         assert(fadeOutCurve != null),
@@ -200,15 +200,15 @@ class FadeInImageWithoutAuth extends StatefulWidget {
         assert(alignment != null),
         assert(repeat != null),
         assert(matchTextDirection != null),
-        image = NetworkImageWithoutAuth(image, scale: imageScale),
+        image = NetworkImageWithoutAuth(image!, scale: imageScale),
         super(key: key);
 
   FadeInImageWithoutAuth.base64Network({
-    Key key,
-    @required String placeholder,
-    @required String image,
-    AssetBundle bundle,
-    double placeholderScale,
+    Key? key,
+    @required String? placeholder,
+    @required String? image,
+    AssetBundle? bundle,
+    double? placeholderScale,
     double imageScale = 1.0,
     this.fadeOutDuration = const Duration(milliseconds: 300),
     this.fadeOutCurve = Curves.easeOut,
@@ -223,8 +223,8 @@ class FadeInImageWithoutAuth extends StatefulWidget {
   }) : assert(placeholder != null),
         assert(image != null),
         placeholder = placeholderScale != null
-            ? ExactAssetImage(placeholder, bundle: bundle, scale: placeholderScale)
-            : AssetImage(placeholder, bundle: bundle),
+            ? ExactAssetImage(placeholder!, bundle: bundle, scale: placeholderScale)
+            : AssetImage(placeholder!, bundle: bundle),
         assert(imageScale != null),
         assert(fadeOutDuration != null),
         assert(fadeOutCurve != null),
@@ -233,14 +233,14 @@ class FadeInImageWithoutAuth extends StatefulWidget {
         assert(alignment != null),
         assert(repeat != null),
         assert(matchTextDirection != null),
-        image = NetworkImageMemory(image, scale: imageScale),
+        image = NetworkImageMemory(image!, scale: imageScale),
         super(key: key);
 
   /// Image displayed while the target [image] is loading.
-  final ImageProvider placeholder;
+  final ImageProvider? placeholder;
 
   /// The target image that is displayed.
-  final ImageProvider image;
+  final ImageProvider? image;
 
   /// The duration of the fade-out animation for the [placeholder].
   final Duration fadeOutDuration;
@@ -260,7 +260,7 @@ class FadeInImageWithoutAuth extends StatefulWidget {
   /// aspect ratio. This may result in a sudden change if the size of the
   /// placeholder image does not match that of the target image. The size is
   /// also affected by the scale factor.
-  final double width;
+  final double? width;
 
   /// If non-null, require the image to have this height.
   ///
@@ -268,13 +268,13 @@ class FadeInImageWithoutAuth extends StatefulWidget {
   /// aspect ratio. This may result in a sudden change if the size of the
   /// placeholder image does not match that of the target image. The size is
   /// also affected by the scale factor.
-  final double height;
+  final double? height;
 
   /// How to inscribe the image into the space allocated during layout.
   ///
   /// The default varies based on the other fields. See the discussion at
   /// [paintImage].
-  final BoxFit fit;
+  final BoxFit? fit;
 
   /// How to align the image within its bounds.
   ///
@@ -356,31 +356,31 @@ class _ImageProviderResolver {
     @required this.listener,
   });
 
-  final _FadeInImageState state;
-  final _ImageProviderResolverListener listener;
+  final _FadeInImageState? state;
+  final _ImageProviderResolverListener? listener;
 
-  FadeInImageWithoutAuth get widget => state.widget;
+  FadeInImageWithoutAuth get widget => state!.widget;
 
-  ImageStream _imageStream;
-  ImageInfo _imageInfo;
+  ImageStream? _imageStream;
+  ImageInfo? _imageInfo;
 
   void resolve(ImageProvider provider) {
-    final ImageStream oldImageStream = _imageStream;
+    final ImageStream? oldImageStream = _imageStream;
     _imageStream = provider.resolve(createLocalImageConfiguration(
-        state.context,
-        size: widget.width != null && widget.height != null ? Size(widget.width, widget.height) : null
+        state!.context,
+        size: widget.width != null && widget.height != null ? Size(widget.width!, widget.height!) : null
     ));
     assert(_imageStream != null);
 
-    if (_imageStream.key != oldImageStream?.key) {
+    if (_imageStream?.key != oldImageStream?.key) {
       oldImageStream?.removeListener(ImageStreamListener(_handleImageChanged));
-      _imageStream.addListener(ImageStreamListener(_handleImageChanged));
+      _imageStream?.addListener(ImageStreamListener(_handleImageChanged));
     }
   }
 
   void _handleImageChanged(ImageInfo imageInfo, bool synchronousCall) {
     _imageInfo = imageInfo;
-    listener();
+    listener?.call();
   }
 
   void stopListening() {
@@ -389,11 +389,11 @@ class _ImageProviderResolver {
 }
 
 class _FadeInImageState extends State<FadeInImageWithoutAuth> with TickerProviderStateMixin {
-  _ImageProviderResolver _imageResolver;
-  _ImageProviderResolver _placeholderResolver;
+  _ImageProviderResolver? _imageResolver;
+  _ImageProviderResolver? _placeholderResolver;
 
-  AnimationController _controller;
-  Animation<double> _animation;
+  AnimationController? _controller;
+  Animation<double>? _animation;
 
   FadeInImagePhase _phase = FadeInImagePhase.start;
   FadeInImagePhase get phase => _phase;
@@ -410,12 +410,12 @@ class _FadeInImageState extends State<FadeInImageWithoutAuth> with TickerProvide
       value: 1.0,
       vsync: this,
     );
-    _controller.addListener(() {
+    _controller?.addListener(() {
       setState(() {
         // Trigger rebuild to update opacity value.
       });
     });
-    _controller.addStatusListener((AnimationStatus status) {
+    _controller?.addStatusListener((AnimationStatus status) {
       _updatePhase();
     });
     super.initState();
@@ -441,11 +441,11 @@ class _FadeInImageState extends State<FadeInImageWithoutAuth> with TickerProvide
   }
 
   void _resolveImage() {
-    _imageResolver.resolve(widget.image);
+    _imageResolver?.resolve(widget.image!);
 
     // No need to resolve the placeholder if we are past the placeholder stage.
     if (_isShowingPlaceholder)
-      _placeholderResolver.resolve(widget.placeholder);
+      _placeholderResolver?.resolve(widget.placeholder!);
 
     if (_phase == FadeInImagePhase.start)
       _updatePhase();
@@ -455,38 +455,38 @@ class _FadeInImageState extends State<FadeInImageWithoutAuth> with TickerProvide
     setState(() {
       switch (_phase) {
         case FadeInImagePhase.start:
-          if (_imageResolver._imageInfo != null)
+          if (_imageResolver!._imageInfo != null)
             _phase = FadeInImagePhase.completed;
           else
             _phase = FadeInImagePhase.waiting;
           break;
         case FadeInImagePhase.waiting:
-          if (_imageResolver._imageInfo != null) {
+          if (_imageResolver!._imageInfo != null) {
             // Received image data. Begin placeholder fade-out.
-            _controller.duration = widget.fadeOutDuration;
+            _controller!.duration = widget.fadeOutDuration;
             _animation = CurvedAnimation(
-              parent: _controller,
+              parent: _controller!,
               curve: widget.fadeOutCurve,
             );
             _phase = FadeInImagePhase.fadeOut;
-            _controller.reverse(from: 1.0);
+            _controller!.reverse(from: 1.0);
           }
           break;
         case FadeInImagePhase.fadeOut:
-          if (_controller.status == AnimationStatus.dismissed) {
+          if (_controller!.status == AnimationStatus.dismissed) {
             // Done fading out placeholder. Begin target image fade-in.
-            _controller.duration = widget.fadeInDuration;
+            _controller!.duration = widget.fadeInDuration;
             _animation = CurvedAnimation(
-              parent: _controller,
+              parent: _controller!,
               curve: widget.fadeInCurve,
             );
             _phase = FadeInImagePhase.fadeIn;
-            _placeholderResolver.stopListening();
-            _controller.forward(from: 0.0);
+            _placeholderResolver!.stopListening();
+            _controller!.forward(from: 0.0);
           }
           break;
         case FadeInImagePhase.fadeIn:
-          if (_controller.status == AnimationStatus.completed) {
+          if (_controller!.status == AnimationStatus.completed) {
             // Done finding in new image.
             _phase = FadeInImagePhase.completed;
           }
@@ -500,9 +500,9 @@ class _FadeInImageState extends State<FadeInImageWithoutAuth> with TickerProvide
 
   @override
   void dispose() {
-    _imageResolver.stopListening();
-    _placeholderResolver.stopListening();
-    _controller.dispose();
+    _imageResolver!.stopListening();
+    _placeholderResolver!.stopListening();
+    _controller!.dispose();
     super.dispose();
   }
 
@@ -518,13 +518,13 @@ class _FadeInImageState extends State<FadeInImageWithoutAuth> with TickerProvide
         return false;
     }
 
-    return null;
+    return false;
   }
 
   ImageInfo get _imageInfo {
     return _isShowingPlaceholder
-        ? _placeholderResolver._imageInfo
-        : _imageResolver._imageInfo;
+        ? _placeholderResolver!._imageInfo!
+        : _imageResolver!._imageInfo!;
   }
 
   @override
@@ -550,8 +550,8 @@ class _FadeInImageState extends State<FadeInImageWithoutAuth> with TickerProvide
     super.debugFillProperties(description);
     description.add(EnumProperty<FadeInImagePhase>('phase', _phase));
     description.add(DiagnosticsProperty<ImageInfo>('pixels', _imageInfo));
-    description.add(DiagnosticsProperty<ImageStream>('image stream', _imageResolver._imageStream));
-    description.add(DiagnosticsProperty<ImageStream>('placeholder stream', _placeholderResolver._imageStream));
+    description.add(DiagnosticsProperty<ImageStream>('image stream', _imageResolver!._imageStream));
+    description.add(DiagnosticsProperty<ImageStream>('placeholder stream', _placeholderResolver!._imageStream));
   }
 }
 

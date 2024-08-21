@@ -18,7 +18,7 @@ class NetworkImageWithoutAuth extends image_provider.ImageProvider<image_provide
   /// Creates an object that fetches the image at the given URL.
   ///
   /// The arguments [url] and [scale] must not be null.
-  const NetworkImageWithoutAuth(this.url, { this.scale = 1.0, this.headers })
+  const NetworkImageWithoutAuth(this.url, { this.scale = 1.0, this.headers = const {} })
       : assert(url != null),
         assert(scale != null);
 
@@ -37,14 +37,14 @@ class NetworkImageWithoutAuth extends image_provider.ImageProvider<image_provide
   }
 
   @override
-  ImageStreamCompleter load(image_provider.NetworkImage key, image_provider.DecoderCallback decode) {
+  ImageStreamCompleter load(image_provider.NetworkImage key, image_provider.ImageDecoderCallback decode) {
     // Ownership of this controller is handed off to [_loadAsync]; it is that
     // method's responsibility to close the controller's stream when the image
     // has been loaded or an error is thrown.
     final StreamController<ImageChunkEvent> chunkEvents = StreamController<ImageChunkEvent>();
 
     return MultiFrameImageStreamCompleter(
-      codec: _loadAsync(key),
+      codec: _loadAsync(key as NetworkImageWithoutAuth),
       chunkEvents: chunkEvents.stream,
       scale: key.scale,
       debugLabel: key.url,
@@ -84,7 +84,7 @@ class NetworkImageWithoutAuth extends image_provider.ImageProvider<image_provide
     if (bytes.lengthInBytes == 0)
       throw Exception('NetworkImage is an empty file: $resolved');
 
-    return PaintingBinding.instance.instantiateImageCodec(bytes);
+    return PaintingBinding.instance.instantiateImageCodecFromBuffer(await ImmutableBuffer.fromUint8List(bytes));
   }
 
   @override

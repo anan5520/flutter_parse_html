@@ -1,30 +1,30 @@
 class PornItem {
-  String viewKey;
-  String title;
-  String imgUrl;
-  String duration;
-  String info;
+  String? viewKey;
+  String? title;
+  String? imgUrl;
+  String? duration;
+  String? info;
 
   PornItem(this.viewKey, this.title, this.imgUrl, this.duration, this.info);
 }
 
 class VideoResult {
   static final int OUT_OF_WATCH_TIMES = -1;
-  int id;
-  String videoUrl;
+  int? id;
+  String? videoUrl;
 
-  String videoId;
+  String? videoId;
 
-  String ownerId = '';
+  String? ownerId = '';
 
-  String authorId;
+  String? authorId;
 
-  String thumbImgUrl;
-  String videoName;
-  String ownerName;
-  String addDate;
-  String viewKey;
-  String userOtherInfo;
+  String? thumbImgUrl;
+  String? videoName;
+  String? ownerName;
+  String? addDate;
+  String? viewKey;
+  String? userOtherInfo;
 
   @override
   String toString() {
@@ -33,14 +33,14 @@ class VideoResult {
 }
 
 class VideoComment {
-  String uid;
-  String uName;
-  String replyTime;
-  String replyId;
-  String titleInfo;
-  String content;
-  PornForumContent pornForumContent;
-  List<String> commentQuoteList;
+  String? uid;
+  String? uName;
+  String? replyTime;
+  String? replyId;
+  String? titleInfo;
+  String? content;
+  PornForumContent? pornForumContent;
+  List<String?>? commentQuoteList;
 
   @override
   String toString() {
@@ -51,20 +51,20 @@ class VideoComment {
 class PornForumItem {
   static final int serialVersionUID = 1;
 
-  String folder;
-  String icon;
+  String? folder;
+  String? icon;
 
-  int tid;
-  String title;
-  List<String> imageList;
-  String agreeCount;
+  int? tid;
+  String? title;
+  List<String?>? imageList;
+  String? agreeCount;
 
-  String author;
-  String authorPublishTime;
-  int replyCount;
-  int viewCount;
-  String lastPostAuthor;
-  String lastPostTime;
+  String? author;
+  String? authorPublishTime;
+  int? replyCount;
+  int? viewCount;
+  String? lastPostAuthor;
+  String? lastPostTime;
 
   @override
   String toString() {
@@ -73,11 +73,11 @@ class PornForumItem {
 }
 
 class PornForumContent {
-  String content;
-  String videoUrl = '';
-  List<String> imageList;
-  List<CiLiUrl> ciLiList;
-  List<String> videoList = [];
+  String? content;
+  String? videoUrl = '';
+  List<String?>? imageList;
+  List<CiLiUrl>? ciLiList;
+  List<String?> videoList = [];
 
   @override
   String toString() {
@@ -86,6 +86,6 @@ class PornForumContent {
 }
 
 class CiLiUrl{
-  String title;
-  String url;
+  String? title;
+  String? url;
 }

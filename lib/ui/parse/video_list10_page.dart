@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_parse_html/model/video_list8_bean_entity.dart';
 import 'package:flutter_parse_html/model/video_list_item.dart';
 import 'package:flutter_parse_html/ui/movie/movie_detail_page.dart';
 import 'package:flutter_parse_html/ui/pornhub/pornhub_util.dart';
@@ -31,13 +30,13 @@ class VideoList10Page extends StatefulWidget {
 class VideoList10State extends State<VideoList10Page>
     with AutomaticKeepAliveClientMixin {
   List<VideoListItem> _data = [];
-  List<ButtonBean> _btns;
+  late List<ButtonBean> _btns;
 
-  RefreshController _refreshController;
+  late RefreshController _refreshController;
   int _page = 1, buttonType = 0;
   String _currentKey = '/vodlist/33';
   bool _isSearch = false;
-  TextEditingController _editingController;
+  late TextEditingController _editingController;
 
   @override
   void initState() {
@@ -129,7 +128,7 @@ class VideoList10State extends State<VideoList10Page>
   //跳转播放
   void goToPlay(VideoListItem data) async {
     showLoading();
-    var response = await PornHubUtil.getHtmlFromHttpDeugger(data.targetUrl);
+    var response = await PornHubUtil.getHtmlFromHttpDeugger(data.targetUrl!);
     try {
       var doc = parse.parse(response);
       var gotoEles = doc.getElementsByClassName("film_bar clearfix");
@@ -144,7 +143,7 @@ class VideoList10State extends State<VideoList10Page>
           .split('url=')[1];
       Navigator.pop(context);
       if (playUrl.startsWith('http')) {
-        CommonUtil.toVideoPlay(playUrl, context, title: data.title);
+        CommonUtil.toVideoPlay(playUrl, context, title: data.title!);
       }
     } catch (e) {
       Navigator.pop(context);
@@ -170,7 +169,7 @@ class VideoList10State extends State<VideoList10Page>
                   child: CachedNetworkImage(
                     placeholder: (context, url) => new Icon(Icons.image),
                     errorWidget: (context, url, error) => new Icon(Icons.error),
-                    imageUrl: item.imageUrl,
+                    imageUrl: item.imageUrl!,
                     fit: BoxFit.cover,
                   ),
                   constraints: new BoxConstraints.expand(),
@@ -221,7 +220,7 @@ class VideoList10State extends State<VideoList10Page>
           item.imageUrl = imgEle.attributes['data-original'] == null
               ? imgEle.attributes['src']
               : imgEle.attributes['data-original'];
-          item.imageUrl = item.imageUrl.startsWith('http')
+          item.imageUrl = item.imageUrl!.startsWith('http')
               ? item.imageUrl
               : 'http:${item.imageUrl}';
           item.targetUrl = href;
@@ -245,7 +244,7 @@ class VideoList10State extends State<VideoList10Page>
             buttonBean.title = value1.text;
             if (!value1.text.contains('区') && !value1.text.contains('会员')) {
               buttonBean.value =
-                  value1.attributes['href'].replaceAll('.html', '');
+                  value1.attributes['href']!.replaceAll('.html', '');
               _btns.add(buttonBean);
             }
           });
@@ -273,7 +272,7 @@ class VideoList10State extends State<VideoList10Page>
       } else {
         _isSearch = false;
         buttonType = 0;
-        _currentKey = buttonBean.value;
+        _currentKey = buttonBean.value!;
       }
       _refreshController.requestRefresh();
     }

@@ -27,7 +27,7 @@ class NativeUtils {
   static const String pleaseProvidePath = 'Please provide valid file path.';
   static const String fileIsNotVideo = 'File on path is not a video.';
   static const String fileIsNotImage = 'File on path is not an image.';
-  static StreamSubscription _subscription;
+  static StreamSubscription? _subscription;
 
   static void onResume() {
     umeng.invokeMethod('onResume', {'event': " "});
@@ -49,7 +49,7 @@ class NativeUtils {
     perform.invokeMethod('act', {'magnet': magnet});
   }
 
-  static Future<bool> toX5Browser(String url, String title) {
+  static Future<bool?> toX5Browser(String url, String title) {
     return perform.invokeMethod('toX5Browser', {'url': url, 'title': title});
   }
 
@@ -101,8 +101,8 @@ class NativeUtils {
   }
 
   ///saves video from provided temp path and optional album name in gallery
-  static Future<bool> saveVideo(String path, {String albumName}) async {
-    File tempFile;
+  static Future<bool> saveVideo(String path, {String albumName = ""}) async {
+    File? tempFile;
     if (path == null || path.isEmpty) {
       throw ArgumentError(pleaseProvidePath);
     }
@@ -125,8 +125,8 @@ class NativeUtils {
 
   ///saves image from provided temp path and optional album name in gallery
   static Future<bool> saveImage(String path,
-      {String albumName, Map<String, String> headers}) async {
-    File tempFile;
+      {String albumName = '', Map<String, String> headers = const {}}) async {
+    File? tempFile;
     if (path == null || path.isEmpty) {
       throw ArgumentError(pleaseProvidePath);
     }
@@ -149,24 +149,24 @@ class NativeUtils {
     return result;
   }
 
-  static void startFromNativeLis(void onEvent(Object event),
-      {Function onError}) {
+  static void startFromNativeLis(void onData(dynamic event)?,
+      {Function? onError}) {
     //开启监听
     if (_subscription == null) {
       _subscription = counterPlugin
           .receiveBroadcastStream()
-          .listen(onEvent, onError: onError);
+          .listen(onData, onError: onError);
     }
   }
 
   static void cancelFromNativeLis() {
     if (_subscription != null) {
-      _subscription.cancel();
+      _subscription?.cancel();
     }
   }
 
   static Future<File> _downloadFile(String url,
-      {Map<String, String> headers}) async {
+      {Map<String, String> headers = const {}}) async {
     print(url);
     var response = await http.get(Uri(path: url), headers: headers);
     var bytes = response.bodyBytes;

@@ -8,7 +8,7 @@ import 'package:html/parser.dart' as parse;
 import 'dart:convert' as convert;
 
 class MovieUtil {
-  static Future<MovieBean> getVideoInfo(String url, {String number}) {
+  static Future<MovieBean> getVideoInfo(String url, {String number = ''}) {
     return NetUtil.getHtmlData(url).then((response) async {
       MovieBean movieBean = MovieBean();
       String body = response;
@@ -33,20 +33,20 @@ class MovieUtil {
                 var eleIds = document.getElementsByClassName('nav nav-tabs active').first.getElementsByTagName('li');
                 eleIds.forEach((element) {
                   if(element.text.contains('m3u8')){
-                    id = element.getElementsByTagName('a').first.attributes['href'].replaceAll('#', '');
+                    id = element.getElementsByTagName('a').first.attributes['href']!.replaceAll('#', '');
                   }
                 });
                 if(id.isEmpty && eleIds.length > 0){
-                  id = eleIds[0].getElementsByTagName('a').first.attributes['href'].replaceAll('#', '');
+                  id = eleIds[0].getElementsByTagName('a').first.attributes['href']!.replaceAll('#', '');
                 }
                 var itemElements = document.getElementById(id)
-                    .getElementsByTagName('li');
-                List<MovieItemBean> list = List();
+                    !.getElementsByTagName('li');
+                List<MovieItemBean> list = [];
                 for (var value in itemElements) {
                   MovieItemBean movieItemBean = MovieItemBean();
                   movieItemBean.name = value.getElementsByTagName('a').first.text;
                   movieItemBean.targetUrl = ApiConstant.movieBaseUrl +
-                      value.getElementsByTagName('a').first.attributes['href'];
+                      value.getElementsByTagName('a').first.attributes['href']!;
                   list.add(movieItemBean);
                 }
                 movieBean.list = list;
@@ -95,12 +95,12 @@ class MovieUtil {
     return NetUtil.getHtmlData(url).then((response) async {
       MaHuaMovieDetail maHuaMovieDetail = MaHuaMovieDetail.fromJson(convert.json.decode(response));
       MovieBean movieBean = MovieBean();
-      maHuaMovieDetail.list.forEach((element) {
+      maHuaMovieDetail.list!.forEach((element) {
         movieBean.imgUrl = element.vodPic;
         movieBean.name = element.vodName;
         movieBean.info = '${element.vodTime}\n${element.vodActor}\n${element.vodArea}';
         movieBean.des = element.vodContent;
-        var urls = element.vodPlayUrl.split("#");
+        var urls = element.vodPlayUrl!.split("#");
         List<MovieItemBean> list = [];
         urls.forEach((element) {
           MovieItemBean movieItemBean = new MovieItemBean();
@@ -115,7 +115,7 @@ class MovieUtil {
     });
   }
 
-  static Future<String> getVideoUrl(String pageUrl, {String number}) {
+  static Future<String> getVideoUrl(String pageUrl, {String number = ''}) {
     return NetUtil.getHtmlData(pageUrl).then((pageBody) async {
       var pageDocument = parse.parse(pageBody);
       String playData = pageDocument
@@ -140,18 +140,18 @@ class MovieUtil {
             .getElementsByClassName('stui-content__playlist clearfix')
             .first
             .getElementsByTagName('li');
-        List<MovieItemBean> list = List();
+        List<MovieItemBean> list = [];
         for (var value in itemElements) {
           MovieItemBean movieItemBean = MovieItemBean();
           movieItemBean.name = value.getElementsByTagName('a').first.text;
           movieItemBean.targetUrl = ApiConstant.movieBaseUrl +
-              value.getElementsByTagName('a').first.attributes['href'];
+              value.getElementsByTagName('a').first.attributes['href']!;
           list.add(movieItemBean);
         }
 
         if (number != null && number != "") {
           print('需要播放$number');
-          String resultUrl;
+          String? resultUrl;
           for (var value in list) {
             if (number == value.targetUrl) {
               resultUrl = '${ApiConstant.movieBaseUrl}${value.targetUrl}';
@@ -188,7 +188,7 @@ class MovieUtil {
     });
   }
 
-  static Future<MovieBean> getMovieBean(String pageUrl,String name, {String number}) {
+  static Future<MovieBean> getMovieBean(String pageUrl,String name, {String number=''}) {
     return NetUtil.getHtmlData(pageUrl).then((pageBody) async {
       MovieBean movieBean = MovieBean();
       var pageDocument = parse.parse(pageBody);
@@ -214,21 +214,21 @@ class MovieUtil {
             .getElementsByClassName('stui-content__playlist clearfix')
             .first
             .getElementsByTagName('li');
-        List<MovieItemBean> list = List();
+        List<MovieItemBean> list = [];
         for (var value in itemElements) {
           MovieItemBean movieItemBean = MovieItemBean();
           movieItemBean.name = value.getElementsByTagName('a').first.text;
           movieItemBean.targetUrl = ApiConstant.movieBaseUrl +
-              value.getElementsByTagName('a').first.attributes['href'];
+              value.getElementsByTagName('a').first.attributes['href']!;
           list.add(movieItemBean);
         }
 
         if (number != null && number != "") {
           print('需要播放$number');
-          String resultUrl;
+          String? resultUrl;
           for (var value in list) {
             if (number == value.name) {
-              resultUrl = value.targetUrl;
+              resultUrl = value.targetUrl!;
             }
           }
           if (resultUrl != null) {

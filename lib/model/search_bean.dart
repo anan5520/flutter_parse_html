@@ -2,8 +2,8 @@
 
 
 class SearchBean{
-  String title;
-  String magnet;
+  String? title;
+  String? magnet;
 
   @override
   String toString() {

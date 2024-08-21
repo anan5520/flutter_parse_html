@@ -21,9 +21,6 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import com.tencent.smtt.sdk.QbSdk;
-import com.umeng.commonsdk.UMConfigure;
-import com.umeng.message.IUmengRegisterCallback;
-import com.umeng.message.PushAgent;
 
 import androidx.annotation.RequiresApi;
 import androidx.multidex.MultiDex;
@@ -63,22 +60,8 @@ public class MainActivity extends FlutterActivity {
     CustomFlutterPlugins.startUcBrowser(flutterEngine, com.arvin.flutter_parse_html.MainActivity.this);
     CustomFlutterPlugins.initX5Web(flutterEngine, com.arvin.flutter_parse_html.MainActivity.this);
     FlutterPluginCounter.registerWith(flutterEngine, com.arvin.flutter_parse_html.MainActivity.this);
-    UMConfigure.init(this,"5ddc8b37570df395b0000af1", "",UMConfigure.DEVICE_TYPE_PHONE, "e9b52e22a332d3c9e3b04627faa88aaf");
-    PushAgent mPushAgent = PushAgent.getInstance(this);
-//注册推送服务，每次调用register方法都会回调该接口
-    mPushAgent.register(new IUmengRegisterCallback() {
-      @Override
-      public void onSuccess(String deviceToken) {
-        //注册成功会返回deviceToken deviceToken是推送消息的唯一标志
-        Log.i("umeng","注册成功：deviceToken：-------->  " + deviceToken);
-      }
-      @Override
-      public void onFailure(String s, String s1) {
-        Log.e("umeng","注册失败：-------->  " + "s:" + s + ",s1:" + s1);
-      }
-    });
     //搜集本地tbs内核信息并上报服务器，服务器返回结果决定使用哪个内核。
-    setInstallPermission();
+//    setInstallPermission();
     cb = new QbSdk.PreInitCallback() {
 
       @Override

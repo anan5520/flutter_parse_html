@@ -2,15 +2,15 @@
 
 
 class MovieBean{
-  String name;
-  String imgUrl;
-  String playUrl;
-  String info;
-  String des = '';
-  String originUrl;
-  String number;
+  String? name;
+  String? imgUrl;
+  String? playUrl;
+  String? info;
+  String? des = '';
+  String? originUrl;
+  String? number;
   bool isM3u8 = false;
-  List<MovieItemBean> list;
+  List<MovieItemBean>? list;
 
 
   @override
@@ -22,8 +22,8 @@ class MovieBean{
 }
 
 class MovieItemBean{
-  String name;
-  String targetUrl;
+  String? name;
+  String? targetUrl;
 
   @override
   String toString() {
@@ -33,10 +33,10 @@ class MovieItemBean{
 }
 
 class GifItemBean{
-  String name;
-  String targetUrl;
-  String imageUrl;
-  GifType gifType;
+  String? name;
+  String? targetUrl;
+  String? imageUrl;
+  GifType? gifType;
 
 
 }
@@ -48,18 +48,18 @@ enum GifType{
 
 
 class MaHuaMovieList {
-  int code;
-  String msg;
-  int page;
-  int pagecount;
-  int limit;
-  int total;
-  List<Item> list;
-  List<Type> type;
+  int? code;
+  String? msg;
+  int? page;
+  int? pagecount;
+  int? limit;
+  int? total;
+  List<Item>? list;
+  List<Type>? type;
 
   MaHuaMovieList({this.code, this.msg, this.page, this.pagecount, this.limit, this.total, this.list, this.type});
 
-  MaHuaMovieList.fromJson(Map<String, dynamic> json) {
+  MaHuaMovieList.fromJson(Map<String?, dynamic> json) {
   code = json['code'];
   msg = json['msg'];
   page = json['page'];
@@ -67,18 +67,18 @@ class MaHuaMovieList {
   limit = json['limit'];
   total = json['total'];
   if (json['list'] != null) {
-  list = new List<Item>();
+  list = [];
   json['list'].forEach((v) {
-    list.add(new Item.fromJson(v)); });
+    list!.add(new Item.fromJson(v)); });
   }
   if (json['class'] != null) {
-  type = new List<Type>();
-  json['class'].forEach((v) { type.add(new Type.fromJson(v)); });
+  type = [];
+  json['class'].forEach((v) { type!.add(new Type.fromJson(v)); });
   }
   }
 
-  Map<String, dynamic> toJson() {
-  final Map<String, dynamic> data = new Map<String, dynamic>();
+  Map<String?, dynamic> toJson() {
+  final Map<String?, dynamic> data = new Map<String?, dynamic>();
   data['code'] = this.code;
   data['msg'] = this.msg;
   data['page'] = this.page;
@@ -86,28 +86,28 @@ class MaHuaMovieList {
   data['limit'] = this.limit;
   data['total'] = this.total;
   if (this.list != null) {
-  data['list'] = this.list.map((v) => v.toJson()).toList();
+  data['list'] = this.list!.map((v) => v.toJson()).toList();
   }
   if (this.type != null) {
-  data['class'] = this.type.map((v) => v.toJson()).toList();
+  data['class'] = this.type!.map((v) => v.toJson()).toList();
   }
   return data;
   }
 }
 
 class Item {
-  String vodId;
-  String vodName;
-  String typeId;
-  String typeName;
-  String vodEn;
-  String vodTime;
-  String vodRemarks;
-  String vodPlayFrom;
+  String? vodId;
+  String? vodName;
+  String? typeId;
+  String? typeName;
+  String? vodEn;
+  String? vodTime;
+  String? vodRemarks;
+  String? vodPlayFrom;
 
   Item({this.vodId, this.vodName, this.typeId, this.typeName, this.vodEn, this.vodTime, this.vodRemarks, this.vodPlayFrom});
 
-  Item.fromJson(Map<String, dynamic> json) {
+  Item.fromJson(Map<String?, dynamic> json) {
     vodId = json['vod_id'];
     vodName = json['vod_name'];
     typeId = json['type_id'];
@@ -118,8 +118,8 @@ class Item {
     vodPlayFrom = json['vod_play_from'];
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+  Map<String?, dynamic> toJson() {
+    final Map<String?, dynamic> data = new Map<String?, dynamic>();
     data['vod_id'] = this.vodId;
     data['vod_name'] = this.vodName;
     data['type_id'] = this.typeId;
@@ -133,18 +133,18 @@ class Item {
 }
 
 class Type {
-  String typeId;
-  String typeName;
+  String? typeId;
+  String? typeName;
 
   Type({this.typeId, this.typeName});
 
-  Type.fromJson(Map<String, dynamic> json) {
+  Type.fromJson(Map<String?, dynamic> json) {
     typeId = json['type_id'];
     typeName = json['type_name'];
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+  Map<String?, dynamic> toJson() {
+    final Map<String?, dynamic> data = new Map<String?, dynamic>();
     data['type_id'] = this.typeId;
     data['type_name'] = this.typeName;
     return data;
@@ -152,13 +152,13 @@ class Type {
 }
 
 class MaHuaMovieDetail {
-  int code;
-  String msg;
-  int page;
-  int pagecount;
-  int limit;
-  int total;
-  List<DetailItem> list;
+  int? code;
+  String? msg;
+  int? page;
+  int? pagecount;
+  int? limit;
+  int? total;
+  List<DetailItem>? list;
 
   MaHuaMovieDetail(
       {this.code,
@@ -169,7 +169,7 @@ class MaHuaMovieDetail {
         this.total,
         this.list});
 
-  MaHuaMovieDetail.fromJson(Map<String, dynamic> json) {
+  MaHuaMovieDetail.fromJson(Map<String?, dynamic> json) {
     code = json['code'];
     msg = json['msg'];
     page = json['page'];
@@ -177,15 +177,15 @@ class MaHuaMovieDetail {
     limit = json['limit'];
     total = json['total'];
     if (json['list'] != null) {
-      list = new List<DetailItem>();
+      list = [];
       json['list'].forEach((v) {
-        list.add(new DetailItem.fromJson(v));
+        list!.add(new DetailItem.fromJson(v));
       });
     }
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+  Map<String?, dynamic> toJson() {
+    final Map<String?, dynamic> data = new Map<String?, dynamic>();
     data['code'] = this.code;
     data['msg'] = this.msg;
     data['page'] = this.page;
@@ -193,54 +193,54 @@ class MaHuaMovieDetail {
     data['limit'] = this.limit;
     data['total'] = this.total;
     if (this.list != null) {
-      data['list'] = this.list.map((v) => v.toJson()).toList();
+      data['list'] = this.list!.map((v) => v.toJson()).toList();
     }
     return data;
   }
 }
 
 class DetailItem {
-  String vodTime;
-  String vodId;
-  String vodName;
-  String vodEnname;
-  String vodSubname;
-  String vodLetter;
-  String vodColor;
-  String vodTag;
-  String typeId;
-  String typeName;
-  String vodPic;
-  String vodLang;
-  String vodArea;
-  String vodYear;
-  String vodRemark;
-  String vodActor;
-  String vodDirector;
-  String vodSerial;
-  String vodLock;
-  String vodLevel;
-  String vodHits;
-  String vodHitsDay;
-  String vodHitsWeek;
-  String vodHitsMonth;
-  String vodDuration;
-  String vodUp;
-  String vodDown;
-  String vodScore;
-  String vodScoreAll;
-  String vodScoreNum;
-  String vodPointsPlay;
-  String vodPointsDown;
-  String vodContent;
-  String vodPlayFrom;
-  String vodPlayNote;
-  String vodPlayServer;
-  String vodPlayUrl;
-  String vodDownFrom;
-  String vodDownNote;
-  String vodDownServer;
-  String vodDownUrl;
+  String? vodTime;
+  String? vodId;
+  String? vodName;
+  String? vodEnname;
+  String? vodSubname;
+  String? vodLetter;
+  String? vodColor;
+  String? vodTag;
+  String? typeId;
+  String? typeName;
+  String? vodPic;
+  String? vodLang;
+  String? vodArea;
+  String? vodYear;
+  String? vodRemark;
+  String? vodActor;
+  String? vodDirector;
+  String? vodSerial;
+  String? vodLock;
+  String? vodLevel;
+  String? vodHits;
+  String? vodHitsDay;
+  String? vodHitsWeek;
+  String? vodHitsMonth;
+  String? vodDuration;
+  String? vodUp;
+  String? vodDown;
+  String? vodScore;
+  String? vodScoreAll;
+  String? vodScoreNum;
+  String? vodPointsPlay;
+  String? vodPointsDown;
+  String? vodContent;
+  String? vodPlayFrom;
+  String? vodPlayNote;
+  String? vodPlayServer;
+  String? vodPlayUrl;
+  String? vodDownFrom;
+  String? vodDownNote;
+  String? vodDownServer;
+  String? vodDownUrl;
 
   DetailItem(
       {this.vodTime,
@@ -285,7 +285,7 @@ class DetailItem {
         this.vodDownServer,
         this.vodDownUrl});
 
-  DetailItem.fromJson(Map<String, dynamic> json) {
+  DetailItem.fromJson(Map<String?, dynamic> json) {
     vodTime = json['vod_time'];
     vodId = json['vod_id'];
     vodName = json['vod_name'];
@@ -329,8 +329,8 @@ class DetailItem {
     vodDownUrl = json['vod_down_url'];
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+  Map<String?, dynamic> toJson() {
+    final Map<String?, dynamic> data = new Map<String?, dynamic>();
     data['vod_time'] = this.vodTime;
     data['vod_id'] = this.vodId;
     data['vod_name'] = this.vodName;

@@ -4,18 +4,18 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:cookie_jar/cookie_jar.dart';
-import 'package:dio/adapter.dart';
+import 'package:dio/io.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:dio/dio.dart';
-import 'package:gbk2utf8/gbk2utf8.dart';
+import 'package:flutter_gbk2utf8/flutter_gbk2utf8.dart';
 import 'package:path/path.dart';
 import 'package:http/http.dart' as http;
 
 class NetUtil {
   static final debug = false;
-  static BuildContext context = null;
+  static BuildContext? context = null;
 
   /// 服务器路径
   static final host = 'http://xxxxxxxx';
@@ -24,8 +24,8 @@ class NetUtil {
   ///  基础信息配置
   static final Dio _dio = new Dio(new BaseOptions(
       method: "get",
-      connectTimeout: 20000,
-      receiveTimeout: 20000,
+      connectTimeout: Duration(seconds: 20),
+      receiveTimeout: Duration(seconds: 20),
       followRedirects: true));
 
 
@@ -46,16 +46,16 @@ class NetUtil {
     };
   }
 
-  static String token;
+  static String? token;
 
   static final LogicError unknowError = LogicError(-1, "未知异常");
 
   static Future<String> getHtmlDataWithHttp<T>(String uri,
-          {Map<String, dynamic> paras,
-          Map<String, dynamic> header,
-          String referer,
-          bool isWeb,
-          bool isGbk,
+          {Map<String, dynamic>? paras,
+          Map<String, dynamic>? header,
+          String? referer,
+          bool? isWeb,
+          bool? isGbk,
           bool saveCookie = false}) =>
       _httpHtmlDataWithHttp("get", uri, referer,
           data: paras,
@@ -64,14 +64,14 @@ class NetUtil {
           isGbk: isGbk,
           saveCookie: saveCookie);
 
-  static Future<String> getHtmlData<T>(String uri,
-          {Map<String, dynamic> paras,
-          Map<String, dynamic> header,
-          String referer,
-          bool isWeb,
-          bool isGbk,
+  static Future<String> getHtmlData<T>(String? uri,
+          {Map<String, dynamic>? paras,
+          Map<String, dynamic>? header,
+          String? referer,
+          bool? isWeb,
+          bool? isGbk,
           bool saveCookie = false}) =>
-      _httpHtmlData("get", uri, referer,
+      _httpHtmlData("get", uri??'', referer,
           data: paras,
           header: header,
           isWeb: isWeb,
@@ -79,11 +79,11 @@ class NetUtil {
           saveCookie: saveCookie);
 
   static Future<String> getHtmlDataPost<T>(String uri,
-          {Map<String, dynamic> paras,
-          Map<String, dynamic> header,
-          String referer,
-          bool isGbk,
-          bool isWeb}) =>
+          {Map<String, dynamic>? paras,
+          Map<String, dynamic>? header,
+          String? referer,
+          bool? isGbk,
+          bool? isWeb}) =>
       _httpHtmlDataPost("post", uri, referer,
           data: paras, header: header, isWeb: isWeb, isGbk: isGbk);
 
@@ -140,8 +140,8 @@ class NetUtil {
 
   static Future<Response<Map<String, dynamic>>> _httpJson(
       String method, String uri,
-      {Map<String, dynamic> data, bool dataIsJson = true}) {
-    var enToken = token == null ? "" : Uri.encodeFull(token);
+      {Map<String, dynamic>? data, bool dataIsJson = true}) {
+    var enToken = token == null ? "" : Uri.encodeFull(token!);
 
     /// 如果为 get方法，则进行参数拼接
     if (method == "get") {
@@ -176,14 +176,14 @@ class NetUtil {
   }
 
   //获取网页内容
-  static Future<String> _httpHtmlData(String method, String uri, String referer,
-      {Map<String, dynamic> data,
-      Map<String, dynamic> header,
+  static Future<String> _httpHtmlData(String method, String uri, String? referer,
+      {Map<String, dynamic>? data,
+      Map<String, dynamic>? header,
       bool dataIsJson = true,
-      bool isWeb = true,
-      bool isGbk = false,
+      bool? isWeb = true,
+      bool? isGbk = false,
       bool saveCookie = false,
-      Function(String error) error}) {
+      Function(String error)? error}) {
 //    setProxy();
     if (saveCookie) {
       var cookieJar = CookieJar();
@@ -249,22 +249,22 @@ class NetUtil {
     print('请求url>>$uri');
     return _dio.get<String>(uri, options: op).then((value) {
       print('返回结果:${value.data}');
-      return Future.value(value.data);
-    }).catchError((onError) {
-      return "error ${onError.toString()} \n map=${headerMap.toString()}";
+      return Future.value(value.data??'');
+    }).catchError((e){
+      return Future.value('error');
     });
   }
 
   //获取网页内容
   static Future<String> _httpHtmlDataWithHttp(
-      String method, String uri, String referer,
-      {Map<String, dynamic> data,
-      Map<String, dynamic> header,
+      String method, String uri, String? referer,
+      {Map<String, dynamic>? data,
+      Map<String, dynamic>? header,
       bool dataIsJson = true,
-      bool isWeb = true,
-      bool isGbk = false,
+      bool? isWeb = true,
+      bool? isGbk = false,
       bool saveCookie = false,
-      Function(String error) error}) {
+      Function(String error)? error}) {
 //    setProxy();
     /// 如果为 get方法，则进行参数拼接
     if (method == "get") {
@@ -317,7 +317,9 @@ class NetUtil {
             "Cache-Control": "max-age=0",
           };
     if (header != null) {
-      headerMap.addAll(header);
+      headerMap.addAll(header.map((key,value){
+        return MapEntry(key,value);
+      }));
     }
     op.method = method;
     op.headers = headerMap;
@@ -333,8 +335,8 @@ class NetUtil {
 
   //获取网页内容
   static Future<Response<String>> httpHtmlCookies(String cookieUrl, String uri,
-      {Map<String, dynamic> data,
-      Map<String, dynamic> header,
+      {Map<String, dynamic>? data,
+      Map<String, dynamic>? header,
       bool dataIsJson = true,
       bool isWeb = true}) async {
 //    setProxy();
@@ -377,12 +379,12 @@ class NetUtil {
 
   //获取网页内容
   static Future<String> _httpHtmlDataPost(
-      String method, String uri, String referer,
-      {Map<String, dynamic> data,
-      Map<String, dynamic> header,
-      bool dataIsJson = true,
-      bool isWeb = true,
-      bool isGbk = false}) {
+      String method, String uri, String? referer,
+      {Map<String, dynamic>? data,
+      Map<String, dynamic>? header,
+      bool? dataIsJson = true,
+      bool? isWeb = true,
+      bool? isGbk = false}) {
     /// 如果为 get方法，则进行参数拼接
     if (method == "get") {
       dataIsJson = false;
@@ -437,8 +439,6 @@ class NetUtil {
     return _dio.request<String>(uri, data: data, options: op).then((value) {
       print('返回结果:${value.data}');
       return Future.value(value.data);
-    }).catchError((onError) {
-      return "error";
     });
   }
 
@@ -453,8 +453,8 @@ class NetUtil {
   static Future<T> logicalErrorTransform<T>(
       Response<Map<String, dynamic>> resp) {
     if (resp.data != null) {
-      if (resp.data["code"] == 0) {
-        T realData = resp.data["data"];
+      if (resp.data?["code"] == 0) {
+        T realData = resp.data?["data"];
         return Future.value(realData);
       }
     }
@@ -465,15 +465,15 @@ class NetUtil {
     }
 
     LogicError error;
-    if (resp.data != null && resp.data["code"] != 0) {
-      if (resp.data['data'] != null) {
+    if (resp.data != null && resp.data?["code"] != 0) {
+      if (resp.data?['data'] != null) {
         /// 失败时  错误提示在 data中时
         /// 收到token过期时  直接进入登录页面
-        Map<String, dynamic> realData = resp.data["data"];
-        error = new LogicError(resp.data["code"], realData['codeMessage']);
+        Map<String, dynamic> realData = resp.data?["data"];
+        error = new LogicError(resp.data?["code"], realData['codeMessage']);
       } else {
         /// 失败时  错误提示在 message中时
-        error = new LogicError(resp.data["code"], resp.data["message"]);
+        error = new LogicError(resp.data?["code"], resp.data?["message"]);
       }
     } else {
       error = unknowError;
@@ -490,8 +490,8 @@ class NetUtil {
 
 /// 统一异常类
 class LogicError {
-  int errorCode;
-  String msg;
+  int? errorCode;
+  String? msg;
 
   LogicError(errorCode, msg) {
     this.errorCode = errorCode;

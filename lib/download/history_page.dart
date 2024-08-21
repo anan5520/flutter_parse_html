@@ -12,7 +12,7 @@ import 'package:flutter_parse_html/util/movie_util.dart';
 import 'package:flutter_parse_html/util/native_utils.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:image_saver/image_saver.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class HistoryPage extends StatefulWidget {
@@ -26,7 +26,7 @@ class HistoryPage extends StatefulWidget {
 
 class HistoryState extends State<HistoryPage>
     with AutomaticKeepAliveClientMixin {
-  RefreshController _refreshController;
+  late RefreshController _refreshController;
   List<History> _data = [];
 
   @override
@@ -61,12 +61,12 @@ class HistoryState extends State<HistoryPage>
     return Dismissible(
         onDismissed: (_) async {
 //          widget._data.removeAt(index);
-          widget.db.deleteItem(history.title);
-          Scaffold.of(context)
+          widget.db.deleteItem(history.title??'');
+          ScaffoldMessenger.of(context)
               .showSnackBar(new SnackBar(content: new Text("删除成功")));
         },
         movementDuration: Duration(microseconds: 100),
-        key: Key(history.title),
+        key: Key(history.title??''),
         background: Container(
           color: Color(0xffff0000),
         ),
@@ -77,11 +77,11 @@ class HistoryState extends State<HistoryPage>
           onTap: () async {
             showLoading();
             MovieBean movieBean = await MovieUtil.getMovieBean(
-                history.originUrl, history.title,
-                number: history.number);
+                history.originUrl??'', history.title??'',
+                number: history.number??'');
             Navigator.pop(context);
             Navigator.push(context, MaterialPageRoute(builder: (context) {
-              return VideoPlayPage(movieBean, history.progress,false);
+              return VideoPlayPage(movieBean, history.progress??0,false);
             }));
           },
           child: Column(children: <Widget>[
@@ -97,7 +97,7 @@ class HistoryState extends State<HistoryPage>
                      child: CachedNetworkImage(
                        height: 120,
                        width: 80,
-                       imageUrl: history.imageUrl,
+                       imageUrl: history.imageUrl??'',
                        errorWidget:
                            (BuildContext context, String url, Object error) {
                          return new Icon(Icons.error);
@@ -116,12 +116,12 @@ class HistoryState extends State<HistoryPage>
                         Padding(
                           padding: EdgeInsets.only(bottom: 10),
                           child: Text(
-                            history.title,
+                            history.title??'',
                             style: TextStyle(color: Colors.blue),
                           ),
                         ),
                         Text(
-                            '${history.number} 观看进度: ${(history.progress * 100).toStringAsFixed(2)}%')
+                            '${history.number} 观看进度: ${(history.progress! * 100).toStringAsFixed(2)}%')
                       ],
                     ),
                   )
@@ -158,10 +158,10 @@ class HistoryState extends State<HistoryPage>
     ).then((newValue) {
       if (!mounted) return null;
       if (newValue == null) {
-        if (pop.onCanceled != null) pop.onCanceled();
+        if (pop.onCanceled != null) pop.onCanceled?.call();
         return null;
       }
-      if (pop.onSelected != null) pop.onSelected(newValue);
+      if (pop.onSelected != null) pop.onSelected?.call(newValue);
     });
   }
 
@@ -169,8 +169,7 @@ class HistoryState extends State<HistoryPage>
     print('保存视频>>>$path');
 
     if (Platform.isAndroid) {
-      Uint8List fileData = await new File(path).readAsBytes();
-      File savedFile = await ImageSaver.toFile(fileData: fileData);
+      File savedFile = await ImageGallerySaver.saveFile(path);
       print('保存成功>>>' + savedFile.path);
       Fluttertoast.showToast(msg: '保存成功');
     } else {

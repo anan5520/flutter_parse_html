@@ -2,8 +2,8 @@
 
 class ButtonBean{
   int type = 0; // 1 跳转页面
-  String title;
-  String value;
+  String? title;
+  String? value;
   int page = 1;
 
 

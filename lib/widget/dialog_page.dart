@@ -1,13 +1,15 @@
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_parse_html/model/button_bean.dart';
 import 'package:flutter_parse_html/util/native_utils.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:gallery_saver/gallery_saver.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
 
 class NoticeDialog extends StatefulWidget {
   final String _title;
@@ -142,7 +144,7 @@ class GridViewDialog extends StatelessWidget {
             Navigator.pop(context, value);
           },
           color: Colors.blue,
-          child: Text(value.title,
+          child: Text(value.title!,
               maxLines: 1,
               style: TextStyle(
                   fontSize: 13,
@@ -199,10 +201,10 @@ class ShowImageDialogState extends State {
     ).then((newValue) {
       if (!mounted) return null;
       if (newValue == null) {
-        if (pop.onCanceled != null) pop.onCanceled();
+        if (pop.onCanceled != null) pop.onCanceled!.call();
         return null;
       }
-      if (pop.onSelected != null) pop.onSelected(newValue);
+      if (pop.onSelected != null) pop.onSelected!.call(newValue);
     });
   }
 
@@ -243,10 +245,10 @@ class ShowImageDialogState extends State {
       // var response = await http.get(url, headers: header);
       // File savedFile = await ImageSaver.toFile(fileData: response.bodyBytes);
       // print('保存成功>>>' + savedFile.path);
-      GallerySaver.saveImage(url).then((value){
-        Fluttertoast.showToast(msg: '保存成功$value');
-      });
-
+      var response = await Dio().get(url,
+          options: Options(responseType: ResponseType.bytes));
+      final result = await ImageGallerySaver.saveImage(Uint8List.fromList(response.data));
+      Fluttertoast.showToast(msg: '保存成功$result');
     } else {
       NativeUtils.saveImage(url, albumName: 'Media').then((bool success) {
         print('保存图片返回结果>>$success');

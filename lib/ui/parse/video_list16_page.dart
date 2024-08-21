@@ -37,13 +37,13 @@ class VideoList16Page extends StatefulWidget {
 class VideoList16State extends State<VideoList16Page>
     with AutomaticKeepAliveClientMixin {
   List<VideoListItem> _data = [];
-  List<ButtonBean> _btns;
+  late List<ButtonBean> _btns;
 
-  RefreshController _refreshController;
+  late RefreshController _refreshController;
   int _page = 1, buttonType = 0;
   String _currentKey = '/vodlist/33';
   bool _isSearch = false;
-  TextEditingController _editingController;
+  late TextEditingController _editingController;
 
   @override
   void initState() {
@@ -106,7 +106,7 @@ class VideoList16State extends State<VideoList16Page>
   //跳转播放
   void goToPlay(VideoListItem data) async {
     showLoading();
-    var response = await PornHubUtil.getHtmlFromHttpDeugger(data.targetUrl);
+    var response = await PornHubUtil.getHtmlFromHttpDeugger(data.targetUrl!);
     try {
       var doc = parse.parse(response);
       var url = '';
@@ -120,7 +120,7 @@ class VideoList16State extends State<VideoList16Page>
       });
       Navigator.pop(context);
       if (url.startsWith('http'))
-        CommonUtil.toVideoPlay(url, context, title: data.title);
+        CommonUtil.toVideoPlay(url, context, title: data.title!);
     } catch (e) {
       Navigator.pop(context);
       print(e);
@@ -145,7 +145,7 @@ class VideoList16State extends State<VideoList16Page>
                   child: CachedNetworkImage(
                     placeholder: (context, url) => new Icon(Icons.image),
                     errorWidget: (context, url, error) => new Icon(Icons.error),
-                    imageUrl: item.imageUrl,
+                    imageUrl: item.imageUrl!,
                     fit: BoxFit.cover,
                   ),
                   constraints: new BoxConstraints.expand(),
@@ -199,7 +199,7 @@ class VideoList16State extends State<VideoList16Page>
         }
       });
       if (_btns.length > 0) {
-        _currentKey = _btns[0].value;
+        _currentKey = _btns[0].value!;
         _getData();
       }
     } else {
@@ -247,7 +247,7 @@ class VideoList16State extends State<VideoList16Page>
       } else {
         _isSearch = false;
         buttonType = 0;
-        _currentKey = buttonBean.value;
+        _currentKey = buttonBean.value!;
       }
       _refreshController.requestRefresh();
     }

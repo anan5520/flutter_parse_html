@@ -3,13 +3,13 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_gbk2utf8/flutter_gbk2utf8.dart';
 import 'package:flutter_parse_html/model/video_list_item.dart';
 import 'package:flutter_parse_html/model/xian_feng_bean_entity.dart';
 import 'package:flutter_parse_html/ui/movie/movie_detail_page.dart';
 import 'package:flutter_parse_html/ui/pornhub/pornhub_util.dart';
 import 'package:flutter_parse_html/util/native_utils.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:gbk2utf8/gbk2utf8.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:flutter_parse_html/model/button_bean.dart';
 import 'package:flutter_parse_html/net/net_util.dart';
@@ -34,13 +34,13 @@ class XianFengPage extends StatefulWidget {
 class XianFengState extends State<XianFengPage>
     with AutomaticKeepAliveClientMixin {
   List<VideoListItem> _data = [];
-  List<ButtonBean> _btns;
+  late List<ButtonBean> _btns;
 
-  RefreshController _refreshController;
+  late RefreshController _refreshController;
   int _page = 1,buttonType = 0;
   String _currentKey = '/';
   String _searchKey = '';
-  TextEditingController _editingController;
+  TextEditingController? _editingController;
   bool _isSearch = false;
 
   @override
@@ -84,7 +84,7 @@ class XianFengState extends State<XianFengPage>
                       },
                       child: Padding(
                         padding: EdgeInsets.all(5),
-                        child: Text(_data[index].title),
+                        child: Text(_data[index].title!),
                       ),
                     );
                   }),
@@ -130,10 +130,10 @@ class XianFengState extends State<XianFengPage>
     }
     if (_isSearch) {
       List<XianFengBeanDataItem> items =
-          XianFengBeanEntity.fromJson(json.decode(response)).data.items;
+          XianFengBeanEntity.fromJson(json.decode(response)).data!.items!;
       for (var value in items) {
         VideoListItem item = VideoListItem();
-        item.targetUrl = ApiConstant.xianFengUrl + value.urlpath;
+        item.targetUrl = ApiConstant.xianFengUrl + value.urlpath!;
         item.title = value.name;
         _data.add(item);
       }
@@ -181,7 +181,7 @@ class XianFengState extends State<XianFengPage>
               if (!title.contains('上一页')) {
                 VideoListItem item = VideoListItem();
                 item.targetUrl = ApiConstant.xianFengUrl +
-                    value.getElementsByTagName('a').first.attributes['href'];
+                    value.getElementsByTagName('a').first.attributes['href']!;
                 item.title = title;
                 _data.add(item);
               }
@@ -194,7 +194,7 @@ class XianFengState extends State<XianFengPage>
               if (!title.contains('上一页')) {
                 VideoListItem item = VideoListItem();
                 item.targetUrl = ApiConstant.xianFeng4Url +
-                    value.getElementsByTagName('a').first.attributes['href'];
+                    value.getElementsByTagName('a').first.attributes['href']!;
                 item.title = title;
                 _data.add(item);
               }
@@ -227,7 +227,7 @@ class XianFengState extends State<XianFengPage>
         buttonType = 1;
       }else{
         buttonType = 0;
-        _currentKey = buttonBean.value;
+        _currentKey = buttonBean.value!;
       }
       _refreshController.requestRefresh();
     }
@@ -237,7 +237,7 @@ class XianFengState extends State<XianFengPage>
     showLoading();
     String response;
     if (widget._type == 0) {
-      response = await PornHubUtil.getHtmlFromHttpDeugger(data.targetUrl, isMobile: true);
+      response = await PornHubUtil.getHtmlFromHttpDeugger(data.targetUrl!, isMobile: true);
     } else {
       var res = await http.get(Uri(path: data.targetUrl));
       response = gbk.decode(res.bodyBytes);
@@ -258,8 +258,8 @@ class XianFengState extends State<XianFengPage>
     }
     var inputs = doc.getElementsByTagName('input');
     for (var value in inputs) {
-      String name = value.attributes['name'];
-      String targetUrl = value.attributes['value'];
+      String name = value.attributes['name']!;
+      String targetUrl = value.attributes['value']!;
       if (name != null && (name == 'copy_yah' || name == 'copy_sel') && targetUrl.startsWith('xf')) {
         MovieItemBean movieItemBean = MovieItemBean();
         movieItemBean.targetUrl = targetUrl;

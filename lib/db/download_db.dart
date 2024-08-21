@@ -8,15 +8,15 @@ class Download {
   Download.make(
       this.status, this.url, this.title, this.path, this.progress, this.size, this.length, this.isVideo);
 
-  int status;
+  int? status;
 
-  String url;
-  String title;
-  String path;
-  double progress;
-  double size;
-  double length = 0;
-  int isVideo;
+  String? url;
+  String? title;
+  String? path;
+  double? progress;
+  double? size;
+  double? length = 0;
+  int? isVideo;
 
   Map<String, dynamic> toMap() {
     var map = new Map<String, dynamic>();
@@ -48,10 +48,10 @@ class Download {
     return download;
   }
 
-  static List<Download> fromMapList(dynamic mapList) {
-    List<Download> list = new List(mapList.length);
+  static List<Download> fromMapList(List mapList) {
+    List<Download> list = [];
     for (int i = 0; i < mapList.length; i++) {
-      list[i] = fromMap(mapList[i]);
+      list.add(fromMap(mapList[i]));
     }
     return list;
   }
@@ -77,14 +77,14 @@ class DatabaseHelper {
   final String columnPath = "path";
   final String columnLength = "length";
   final String columnIsVideo = "isVideo";
-  static Database _db;
+  static Database? _db;
 
   Future<Database> get db async {
     if (_db != null) {
-      return _db;
+      return _db!;
     }
     _db = await initDb();
-    return _db;
+    return _db!;
   }
 
   DatabaseHelper.internal();
@@ -143,14 +143,14 @@ class DatabaseHelper {
   }
 
   //查询总数
-  Future<int> getCount() async {
+  Future<int?> getCount() async {
     var dbClient = await db;
     return Sqflite.firstIntValue(
         await dbClient.rawQuery("SELECT COUNT(*) FROM $tableName"));
   }
 
 //按照title查询
-  Future<Download> getItem(String title) async {
+  Future<Download?> getItem(String title) async {
     var dbClient = await db;
 //    var result = await dbClient
 //        .rawQuery("SELECT * FROM $tableName WHERE $columnUrl = '$url'");

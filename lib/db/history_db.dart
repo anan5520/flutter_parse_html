@@ -8,15 +8,15 @@ class History {
   History.make(
       this.type, this.originUrl, this.title, this.videoUrl, this.progress, this.imageUrl, this.length, this.number);
 
-  int type;
+  int? type;
 
-  String originUrl;
-  String title;
-  String videoUrl;
-  String imageUrl;
-  String number;
-  double progress;
-  double length = 0;
+  String? originUrl;
+  String? title;
+  String? videoUrl;
+  String? imageUrl;
+  String? number;
+  double? progress;
+  double? length = 0;
 
   Map<String, dynamic> toMap() {
     var map = new Map<String, dynamic>();
@@ -48,13 +48,14 @@ class History {
     return download;
   }
 
-  static List<History> fromMapList(dynamic mapList) {
-    List<History> list = new List(mapList.length);
+  static List<History> fromMapList(List mapList) {
+    List<History> list = [];
     for (int i = 0; i < mapList.length; i++) {
-      list[i] = fromMap(mapList[i]);
+      list.add(fromMap(mapList[i]));
     }
     return list;
   }
+
 
   @override
   String toString() {
@@ -77,14 +78,14 @@ class HistoryDatabaseHelper {
   static final String columnNumber = "number";
   static final String columnLength = "length";
   static final String columnIsImageUrl = "imageUrl";
-  static Database _db;
+  static Database? _db;
 
   Future<Database> get db async {
     if (_db != null) {
-      return _db;
+      return _db!;
     }
     _db = await initDb();
-    return _db;
+    return _db!;
   }
 
   HistoryDatabaseHelper.internal();
@@ -125,14 +126,14 @@ class HistoryDatabaseHelper {
   }
 
   //查询总数
-  Future<int> getCount() async {
+  Future<int?> getCount() async {
     var dbClient = await db;
     return Sqflite.firstIntValue(
         await dbClient.rawQuery("SELECT COUNT(*) FROM $tableName"));
   }
 
 //按照title查询
-  Future<History> getItem(String title) async {
+  Future<History?> getItem(String title) async {
     var dbClient = await db;
 //    var result = await dbClient
 //        .rawQuery("SELECT * FROM $tableName WHERE $columnUrl = '$url'");

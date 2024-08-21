@@ -15,7 +15,6 @@ import 'package:flutter_parse_html/api/api_constant.dart';
 import 'package:html/parser.dart' as parse;
 import 'package:flutter_parse_html/widget/dialog_page.dart';
 import 'package:flutter_parse_html/model/movie_bean.dart';
-import 'package:screen/screen.dart';
 import 'package:flutter_parse_html/model/parse3_search_bean_entity.dart';
 
 class XianFeng3Page extends StatefulWidget {
@@ -28,13 +27,13 @@ class XianFeng3Page extends StatefulWidget {
 class XianFeng3State extends State<XianFeng3Page>
     with AutomaticKeepAliveClientMixin {
   List<VideoListItem> _data = [];
-  List<ButtonBean> _btns;
+  late List<ButtonBean> _btns;
 
-  RefreshController _refreshController;
+  late RefreshController _refreshController;
   int _page = 1,buttonType = 0;
   String _currentKey = '/ribenAV';
   String _searchKey = '';
-  TextEditingController _editingController;
+  late TextEditingController _editingController;
   bool _isSearch = false;
 
   @override
@@ -90,7 +89,7 @@ class XianFeng3State extends State<XianFeng3Page>
                                 children: <Widget>[
                                   Padding(
                                     padding: EdgeInsets.all(5),
-                                    child: Text(videoListItem.title),
+                                    child: Text(videoListItem.title!),
                                   ),
                                   SizedBox(
                                     height:
@@ -101,7 +100,7 @@ class XianFeng3State extends State<XianFeng3Page>
                                             new Icon(Icons.image),
                                         errorWidget: (context, url, error) =>
                                             new Icon(Icons.error),
-                                        imageUrl: videoListItem.imageUrl,
+                                        imageUrl: videoListItem.imageUrl!,
                                         fit: BoxFit.fill,
                                       ),
                                     ),
@@ -140,10 +139,10 @@ class XianFeng3State extends State<XianFeng3Page>
 
     if(_isSearch){
       Parse3SearchBeanEntity parse3searchBeanEntity = Parse3SearchBeanEntity.fromJson(json.decode(response));
-      parse3searchBeanEntity.data.items.forEach((item){
+      parse3searchBeanEntity.data!.items!.forEach((item){
         VideoListItem videoListItem = VideoListItem();
         videoListItem.imageUrl = item.picurl;
-        videoListItem.title = item.name + item.createdAt;
+        videoListItem.title = item.name !+ item.createdAt!;
         videoListItem.targetUrl = '${ApiConstant.xianFeng3Url}${item.urlpath}';
         _data.add(videoListItem);
       });
@@ -217,7 +216,7 @@ class XianFeng3State extends State<XianFeng3Page>
       }else{
         _isSearch = false;
         buttonType = 0;
-        _currentKey = buttonBean.value;
+        _currentKey = buttonBean.value!;
       }
       _refreshController.requestRefresh();
     }
@@ -225,7 +224,7 @@ class XianFeng3State extends State<XianFeng3Page>
 
   void goToDetail(VideoListItem data) async {
     showLoading();
-    String response = await PornHubUtil.getHtmlFromHttpDeugger(data.targetUrl);
+    String response = await PornHubUtil.getHtmlFromHttpDeugger(data.targetUrl!);
     Navigator.pop(context);
     var doc = parse.parse(response);
     MovieBean movieBean = MovieBean();
@@ -247,7 +246,7 @@ class XianFeng3State extends State<XianFeng3Page>
           .first;
       movieItemBean.targetUrl =
           '${ApiConstant.xianFeng3Url}${plaEle.attributes['href']}';
-      movieBean.list.add(movieItemBean);
+      movieBean.list!.add(movieItemBean);
       Navigator.of(context)
           .push(new MaterialPageRoute(builder: (BuildContext context) {
         return MovieDetailPage(5, movieBean);

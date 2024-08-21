@@ -1,40 +1,27 @@
 buildscript {
-    ext.kotlin_version = '1.5.20'
+    ext.kotlin_version = '1.8.0'
     repositories {
-//        google()
-//        jcenter()
-        jcenter {
-            name = "aliyunJcenter"
-            url = uri("https://maven.aliyun.com/repository/jcenter")
-        }
-        google {
-            name = "aliyunGoogle"
-            url = uri("https://maven.aliyun.com/repository/google")
-        }
+        google()
+        jcenter()
         mavenCentral()
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.0.1'
-//        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath 'com.android.tools.build:gradle:7.2.2'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
 
 allprojects {
     repositories {
-//        google()
-//        jcenter()
-        jcenter {
-            name = "aliyunJcenter"
-            url = uri("https://maven.aliyun.com/repository/jcenter")
-        }
-        google {
-            name = "aliyunGoogle"
-            url = uri("https://maven.aliyun.com/repository/google")
-        }
+        google()
+        jcenter()
         maven { url 'https://jitpack.io' }
         maven { url "https://maven.aliyun.com/repository/public" }
         mavenCentral()
+        maven {
+            url 'https://storage.googleapis.com/download.flutter.io'
+        }
     }
 }
 
@@ -46,6 +33,6 @@ subprojects {
     project.evaluationDependsOn(':app')
 }
 
-task clean(type: Delete) {
+tasks.register("clean", Delete) {
     delete rootProject.buildDir
 }

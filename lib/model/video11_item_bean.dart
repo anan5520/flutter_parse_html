@@ -4,9 +4,9 @@
 
 class Video11ItemBean {
   Video11ItemBean({
-      int code, 
-      Rescont rescont,
-      String msg,}){
+      int? code, 
+      Rescont? rescont,
+      String? msg,}){
     _code = code;
     _rescont = rescont;
     _msg = msg;
@@ -17,19 +17,19 @@ class Video11ItemBean {
     _rescont = json['rescont'] != null ? Rescont.fromJson(json['rescont']) : null;
     _msg = json['msg'];
   }
-  int _code;
-  Rescont _rescont;
-  String _msg;
+  int? _code;
+  Rescont? _rescont;
+  String? _msg;
 
-  int get code => _code;
-  Rescont get rescont => _rescont;
-  String get msg => _msg;
+  int? get code => _code;
+  Rescont? get rescont => _rescont;
+  String? get msg => _msg;
 
-  Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
+  Map<String?, dynamic> toJson() {
+    final map = <String?, dynamic>{};
     map['code'] = _code;
     if (_rescont != null) {
-      map['rescont'] = _rescont.toJson();
+      map['rescont'] = _rescont!.toJson();
     }
     map['msg'] = _msg;
     return map;
@@ -52,18 +52,18 @@ class Video11ItemBean {
 
 class Rescont {
   Rescont({
-      int currentPage, 
-      List<Data> data, 
-      String firstPageUrl, 
-      int from, 
-      int lastPage, 
-      String lastPageUrl, 
-      String nextPageUrl, 
-      String path, 
-      int perPage, 
+      int? currentPage, 
+      List<Data>? data,
+      String? firstPageUrl, 
+      int? from, 
+      int? lastPage, 
+      String? lastPageUrl, 
+      String? nextPageUrl, 
+      String? path, 
+      int? perPage, 
       dynamic prevPageUrl, 
-      int to, 
-      int total,}){
+      int? to, 
+      int? total,}){
     _currentPage = currentPage;
     _data = data;
     _firstPageUrl = firstPageUrl;
@@ -83,7 +83,7 @@ class Rescont {
     if (json['data'] != null) {
       _data = [];
       json['data'].forEach((v) {
-        _data.add(Data.fromJson(v));
+        _data!.add(Data.fromJson(v));
       });
     }
     _firstPageUrl = json['first_page_url'];
@@ -97,37 +97,37 @@ class Rescont {
     _to = json['to'];
     _total = json['total'];
   }
-  int _currentPage;
-  List<Data> _data;
-  String _firstPageUrl;
-  int _from;
-  int _lastPage;
-  String _lastPageUrl;
-  String _nextPageUrl;
-  String _path;
-  int _perPage;
+  int? _currentPage;
+  List<Data>? _data;
+  String? _firstPageUrl;
+  int? _from;
+  int? _lastPage;
+  String? _lastPageUrl;
+  String? _nextPageUrl;
+  String? _path;
+  int? _perPage;
   dynamic _prevPageUrl;
-  int _to;
-  int _total;
+  int? _to;
+  int? _total;
 
-  int get currentPage => _currentPage;
-  List<Data> get data => _data;
-  String get firstPageUrl => _firstPageUrl;
-  int get from => _from;
-  int get lastPage => _lastPage;
-  String get lastPageUrl => _lastPageUrl;
-  String get nextPageUrl => _nextPageUrl;
-  String get path => _path;
-  int get perPage => _perPage;
+  int? get currentPage => _currentPage;
+  List<Data>? get data => _data;
+  String? get firstPageUrl => _firstPageUrl;
+  int? get from => _from;
+  int? get lastPage => _lastPage;
+  String? get lastPageUrl => _lastPageUrl;
+  String? get nextPageUrl => _nextPageUrl;
+  String? get path => _path;
+  int? get perPage => _perPage;
   dynamic get prevPageUrl => _prevPageUrl;
-  int get to => _to;
-  int get total => _total;
+  int? get to => _to;
+  int? get total => _total;
 
-  Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
+  Map<String?, dynamic> toJson() {
+    final map = <String?, dynamic>{};
     map['current_page'] = _currentPage;
     if (_data != null) {
-      map['data'] = _data.map((v) => v.toJson()).toList();
+      map['data'] = _data!.map((v) => v.toJson()).toList();
     }
     map['first_page_url'] = _firstPageUrl;
     map['from'] = _from;
@@ -152,11 +152,11 @@ class Rescont {
 
 class Data {
   Data({
-      int id, 
-      String title, 
-      String coverpath, 
-      String authername, 
-      String autherNo,}){
+      int? id, 
+      String? title, 
+      String? coverpath, 
+      String? authername, 
+      String? autherNo,}){
     _id = id;
     _title = title;
     _coverpath = coverpath;
@@ -171,20 +171,20 @@ class Data {
     _authername = json['authername'];
     _autherNo = json['auther_no'];
   }
-  int _id;
-  String _title;
-  String _coverpath;
-  String _authername;
-  String _autherNo;
+  int? _id;
+  String? _title;
+  String? _coverpath;
+  String? _authername;
+  String? _autherNo;
 
-  int get id => _id;
-  String get title => _title;
-  String get coverpath => _coverpath;
-  String get authername => _authername;
-  String get autherNo => _autherNo;
+  int? get id => _id;
+  String? get title => _title;
+  String? get coverpath => _coverpath;
+  String? get authername => _authername;
+  String? get autherNo => _autherNo;
 
-  Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
+  Map<String?, dynamic> toJson() {
+    final map = <String?, dynamic>{};
     map['id'] = _id;
     map['title'] = _title;
     map['coverpath'] = _coverpath;
@@ -196,24 +196,24 @@ class Data {
 }
 
 class Video11PlayBean {
-  int code;
-  Rescont1 rescont;
-  String msg;
+  int? code;
+  Rescont1? rescont;
+  String? msg;
 
   Video11PlayBean({this.code, this.rescont, this.msg});
 
-  Video11PlayBean.fromJson(Map<String, dynamic> json) {
+  Video11PlayBean.fromJson(Map<String?, dynamic> json) {
     code = json['code'];
     rescont =
     json['rescont'] != null ? new Rescont1.fromJson(json['rescont']) : null;
     msg = json['msg'];
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+  Map<String?, dynamic> toJson() {
+    final Map<String?, dynamic> data = new Map<String?, dynamic>();
     data['code'] = this.code;
     if (this.rescont != null) {
-      data['rescont'] = this.rescont.toJson();
+      data['rescont'] = this.rescont!.toJson();
     }
     data['msg'] = this.msg;
     return data;
@@ -221,16 +221,16 @@ class Video11PlayBean {
 }
 
 class Rescont1 {
-  String videopath;
+  String? videopath;
 
   Rescont1({this.videopath});
 
-  Rescont1.fromJson(Map<String, dynamic> json) {
+  Rescont1.fromJson(Map<String?, dynamic> json) {
     videopath = json['videopath'];
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+  Map<String?, dynamic> toJson() {
+    final Map<String?, dynamic> data = new Map<String?, dynamic>();
     data['videopath'] = this.videopath;
     return data;
   }

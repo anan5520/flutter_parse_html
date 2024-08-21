@@ -9,7 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_parse_html/model/api_bean.dart';
 import 'package:flutter_parse_html/model/sise_search_entity.dart';
-import 'package:flutter_parse_html/model/video_list8_bean_entity.dart';
 import 'package:flutter_parse_html/model/video_list_item.dart';
 import 'package:flutter_parse_html/resources/shared_preferences_keys.dart';
 import 'package:flutter_parse_html/ui/movie/movie_detail_page.dart';
@@ -41,18 +40,18 @@ class VideoList8Page extends StatefulWidget {
 class VideoList8State extends State<VideoList8Page>
     with AutomaticKeepAliveClientMixin {
   List<VideoListItem> _data = [];
-  List<ButtonBean> _btns;
-  List<ButtonBean> _tags;
-  List<ButtonBean> _commonBtns;
+  List<ButtonBean>? _btns;
+  List<ButtonBean> _tags = [];
+  List<ButtonBean>? _commonBtns;
 
-  RefreshController _refreshController;
+  late RefreshController _refreshController;
   int _page = 1,
       buttonType = 0;
   String _currentKey = '/index/home.html';
   String _nextKey = '';
   String _searchTag = 'jingpin';
   bool _isSearch = false;
-  TextEditingController _editingController;
+  late TextEditingController _editingController;
   StreamController<VideoListItem> imgeStream = StreamController.broadcast();
 
   @override
@@ -141,7 +140,7 @@ class VideoList8State extends State<VideoList8Page>
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          if (_btns.length > 0) {
+          if (_btns?.isNotEmpty ?? false) {
             //有选项再显示
             _showDialog();
           }
@@ -159,7 +158,7 @@ class VideoList8State extends State<VideoList8Page>
 
   void goToPlay(VideoListItem data) async {
     showLoading();
-    var response = await PornHubUtil.getHtmlFromHttpDeugger(data.targetUrl);
+    var response = await PornHubUtil.getHtmlFromHttpDeugger(data.targetUrl!);
     try {
       var doc = parse.parse(response);
       var playUrl = '';
@@ -180,7 +179,7 @@ class VideoList8State extends State<VideoList8Page>
       });
       Navigator.pop(context);
       if (playUrl.startsWith('http')) {
-        CommonUtil.toVideoPlay(playUrl, context, title: data.title);
+        CommonUtil.toVideoPlay(playUrl, context, title: data.title!);
       }
     } catch (e) {
       Navigator.pop(context);
@@ -210,14 +209,14 @@ class VideoList8State extends State<VideoList8Page>
           padding: EdgeInsets.all(0),
           onPressed: () {
             if(_isSearch){
-              _searchTag = value.value;
+              _searchTag = value.value!;
             }else{
-              _currentKey = value.value;
+              _currentKey = value.value!;
             }
             _refreshController.requestRefresh();
           },
           color: Colors.blue,
-          child: Text(value.title,
+          child: Text(value.title!,
               maxLines: 1,
               style: TextStyle(
                   fontSize: 13,
@@ -237,7 +236,7 @@ class VideoList8State extends State<VideoList8Page>
       borderRadius: BorderRadius.circular(5),
       child: GestureDetector(
         onTap: () {
-          if(item.isVideo){
+          if(item.isVideo!){
             goToPlay(item);
           }else{
             goToDetail(item);
@@ -252,9 +251,9 @@ class VideoList8State extends State<VideoList8Page>
                 child: ConstrainedBox(
                   child: StreamBuilder<VideoListItem>(
                     builder: (_, _snap) {
-                      return item.index > -1
+                      return item.index !> -1
                           ? Image.file(
-                        File(item.imageUrl),
+                        File(item.imageUrl!),
                         gaplessPlayback: true,
                         fit: BoxFit.cover,
                       )
@@ -290,16 +289,20 @@ class VideoList8State extends State<VideoList8Page>
         ? '${ApiConstant
         .videoList8Url}/search/video/?s=$_currentKey&page=$_page'
         : "${ApiConstant.videoList8Url}${_page > 1 ? _nextKey : _currentKey}";
-
     String response = await NetUtil.getHtmlData(url);
     _refreshController.refreshCompleted();
     _refreshController.loadComplete();
     var doc = parse.parse(response);
     try {
       var tdElements = doc.getElementsByClassName('video-list');
-      if(tdElements.length == 0 && !response.contains('enter-content')){
+      if(tdElements.length == 0){
         _resetUrl(url);
         return;
+      }
+      var imageBaseUrls = response.split(RegExp(r"var pic_image_url = '|';"));
+      var imgBaseUrl = 'https://base.jingmin.wang/';
+      if(imageBaseUrls.length > 1){
+        imgBaseUrl = imageBaseUrls[1];
       }
       for (var value in tdElements) {
         var aEles = value.getElementsByClassName('video-item');
@@ -313,13 +316,13 @@ class VideoList8State extends State<VideoList8Page>
           item.title = CommonUtil.replaceStr(aesEncode(aEle
               .getElementsByClassName('video-item-title dec-ti')
               .first
-              .attributes['title']));
+              .attributes['title']!));
           if(imgEle.attributes.containsKey('data-pic-base64')){
             item.isVideo = false;
-            item.imageUrl = _getImgUrl(imgEle.attributes['data-pic-base64']);
+            item.imageUrl = _getImgUrl(imgBaseUrl,imgEle.attributes['data-pic-base64']!);
           }else{
             item.isVideo = true;
-            item.imageUrl = _getImgUrl(imgEle.attributes['data-base64']);
+            item.imageUrl = _getImgUrl(imgBaseUrl,imgEle.attributes['data-base64']!);
           }
 
           item.targetUrl = href;
@@ -331,7 +334,7 @@ class VideoList8State extends State<VideoList8Page>
         try {
           nextEles.first.getElementsByTagName('a').forEach((element) {
             if (element.attributes['title'] == '下一页') {
-              _nextKey = element.attributes['href'];
+              _nextKey = element.attributes['href']!;
             }
           });
         } catch (e) {
@@ -345,8 +348,8 @@ class VideoList8State extends State<VideoList8Page>
         var aEles = cates.first.getElementsByTagName('a');
         aEles.forEach((element) {
           ButtonBean buttonBean = ButtonBean();
-          buttonBean.title = aesEncode(element.attributes['title']);
-          buttonBean.value = aesEncode(element.attributes['data-link']);
+          buttonBean.title = aesEncode(element.attributes['title']!);
+          buttonBean.value = aesEncode(element.attributes['data-link']!);
           _tags.add(buttonBean);
         });
       }
@@ -358,14 +361,14 @@ class VideoList8State extends State<VideoList8Page>
         var liEles = menu.getElementsByTagName('div');
         liEles.forEach((element) {
           ButtonBean buttonBean = ButtonBean();
-          buttonBean.title = aesEncode(element.attributes['title']);
+          buttonBean.title = aesEncode(element.attributes['title']!);
           buttonBean.value = aesEncode(element.attributes['onclick']
-              .replaceAll("onMenuItemClick('", '')
+              !.replaceAll("onMenuItemClick('", '')
               .replaceAll("')", ''));
-          _commonBtns.add(buttonBean);
+          _commonBtns?.add(buttonBean);
         });
       }
-      _btns.addAll(_commonBtns);
+      _btns?.addAll(_commonBtns!);
     } catch (e) {
       print(e);
     }
@@ -392,11 +395,16 @@ class VideoList8State extends State<VideoList8Page>
     }
     try {
       List<dynamic> jsons = json.decode(response);
+      var imageBaseUrls = response.split(RegExp(r"var pic_image_url = '|';"));
+      var imgBaseUrl = 'https://base.jingmin.wang/';
+      if(imageBaseUrls.length > 1){
+        imgBaseUrl = imageBaseUrls[1];
+      }
       jsons.forEach((element) {
         var siseEntity = SiseSearchEntity.fromJson(element);
         VideoListItem listItem = VideoListItem();
-        listItem.title = aesEncode(siseEntity.title);
-        listItem.imageUrl = _getImgUrl(siseEntity.thumb);
+        listItem.title = aesEncode(siseEntity.title!);
+        listItem.imageUrl = _getImgUrl(imgBaseUrl,siseEntity.thumb!);
         listItem.isVideo = _searchTag != 'tupian';
         listItem.targetUrl = _searchTag != 'tupian'? '${ApiConstant.videoList8Url}/cYc${encodeString(
             '/$_searchTag/play-${siseEntity.id}')}.html': '${ApiConstant.videoList8Url}/cYc${encodeString(
@@ -416,7 +424,7 @@ class VideoList8State extends State<VideoList8Page>
         context: context,
         builder: (context) {
           return new AlertDialog(
-            content: GridViewDialog(_btns),
+            content: GridViewDialog(_btns!),
           );
         });
     if (buttonBean != null) {
@@ -426,14 +434,14 @@ class VideoList8State extends State<VideoList8Page>
       } else {
         _isSearch = false;
         buttonType = 0;
-        _currentKey = buttonBean.value;
+        _currentKey = buttonBean.value!;
       }
       _refreshController.requestRefresh();
     }
   }
 
-  String _getImgUrl(String url){
-    return 'https://www.xlrdcgrgs.xyz${url
+  String _getImgUrl(String? baseUrl,String url){
+    return '${baseUrl??'https://www.xlrdcgrgs.xyz'}${url
           .startsWith('/') ?
     url : '/$url'}';
   }
@@ -444,8 +452,13 @@ class VideoList8State extends State<VideoList8Page>
     var doc = parse.parse(response);
     var url = '';
     List<String> imageList = [];
+    var imageBaseUrls = response.split(RegExp(r"var pic_image_url = '|';"));
+    var imgBaseUrl = 'https://base.jingmin.wang/';
+    if(imageBaseUrls.length > 1){
+      imgBaseUrl = imageBaseUrls[1];
+    }
     doc.getElementsByClassName('tupian-detail-content').first.getElementsByTagName('img').forEach((element) {
-      imageList.add(_getImgUrl(element.attributes['data-pic-base64']));
+      imageList.add(_getImgUrl(imgBaseUrl,element.attributes['data-pic-base64']!));
     });
     Navigator.pop(context);
     Navigator.pushNamed(
@@ -488,7 +501,7 @@ class VideoList8State extends State<VideoList8Page>
     Directory tempDir = await getTemporaryDirectory();
     var path =
         '${tempDir.path}/${md5.convert(
-        new Utf8Encoder().convert(item.imageUrl))}';
+        new Utf8Encoder().convert(item.imageUrl!))}';
     if (await File(path).exists()) {
       item.index = index;
       imgeStream.sink.add(item..imageUrl = path);
@@ -513,22 +526,21 @@ class VideoList8State extends State<VideoList8Page>
   void _resetUrl(String url,{bool useFanhao = true})  async{
     SpUtil sp = await SpUtil.getInstance();
     String localStr = sp.getString(SharedPreferencesKeys.urls);
-    UrlsBean localUrl;
+    UrlsBean? localUrl;
     if (localStr != null && localStr.isNotEmpty) {
       localUrl = UrlsBean.fromJson(json.decode(localStr));
     }
-    url = useFanhao? localUrl.fanHao3:url;
     http.Request req = http.Request("Get", Uri.parse(url))..followRedirects = false;
     http.Client baseClient = http.Client();
     http.StreamedResponse redirectResponse = await baseClient.send(req);
     if(redirectResponse.statusCode == 302){
-      Uri redirectUri = Uri.parse(redirectResponse.headers['location']);
+      Uri redirectUri = Uri.parse(redirectResponse.headers['location']!);
       url = redirectUri.origin;
       _resetUrl(url,useFanhao: false);
       return;
     }
     if(url.isNotEmpty){
-      ApiConstant.videoList8Url = url;
+      ApiConstant.videoList8Url = url.replaceAll('/index/home.html', '');
       UrlsBean localUrl;
       if (localStr != null && localStr.isNotEmpty) {
         localUrl = UrlsBean.fromJson(json.decode(localStr));

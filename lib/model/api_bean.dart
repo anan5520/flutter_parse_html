@@ -1,45 +1,45 @@
 
 
 class UrlsBean {
-  String s4kMovie;
-  String pornForum;
-  String pornVideo;
-  String lsjUrl;
-  String liveUrl;
-  String searchUrl;
-  String searchNiMaUrl;
-  String fanHao1;
-  String fanHao2;
-  String fanHao3;
-  String xianFengUrl;
-  String videoList1Url;
-  String videoList2Url;
-  String videoList3Url;
-  String videoList4Url;
-  String videoList5Url;
-  String videoList6Url;
-  String videoList7Url;
-  String videoList8Url;
-  String videoList9Url;
-  String videoList10Url;
-  String videoList18Url;
-  String douYinUrl;
-  String douYin2Url;
-  String abjUrl;
-  String yaSeUrl;
-  String parse2Url;
-  String parse3Url;
-  String parse4Url;
-  String parse5Url;
-  String movieBaseUrl1;
-  String gif1;
-  String gif2;
-  String xianFeng3Url;
-  String xianFeng4Url;
-  String xianFeng5Url;
-  bool isUpSiSeUrl;
-  bool goToFuLi;
-  int version;
+  String? s4kMovie;
+  String? pornForum;
+  String? pornVideo;
+  String? lsjUrl;
+  String? liveUrl;
+  String? searchUrl;
+  String? searchNiMaUrl;
+  String? fanHao1;
+  String? fanHao2;
+  String? fanHao3;
+  String? xianFengUrl;
+  String? videoList1Url;
+  String? videoList2Url;
+  String? videoList3Url;
+  String? videoList4Url;
+  String? videoList5Url;
+  String? videoList6Url;
+  String? videoList7Url;
+  String? videoList8Url;
+  String? videoList9Url;
+  String? videoList10Url;
+  String? videoList18Url;
+  String? douYinUrl;
+  String? douYin2Url;
+  String? abjUrl;
+  String? yaSeUrl;
+  String? parse2Url;
+  String? parse3Url;
+  String? parse4Url;
+  String? parse5Url;
+  String? movieBaseUrl1;
+  String? gif1;
+  String? gif2;
+  String? xianFeng3Url;
+  String? xianFeng4Url;
+  String? xianFeng5Url;
+  bool? isUpSiSeUrl;
+  bool? goToFuLi;
+  int? version;
 
   UrlsBean(
       {this.s4kMovie,
@@ -77,7 +77,7 @@ class UrlsBean {
         this.goToFuLi,
         this.version});
 
-  UrlsBean.fromJson(Map<String, dynamic> json) {
+  UrlsBean.fromJson(Map<String?, dynamic> json) {
     s4kMovie = json['4kMovie'];
     pornForum = json['pornForum'];
     pornVideo = json['pornVideo'];
@@ -119,8 +119,8 @@ class UrlsBean {
     version = json['version'];
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+  Map<String?, dynamic> toJson() {
+    final Map<String?, dynamic> data = new Map<String?, dynamic>();
     data['4kMovie'] = this.s4kMovie;
     data['pornForum'] = this.pornForum;
     data['pornVideo'] = this.pornVideo;
@@ -164,16 +164,16 @@ class UrlsBean {
   }
 }
 class UpdateBean {
-  int version;
-  bool isForce;
-  String versionName;
-  String des;
-  String url;
+  int? version;
+  bool? isForce;
+  String? versionName;
+  String? des;
+  String? url;
 
   UpdateBean(
       {this.version, this.isForce, this.versionName, this.des, this.url});
 
-  UpdateBean.fromJson(Map<String, dynamic> json) {
+  UpdateBean.fromJson(Map<String?, dynamic> json) {
     version = json['version'];
     isForce = json['isForce'];
     versionName = json['versionName'];
@@ -181,8 +181,8 @@ class UpdateBean {
     url = json['url'];
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+  Map<String?, dynamic> toJson() {
+    final Map<String?, dynamic> data = new Map<String?, dynamic>();
     data['version'] = this.version;
     data['isForce'] = this.isForce;
     data['versionName'] = this.versionName;
@@ -193,16 +193,16 @@ class UpdateBean {
 }
 
 class NoticeBean {
-  String content;
-  int version;
-  String title;
-  bool isShow;
-  bool canCancel;
+  String? content;
+  int? version;
+  String? title;
+  bool? isShow;
+  bool? canCancel;
 
   NoticeBean(
       {this.content, this.version, this.title, this.isShow, this.canCancel});
 
-  NoticeBean.fromJson(Map<String, dynamic> json) {
+  NoticeBean.fromJson(Map<String?, dynamic> json) {
     content = json['content'];
     version = json['version'];
     title = json['title'];
@@ -210,8 +210,8 @@ class NoticeBean {
     canCancel = json['canCancel'];
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+  Map<String?, dynamic> toJson() {
+    final Map<String?, dynamic> data = new Map<String?, dynamic>();
     data['content'] = this.content;
     data['version'] = this.version;
     data['title'] = this.title;
@@ -222,15 +222,15 @@ class NoticeBean {
 }
 
 class UpdateKey {
-  String xVideosKey;
-  String copyKey;
-  bool isJd;
-  bool onlyShowOne;
-  String spKey;
+  String? xVideosKey;
+  String? copyKey;
+  bool? isJd;
+  bool? onlyShowOne;
+  String? spKey;
 
   UpdateKey({this.xVideosKey});
 
-  UpdateKey.fromJson(Map<String, dynamic> json) {
+  UpdateKey.fromJson(Map<String?, dynamic> json) {
     xVideosKey = json['xVideosKey'];
     copyKey = json['copyKey'];
     isJd = json['isJd'];
@@ -238,8 +238,8 @@ class UpdateKey {
     onlyShowOne = json['onlyShowOne'];
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+  Map<String?, dynamic> toJson() {
+    final Map<String?, dynamic> data = new Map<String?, dynamic>();
     data['xVideosKey'] = this.xVideosKey;
     data['copyKey'] = this.copyKey;
     data['isJd'] = this.isJd;

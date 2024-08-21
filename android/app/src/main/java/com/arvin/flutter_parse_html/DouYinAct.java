@@ -29,16 +29,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.view.ViewCompat;
 import io.flutter.plugins.CustomFlutterPlugins;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-
-public class DouYinAct extends AppCompatActivity {
+import android.app.Activity;
+public class DouYinAct extends Activity {
 
     public final static String IMG_TRANSITION = "IMG_TRANSITION";
     public final static String TRANSITION = "TRANSITION";
@@ -241,7 +239,6 @@ public class DouYinAct extends AppCompatActivity {
     private void initTransition() {
         if (isTransition && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             postponeEnterTransition();
-            ViewCompat.setTransitionName(videoPlayer, IMG_TRANSITION);
             addTransitionListener();
             startPostponedEnterTransition();
         } else {

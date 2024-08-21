@@ -10,7 +10,6 @@ import 'package:flutter_parse_html/model/video_list_item.dart';
 import 'package:flutter_parse_html/model/book_bean.dart';
 import 'package:flutter_parse_html/net/net_util.dart';
 import 'package:flutter_parse_html/api/api_constant.dart';
-import 'package:unicorndial/unicorndial.dart';
 import 'package:html/parser.dart' as parse;
 import 'dart:convert';
 
@@ -31,10 +30,10 @@ class BookList4State extends State<BookList4Page>
     with AutomaticKeepAliveClientMixin {
   String _currentKey = '';
   int _page = 1;
-  RefreshController _refreshController;
-  TextEditingController _editingController;
+  late RefreshController _refreshController;
+  late TextEditingController _editingController;
   List<VideoListItem> _data = [];
-  List<ButtonBean> _btns;
+  late List<ButtonBean> _btns;
   bool _isSearch = false;
 
   @override
@@ -62,9 +61,9 @@ class BookList4State extends State<BookList4Page>
   Widget getItem(BuildContext context, int index) {
     return GestureDetector(
       onTap: () {
-        if (_data[index].show) {
+        if (_data[index].show!) {
           Navigator.push(context, MaterialPageRoute(builder: (context) {
-            return BookList4Page(_data[index].targetUrl);
+            return BookList4Page(_data[index].targetUrl!);
           }));
         } else {
           Navigator.push(context, MaterialPageRoute(builder: (context) {
@@ -75,8 +74,8 @@ class BookList4State extends State<BookList4Page>
       child: Padding(
         padding: EdgeInsets.only(top: 10, bottom: 10, left: 5, right: 5),
         child: Column(children: [
-          Text(_data[index].title,style: TextStyle(color: Colors.blue),),
-          Text(_data[index].des == null?"":_data[index].des)
+          Text(_data[index].title!,style: TextStyle(color: Colors.blue),),
+          Text(_data[index].des == null?"":_data[index].des!)
         ],),
       ),
     );
@@ -102,7 +101,7 @@ class BookList4State extends State<BookList4Page>
     var contentEle = doc.getElementsByClassName("post-list");
     if (contentEle.length > 0) {
       var itemEles = contentEle?.first?.getElementsByTagName('li');
-      itemEles.forEach((element) {
+      itemEles!.forEach((element) {
         var contentItem =
             element.getElementsByClassName('post-item-main').first;
         var item = VideoListItem()
@@ -118,7 +117,7 @@ class BookList4State extends State<BookList4Page>
     var suijiRoot = doc.getElementsByClassName('post-content-post');
     if (suijiRoot.length > 0) {
       var suijiEles = suijiRoot?.first?.getElementsByTagName('li');
-      suijiEles.forEach((element) {
+      suijiEles!.forEach((element) {
         var item = VideoListItem()
           ..title = CommonUtil.replaceStr(element.text)
           ..targetUrl =
@@ -134,7 +133,7 @@ class BookList4State extends State<BookList4Page>
         var aEle = element.getElementsByTagName('a').first;
         _btns.add(ButtonBean()
           ..title = aEle.text
-          ..value = aEle.attributes['href'].replaceAll(ApiConstant.bookList4Url, ''));
+          ..value = aEle.attributes['href']!.replaceAll(ApiConstant.bookList4Url, ''));
       });
     }
   }
@@ -149,7 +148,7 @@ class BookList4State extends State<BookList4Page>
         });
     if (buttonBean != null) {
       _isSearch = false;
-      _currentKey = buttonBean.value;
+      _currentKey = buttonBean.value!;
       _refreshController.requestRefresh();
     }
   }

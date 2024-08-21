@@ -46,7 +46,7 @@ class SearchBar extends SearchDelegate<String> {
       ),
       // 点击的时候关闭页面（上下文）
       onPressed: () {
-        close(context, null);
+        close(context, '');
       },
     );
   }
@@ -83,9 +83,9 @@ class SearchState extends State<SearchResultPage>
 
   SearchState(this._query);
 
-  List<VideoListItem> _data = new List();
+  List<VideoListItem> _data = [];
 
-  Dio _dio;
+  late Dio _dio;
 
   @override
   void initState() {
@@ -123,7 +123,7 @@ class SearchState extends State<SearchResultPage>
     Widget content = videoListItem.imageUrl == null
         ? new Container()
         : CachedNetworkImage(
-      imageUrl: videoListItem.imageUrl,
+      imageUrl: videoListItem.imageUrl!,
       fit: BoxFit.cover,
       height: 80,
       width: 60,
@@ -133,14 +133,14 @@ class SearchState extends State<SearchResultPage>
       child: GestureDetector(
         onTap: () {
           showLoading();
-          getVideoUrl(videoListItem.targetUrl);
+          getVideoUrl(videoListItem.targetUrl!);
         },
         child: new Row(
           children: <Widget>[
             content,
             new Padding(
               padding: EdgeInsets.only(left: 10),
-              child: Text(videoListItem.title),
+              child: Text(videoListItem.title!),
             )
           ],
         ),
@@ -159,7 +159,7 @@ class SearchState extends State<SearchResultPage>
       var document = parse.parse(body);
       List<VideoListItem> list = [];
       if (widget.type == 1) {
-        var elements = document.getElementById('searchList').getElementsByTagName("li");
+        var elements = document.getElementById('searchList')!.getElementsByTagName("li");
         for (var value in elements) {
           VideoListItem videoListItem = new VideoListItem();
           var imgElement = value
@@ -172,7 +172,7 @@ class SearchState extends State<SearchResultPage>
               .text; //标题
           videoListItem.targetUrl =
           '${ApiConstant.movieBaseUrl}${imgElement.attributes['href']
-              .trim()}'; //跳转地址
+              !.trim()}'; //跳转地址
           list.add(videoListItem);
         }
       } else {
@@ -191,7 +191,7 @@ class SearchState extends State<SearchResultPage>
               listItem.targetUrl =
                   ApiConstant.movieBaseUrl1 + target;
               listItem.title = imgEle.attributes['alt'];
-              listItem.imageUrl = 'https${imgEle.attributes['data-original'].split('https').last}';
+              listItem.imageUrl = 'https${imgEle.attributes['data-original']!.split('https').last}';
               var v5 = value1.getElementsByClassName('card-content text-ellipsis text-muted');
               if (v5.length > 0) {
                 listItem.des = "${v5.first.text}";
@@ -244,17 +244,17 @@ class SearchState extends State<SearchResultPage>
         var eleIds = document.getElementsByClassName('nav nav-tabs active').first.getElementsByTagName('li');
         eleIds.forEach((element) {
           if(element.text.contains('m3u8')){
-            id = element.getElementsByTagName('a').first.attributes['href'].replaceAll('#', '');
+            id = element.getElementsByTagName('a').first.attributes['href']!.replaceAll('#', '');
           }
         });
         var itemElements = document.getElementById(id)
-            .getElementsByTagName('li');
-        List<MovieItemBean> list = List();
+            !.getElementsByTagName('li');
+        List<MovieItemBean> list = [];
         for (var value in itemElements) {
           MovieItemBean movieItemBean = MovieItemBean();
           movieItemBean.name = value.getElementsByTagName('a').first.text;
           movieItemBean.targetUrl = ApiConstant.movieBaseUrl +
-              value.getElementsByTagName('a').first.attributes['href'];
+              value.getElementsByTagName('a').first.attributes['href']!;
           list.add(movieItemBean);
         }
         movieBean.list = list;

@@ -9,16 +9,16 @@ import 'package:flutter_parse_html/util/common_util.dart';
 import 'package:path_provider/path_provider.dart';
 
 class DownloadUtil {
-  static DatabaseHelper _dbHelper;
+  static DatabaseHelper? _dbHelper;
 
-  static RefreshCallback _refreshCallback;
+  static RefreshCallback? _refreshCallback;
 
   static DatabaseHelper get dbHelper {
     if (_dbHelper != null) {
-      return _dbHelper;
+      return _dbHelper!;
     }
     _dbHelper = DatabaseHelper();
-    return _dbHelper;
+    return _dbHelper!;
   }
 
   static void refreshCallback(RefreshCallback value) {
@@ -30,15 +30,15 @@ class DownloadUtil {
     title,
     int isVideo, {
     bool isM3u8 = false,
-    double videoLength,
+    double? videoLength,
         int maxTaskNum = 0,
-    ProgressCallback onReceiveProgress,
+    ProgressCallback? onReceiveProgress,
   }) async {
-    Directory appDocDir = Platform.isAndroid
+    Directory? appDocDir = Platform.isAndroid
         ? await getExternalStorageDirectory()
         : await getApplicationDocumentsDirectory();
     String md5Url = CommonUtil.toMd5(url);
-    String path = "${appDocDir.path}/$md5Url/$md5Url.mp4";
+    String path = "${appDocDir?.path}/$md5Url/$md5Url.mp4";
     File file = new File(path);
     if (!await file.parent.exists()) {
       await file.parent.create();
@@ -46,10 +46,10 @@ class DownloadUtil {
     print('下载地址>>$path');
     if (url.contains('.m3u8') || isM3u8) {
       return _downM3u8(url, title, path,
-          onReceiveProgress: onReceiveProgress, videoLength: videoLength,maxTaskNum: maxTaskNum);
+          onReceiveProgress: onReceiveProgress!, videoLength: videoLength!,maxTaskNum: maxTaskNum);
     } else {
       return _downloadWithChunks(url, path, title + md5Url, isVideo,
-          onReceiveProgress: onReceiveProgress, videoLength: videoLength);
+          onReceiveProgress: onReceiveProgress!, videoLength: videoLength!);
     }
   }
 
@@ -59,10 +59,10 @@ class DownloadUtil {
     savePath,
     title,
     int isVideo, {
-    double videoLength,
-    ProgressCallback onReceiveProgress,
+    double? videoLength,
+    ProgressCallback? onReceiveProgress,
   }) async {
-    Download download = await dbHelper.getItem(title);
+    Download? download = await dbHelper.getItem(title);
     if (download == null) {
       print('数据库中没有>>>>');
       dbHelper.saveItem(Download.make(0, url, title, savePath, 0, 0,
@@ -88,7 +88,7 @@ class DownloadUtil {
               'path': savePath,
             }, title);
             print('percentage>>$percentage|更新>》》》');
-            if (_refreshCallback != null) _refreshCallback(percentage);
+            if (_refreshCallback != null) _refreshCallback!(percentage);
             if (onReceiveProgress != null) onReceiveProgress(count, total);
           }
         }
@@ -128,10 +128,10 @@ class DownloadUtil {
       //解析文件总长度，进而算出剩余长度
       total = int.parse(response.headers
           .value(HttpHeaders.contentRangeHeader)
-          .split("/")
-          .last);
+          ?.split("/")
+          .last??'');
       int reserved = total -
-          int.parse(response.headers.value(HttpHeaders.contentLengthHeader));
+          int.parse(response.headers.value(HttpHeaders.contentLengthHeader)??'');
       //文件的总块数(包括第一块)
       int chunk = (reserved / firstChunkSize).ceil() + 1;
 
@@ -161,7 +161,7 @@ class DownloadUtil {
   }
 
   static Future _downM3u8(String url, String title, savePath,
-      {double videoLength,int maxTaskNum = 0, ProgressCallback onReceiveProgress}) async {
+      {double? videoLength,int maxTaskNum = 0, ProgressCallback? onReceiveProgress}) async {
 
     var dio = Dio();
     int total = 0;
@@ -169,7 +169,7 @@ class DownloadUtil {
 
     List<String> tsUrls = await _getM3u8PartUrls(url);
 
-    Download download = await dbHelper.getItem(title);
+    Download? download = await dbHelper.getItem(title);
     if (download == null) {
       print('数据库中没有>>>>');
       dbHelper.saveItem(Download.make(0, url, title, savePath, 0, 0,
@@ -188,7 +188,7 @@ class DownloadUtil {
 //              'status': count == total ? 1 : 0,
 //            }, title);
 //            print('percentage>>$percentage|更新>》》》');`
-            if (_refreshCallback != null) _refreshCallback(percentage);
+            if (_refreshCallback != null) _refreshCallback!(percentage);
             if (onReceiveProgress != null) onReceiveProgress(count, total);
           }
         }
@@ -240,7 +240,7 @@ class DownloadUtil {
 //      }, title);
     }
 
-    Future<Response> downloadChunk(url, no) async {
+    Future<Response?> downloadChunk(url, no) async {
       try {
         progress.add(0);
         print('开始下载>>$url||$no');
@@ -323,14 +323,14 @@ class DownloadUtil {
 //              'status': count == total ? 1 : 0,
 //            }, title);
 //            print('percentage>>$percentage|更新>》》》');
-            if (_refreshCallback != null) _refreshCallback(percentage);
+            if (_refreshCallback != null) _refreshCallback!(percentage);
             if (onReceiveProgress != null) onReceiveProgress(count, total);
           }
         }
       };
     }
 
-    Future<Response> downloadChunk(url, no) async {
+    Future<Response?> downloadChunk(url, no) async {
       try {
         progress.add(0);
         print('开始下载>>$url||$no');
@@ -464,13 +464,13 @@ class DownloadUtil {
     savePath,
     title,
     int isVideo, {
-    double videoLength,
-    ProgressCallback onReceiveProgress,
+    double? videoLength,
+    ProgressCallback? onReceiveProgress,
   }) async {
     List<String> tsUrls = await _getM3u8PartUrls(url);
     File file = new File(savePath);
     int start = await file.parent.list().length;
-    await downAndMerge(url, tsUrls, savePath, title, onReceiveProgress,start: start);
+    await downAndMerge(url, tsUrls, savePath, title, onReceiveProgress!,start: start);
   }
 }
 

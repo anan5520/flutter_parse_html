@@ -4,11 +4,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_parse_html/book/base/util/utils_toast.dart';
 import 'package:flutter_parse_html/model/YsgcVideoBean.dart';
 import 'package:flutter_parse_html/model/movie_bean.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter_parse_html/model/movie_detail2.dart';
 import 'package:flutter_parse_html/model/xian_feng6_bean_entity.dart';
 import 'package:flutter_parse_html/ui/parse/webview_page.dart';
 import 'package:flutter_parse_html/ui/pornhub/pornhub_util.dart';
@@ -23,6 +21,8 @@ import 'package:flutter_parse_html/net/net_util.dart';
 import 'dart:convert' as convert;
 import 'package:flutter_parse_html/ui/video_play.dart';
 import 'package:flutter_parse_html/api/api_constant.dart';
+
+import '../../util/toast_util.dart';
 class MovieDetailPage extends StatefulWidget {
   int _type = 1;
   final MovieBean _movieBean;
@@ -44,14 +44,14 @@ class MovieDetailState extends State<MovieDetailPage> {
         slivers: <Widget>[
           SliverAppBar(
             pinned: true,
-            title: Text(widget._movieBean.name),
+            title: Text(widget._movieBean.name!),
             expandedHeight: MediaQuery
                 .of(context)
                 .size
                 .width * 1.2,
             flexibleSpace: FlexibleSpaceBar(
               background: CachedNetworkImage(
-                imageUrl: widget._movieBean.imgUrl,
+                imageUrl: widget._movieBean.imgUrl!,
                 fit: BoxFit.cover,
               ),
             ),
@@ -64,14 +64,14 @@ class MovieDetailState extends State<MovieDetailPage> {
                 child: Column(
                   children: <Widget>[
                     Text(
-                      widget._movieBean.info,
+                      widget._movieBean.info!,
                       style: TextStyle(
                           height: 1.1,
                           fontSize: 13,
                           color: Colors.black54,
                           decoration: TextDecoration.none),
                     ),
-                    Text(widget._movieBean.des,
+                    Text(widget._movieBean.des!,
                         style: TextStyle(
                             height: 1.1,
                             fontSize: 13,
@@ -94,7 +94,7 @@ class MovieDetailState extends State<MovieDetailPage> {
 
   getWidgetList() {
     List<Widget> list = [];
-    for (var value in widget._movieBean.list) {
+    for (var value in widget._movieBean.list!) {
       list.add(Container(
         height: 20,
         color: Colors.white,
@@ -103,32 +103,32 @@ class MovieDetailState extends State<MovieDetailPage> {
           child: MaterialButton(
             color: Colors.blue,
             textColor: Colors.white,
-            child: Text(value.name),
+            child: Text(value.name!),
             onPressed: () {
               widget._movieBean.number = value.name;
               if (widget._type == 1) {
-                goToPlay(value.targetUrl);
+                goToPlay(value.targetUrl!);
               } else if (widget._type == 2) {
                 if (Platform.isAndroid) {
                   NativeUtils.startFromNativeLis(onEvent);
-                  NativeUtils.toXfPlay(value.targetUrl);
+                  NativeUtils.toXfPlay(value.targetUrl!);
                 } else {
-                  Clipboard.setData(new ClipboardData(text: value.targetUrl));
+                  Clipboard.setData(new ClipboardData(text: value.targetUrl!));
                 }
               } else if (widget._type == 3) {
-                getVideoUrlWithType3(value.targetUrl);
+                getVideoUrlWithType3(value.targetUrl!);
               }else if (widget._type == 4) {
-                getVideoUrlWithType4(value.targetUrl);
+                getVideoUrlWithType4(value.targetUrl!);
               }else if (widget._type == 5) {
-                getVideoUrlWithType5(value.targetUrl);
+                getVideoUrlWithType5(value.targetUrl!);
               }else if (widget._type == 6) {
-                getVideoUrlWithType6(value.targetUrl);
+                getVideoUrlWithType6(value.targetUrl!);
               }else if (widget._type == 7) {
-                getVideoUrlWithType7(value.targetUrl);
+                getVideoUrlWithType7(value.targetUrl!);
               }else if (widget._type == 8) {
-                getVideoUrlWithType8(value.targetUrl);
+                getVideoUrlWithType8(value.targetUrl!);
               }else if (widget._type == 9) {
-                getVideoUrlWithType9(value.targetUrl);
+                getVideoUrlWithType9(value.targetUrl!);
               }else{
                 CommonUtil.toVideoPlay(value.targetUrl, context);
               }
@@ -204,9 +204,9 @@ class MovieDetailState extends State<MovieDetailPage> {
     var doc = parse.parse(pageBody);
     var content = doc.getElementsByClassName('playLeft').first.text.replaceAll('var ff_urls=\'', '').replaceAll('\';', '');
     var bean = XianFeng6BeanEntity.fromJson(convert.json.decode(content));
-    var playUrl = bean.data[0].playurls[0][1];
+    var playUrl = bean.data![0].playurls![0][1];
     Navigator.pop(context);
-    if(playUrl.isNotEmpty ){
+    if(playUrl!.isNotEmpty ){
       if (Platform.isAndroid) {
         NativeUtils.startFromNativeLis(onEvent);
         NativeUtils.toXfPlay(playUrl);
@@ -222,7 +222,7 @@ class MovieDetailState extends State<MovieDetailPage> {
     showLoading();
     var pageBody = await NetUtil.getHtmlData(url);
     var doc = parse.parse(pageBody);
-    var playUrl = doc.getElementsByTagName('iframe').first.attributes['src'].replaceAll('&zimu=', '').split('url=')[1];
+    var playUrl = doc.getElementsByTagName('iframe').first.attributes['src']!.replaceAll('&zimu=', '').split('url=')[1];
     Navigator.pop(context);
     if(playUrl.isNotEmpty ){
       CommonUtil.toVideoPlay(playUrl, context);
@@ -330,13 +330,13 @@ class MovieDetailState extends State<MovieDetailPage> {
         });
   }
 
-  void onEvent(Object event) {
+  void onEvent(dynamic event) {
     AlertDialog(
       title: Text('提示'),
       content: Text('没有安装影音先锋，是否安装'),
       contentPadding: EdgeInsets.all(10),
       actions: <Widget>[
-        RaisedButton(
+        TextButton(
           onPressed: () {
             NativeUtils.toBrowser(ApiConstant.xianFengDownUrl);
           },
@@ -356,34 +356,3 @@ class MovieDetailState extends State<MovieDetailPage> {
   }
 }
 
-class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
-  _SliverAppBarDelegate({
-    @required this.minHeight,
-    @required this.maxHeight,
-    @required this.child,
-  });
-
-  final double minHeight;
-  final double maxHeight;
-  final Widget child;
-
-  @override
-  double get minExtent => minHeight;
-
-  @override
-  double get maxExtent => maxHeight;
-
-  @override
-  Widget build(BuildContext context, double shrinkOffset,
-      bool overlapsContent) {
-    return new SizedBox.expand(child: child);
-  }
-
-  @override
-  bool shouldRebuild(_SliverAppBarDelegate oldDelegate) {
-    return maxHeight != oldDelegate.maxHeight ||
-        minHeight != oldDelegate.minHeight ||
-        child != oldDelegate.child;
-  }
-
-}

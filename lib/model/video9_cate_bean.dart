@@ -3,8 +3,8 @@
 
 class Video9CateBean {
   Video9CateBean({
-      List<CategoryList> categoryList, 
-      List<TagsList> tagsList,}){
+      List<CategoryList>? categoryList,
+      List<TagsList>? tagsList,}){
     _categoryList = categoryList;
     _tagsList = tagsList;
 }
@@ -13,33 +13,33 @@ class Video9CateBean {
     if (json['categoryList'] != null) {
       _categoryList = [];
       json['categoryList'].forEach((v) {
-        _categoryList.add(CategoryList.fromJson(v));
+        _categoryList!.add(CategoryList.fromJson(v));
       });
     }
     if (json['tagsList'] != null) {
       _tagsList = [];
       json['tagsList'].forEach((v) {
-        _tagsList.add(TagsList.fromJson(v));
+        _tagsList?.add(TagsList.fromJson(v));
       });
     }
   }
-  List<CategoryList> _categoryList;
-  List<TagsList> _tagsList;
-Video9CateBean copyWith({  List<CategoryList> categoryList,
-  List<TagsList> tagsList,
+  List<CategoryList>?_categoryList;
+  List<TagsList>? _tagsList;
+Video9CateBean copyWith({  List<CategoryList>? categoryList,
+  List<TagsList>? tagsList,
 }) => Video9CateBean(  categoryList: categoryList ?? _categoryList,
   tagsList: tagsList ?? _tagsList,
 );
-  List<CategoryList> get categoryList => _categoryList;
-  List<TagsList> get tagsList => _tagsList;
+  List<CategoryList>? get categoryList => _categoryList;
+  List<TagsList>? get tagsList => _tagsList;
 
-  Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
+  Map<String?, dynamic> toJson() {
+    final map = <String?, dynamic>{};
     if (_categoryList != null) {
-      map['categoryList'] = _categoryList.map((v) => v.toJson()).toList();
+      map['categoryList'] = _categoryList!.map((v) => v.toJson()).toList();
     }
     if (_tagsList != null) {
-      map['tagsList'] = _tagsList.map((v) => v.toJson()).toList();
+      map['tagsList'] = _tagsList!.map((v) => v.toJson()).toList();
     }
     return map;
   }
@@ -52,9 +52,9 @@ Video9CateBean copyWith({  List<CategoryList> categoryList,
 
 class TagsList {
   TagsList({
-      String id, 
-      String name, 
-      String catid,}){
+      String? id, 
+      String? name, 
+      String? catid,}){
     _id = id;
     _name = name;
     _catid = catid;
@@ -65,22 +65,22 @@ class TagsList {
     _name = json['name'];
     _catid = json['catid'];
   }
-  String _id;
-  String _name;
-  String _catid;
-TagsList copyWith({  String id,
-  String name,
-  String catid,
+  String? _id;
+  String? _name;
+  String? _catid;
+TagsList copyWith({  String? id,
+  String? name,
+  String? catid,
 }) => TagsList(  id: id ?? _id,
   name: name ?? _name,
   catid: catid ?? _catid,
 );
-  String get id => _id;
-  String get name => _name;
-  String get catid => _catid;
+  String? get id => _id;
+  String? get name => _name;
+  String? get catid => _catid;
 
-  Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
+  Map<String?, dynamic> toJson() {
+    final map = <String?, dynamic>{};
     map['id'] = _id;
     map['name'] = _name;
     map['catid'] = _catid;
@@ -94,8 +94,8 @@ TagsList copyWith({  String id,
 
 class CategoryList {
   CategoryList({
-      String id, 
-      String name,}){
+      String? id, 
+      String? name,}){
     _id = id;
     _name = name;
 }
@@ -104,18 +104,18 @@ class CategoryList {
     _id = json['id'];
     _name = json['name'];
   }
-  String _id;
-  String _name;
-CategoryList copyWith({  String id,
-  String name,
+  String? _id;
+  String? _name;
+CategoryList copyWith({  String? id,
+  String? name,
 }) => CategoryList(  id: id ?? _id,
   name: name ?? _name,
 );
-  String get id => _id;
-  String get name => _name;
+  String? get id => _id;
+  String? get name => _name;
 
-  Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
+  Map<String?, dynamic> toJson() {
+    final map = <String?, dynamic>{};
     map['id'] = _id;
     map['name'] = _name;
     return map;

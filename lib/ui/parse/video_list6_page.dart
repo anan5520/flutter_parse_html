@@ -38,14 +38,14 @@ class VideoList6Page extends StatefulWidget {
 class VideoList6State extends State<VideoList6Page>
     with AutomaticKeepAliveClientMixin {
   List<VideoListItem> _data = [];
-  List<ButtonBean> _btns;
-  String _videoListUrl;
-  RefreshController _refreshController;
+  late List<ButtonBean> _btns;
+  late String _videoListUrl;
+  late RefreshController _refreshController;
   int _page = 1,buttonType = 0;
   String _currentKey = '/';
   String _currentKeyName = '' ;
   bool _isSearch = false;
-  TextEditingController _editingController;
+  late  TextEditingController _editingController;
 
 
   VideoList6State(this._videoListUrl);
@@ -107,11 +107,11 @@ class VideoList6State extends State<VideoList6Page>
       for (var value in tdElements) {
         var aEle = value.getElementsByTagName('a').first;
         var imgEle = aEle.getElementsByTagName('img').first;
-        String imgUrl = imgEle.attributes['data-src'];
+        String imgUrl = imgEle.attributes['data-src']!;
         VideoListItem item = VideoListItem();
         String title = aEle.text;
         String href = ApiConstant.videoList6Url +
-            aEle.attributes['href'];
+            aEle.attributes['href']!;
         item.title = CommonUtil.replaceStr(title);
         item.targetUrl = href;
         item.imageUrl = imgUrl.startsWith('http')?imgUrl:'${ApiConstant.videoList6Url}$imgUrl';
@@ -125,7 +125,7 @@ class VideoList6State extends State<VideoList6Page>
           var notContains = ['领取福利','电影下载','代理赚钱','发布地址','发布地址','分类标签','名优采集API'];
           String title = value1.text;
           if(!notContains.contains(title)){
-            String value = value1.attributes['href'];
+            String value = value1.attributes['href']!;
             ButtonBean buttonBean = ButtonBean();
             buttonBean.title = title;
             buttonBean.value = value;
@@ -156,8 +156,8 @@ class VideoList6State extends State<VideoList6Page>
       }else{
         _isSearch = false;
         buttonType = 0;
-        _currentKey = buttonBean.value;
-        _currentKeyName = buttonBean.title;
+        _currentKey = buttonBean.value!;
+        _currentKeyName = buttonBean.title!;
       }
       _refreshController.requestRefresh();
     }
@@ -165,10 +165,10 @@ class VideoList6State extends State<VideoList6Page>
 
   void goToPlay(VideoListItem data) async {
     showLoading();
-    var body = await PornHubUtil.getHtmlFromHttpDeugger(data.targetUrl,isMobile: false);
+    var body = await PornHubUtil.getHtmlFromHttpDeugger(data.targetUrl!,isMobile: false);
     try {
       var doc = parse.parse(body);
-      String playUrl = doc.getElementById('videoUrl').attributes['value'];
+      String playUrl = doc.getElementById('videoUrl')!.attributes['value']!;
       Navigator.pop(context);
       if (playUrl.startsWith('http')) {
         if(Platform.isIOS){
@@ -186,7 +186,7 @@ class VideoList6State extends State<VideoList6Page>
                 return MovieDetailPage(6,movieBean);
               }));
         }else{
-          CommonUtil.toVideoPlay(playUrl, context,title:data.title);
+          CommonUtil.toVideoPlay(playUrl, context,title:data.title!);
         }
 
       }
@@ -217,12 +217,12 @@ class VideoList6State extends State<VideoList6Page>
           if(_currentKeyName == '女优名鉴'){
             Navigator.of(context).push(
                 new MaterialPageRoute(builder: (BuildContext context) {
-                  return VideoList6Page(item.targetUrl);
+                  return VideoList6Page(item.targetUrl!);
                 }));
           }else if(toAvTitles.contains(_currentKeyName)){
             Navigator.of(context).push(
                 new MaterialPageRoute(builder: (BuildContext context) {
-                  return PornForumContentPage(0,1,item.targetUrl);
+                  return PornForumContentPage(0,1,item.targetUrl!);
                 }));
 
           }else{
@@ -239,7 +239,7 @@ class VideoList6State extends State<VideoList6Page>
                 child: CachedNetworkImage(
                   placeholder: (context, url) => new Icon(Icons.image),
                   errorWidget: (context, url, error) => new Icon(Icons.error),
-                  imageUrl: item.imageUrl,
+                  imageUrl: item.imageUrl!,
                   memCacheHeight: 200,
                   height: 200,
                   fit: BoxFit.cover,

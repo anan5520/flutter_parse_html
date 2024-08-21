@@ -24,20 +24,21 @@
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <application
-        android:name="io.flutter.app.FlutterApplication"
+        android:name="com.arvin.flutter_parse_html.MyApplication"
         android:label='老司机'
         xmlns:tools="http://schemas.android.com/tools"
         tools:replace="android:label"
         android:icon="@mipmap/ic_launcher"
         android:usesCleartextTraffic="true"
         android:largeHeap="true"
-        android:hardwareAccelerated="false"
+        android:supportsRtl="true"
         android:networkSecurityConfig="@xml/network_security_config">
         <meta-data android:name="flutterEmbedding" android:value="2" />
         <activity
             android:name="com.arvin.flutter_parse_html.MainActivity"
             android:launchMode="singleTop"
             android:theme="@style/LaunchTheme"
+            android:exported="true"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
             android:hardwareAccelerated="true"
             android:windowSoftInputMode="adjustResize">
@@ -55,20 +56,22 @@
         </activity>
         <activity android:name="com.arvin.flutter_parse_html.BrowserActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
+            android:exported="false"
             android:theme="@style/Theme.AppCompat.DayNight">
         </activity>
         <activity android:name="com.arvin.flutter_parse_html.PlayActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
+            android:exported="false"
             android:theme="@style/Theme.AppCompat.NoActionBar">
         </activity>
         <activity android:name="com.arvin.flutter_parse_html.DouYinAct"
             android:configChanges="orientation|screenSize|keyboardHidden"
+            android:exported="false"
             android:theme="@style/Theme.AppCompat.NoActionBar">
         </activity>
         <activity
 
             android:name="com.tencent.smtt.sdk.VideoActivity"
-
             android:configChanges="orientation|screenSize|keyboardHidden"
 
             android:exported="false"

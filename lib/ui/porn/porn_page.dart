@@ -2,8 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_parse_html/model/porn_bean.dart';
-import 'package:flutter_parse_html/ui/pornhub/porn_hub_page.dart';
-import 'package:flutter_parse_html/ui/pornhub/pornhub_util.dart';
 import 'package:flutter_parse_html/util/common_util.dart';
 import 'package:flutter_parse_html/util/escapeu_unescape.dart';
 import 'package:provider/provider.dart';
@@ -30,7 +28,7 @@ class PornHomePage extends StatefulWidget {
 
 class PornHomePageState extends State<PornHomePage>
     with SingleTickerProviderStateMixin {
-  TabController _tabController;
+  late TabController _tabController;
   List<String> titles = ['最近加精', '最热', '最新', '10分钟以上', '高清'];
 
   @override
@@ -45,6 +43,8 @@ class PornHomePageState extends State<PornHomePage>
       appBar: AppBar(
         title: Text("porn(国内播放慢可以挂vpn)"),
         bottom: TabBar(
+          unselectedLabelStyle:TextStyle(color: Colors.white),
+          labelStyle: TextStyle(color: Colors.white),
           isScrollable: true,
           tabs: <Widget>[
             Tab(
@@ -91,7 +91,7 @@ class PornPage extends StatefulWidget {
 
   int _type = 0;
 
-  String _authorId;
+  late String _authorId;
 
   PornPage(this._type, this._authorId);
 
@@ -109,7 +109,7 @@ class PornPage extends StatefulWidget {
 class PornState extends State<PornPage> with AutomaticKeepAliveClientMixin {
   List<PornItem> _data = [];
   int _page = 1;
-  RefreshController _controller;
+  late RefreshController _controller;
 
   @override
   void initState() {
@@ -215,7 +215,7 @@ class PornState extends State<PornPage> with AutomaticKeepAliveClientMixin {
                   child: CachedNetworkImage(
                     placeholder: (context, url) => new Icon(Icons.image),
                     errorWidget: (context, url, error) => new Icon(Icons.image),
-                    imageUrl: item.imgUrl,
+                    imageUrl: item.imgUrl!,
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -223,8 +223,8 @@ class PornState extends State<PornPage> with AutomaticKeepAliveClientMixin {
               Expanded(
                 child: Column(
                   children: <Widget>[
-                    item.title.startsWith("http")
-                        ? CachedNetworkImage(imageUrl: item.title)
+                    item.title!.startsWith("http")
+                        ? CachedNetworkImage(imageUrl: item.title!)
                         : Text(
                             '${item.title}',
                             style: TextStyle(color: Colors.blueAccent),
@@ -237,7 +237,7 @@ class PornState extends State<PornPage> with AutomaticKeepAliveClientMixin {
                       ),
                     ),
                     Text(
-                      item.info,
+                      item.info!,
                       style: TextStyle(color: Colors.grey, fontSize: 11),
                     )
                   ],
@@ -300,7 +300,7 @@ class PornState extends State<PornPage> with AutomaticKeepAliveClientMixin {
               title = titleEle.first
                   .getElementsByTagName('img')
                   .first
-                  .attributes['src'];
+                  .attributes['src']!;
             }else{
               title = CommonUtil.replaceStr(titleEle.first.text);
             }
@@ -317,9 +317,9 @@ class PornState extends State<PornPage> with AutomaticKeepAliveClientMixin {
               .first
               .querySelectorAll('img')
               .first
-              .attributes['src'];
+              .attributes['src']!;
           String contentUrl =
-              value.querySelectorAll('a').first.attributes['href'];
+              value.querySelectorAll('a').first.attributes['href']!;
           String viewKey = '';
           if (contentUrl.contains("?viewkey")) {
             contentUrl = contentUrl.substring(0, contentUrl.indexOf('&'));
@@ -364,14 +364,14 @@ class PornState extends State<PornPage> with AutomaticKeepAliveClientMixin {
         String viewKey = '';
         String imgUrl = "";
         String contentUrl =
-            value.getElementsByTagName('a')[i == 0 ? 0 : 1].attributes['href'];
+            value.getElementsByTagName('a')[i == 0 ? 0 : 1].attributes['href']!;
         if (contentUrl.contains("?viewkey")) {
           contentUrl = contentUrl.substring(0, contentUrl.indexOf('&'));
           viewKey = contentUrl.substring(contentUrl.indexOf('=') + 1);
         } else {
           viewKey = contentUrl.split("viewkey=")[1];
         }
-        imgUrl = value.getElementsByTagName('img').first.attributes['src'];
+        imgUrl = value.getElementsByTagName('img').first.attributes['src']!;
         String title = '';
         value.getElementsByTagName("span").forEach((element) {
           var childTitle = element.text;
@@ -391,7 +391,7 @@ class PornState extends State<PornPage> with AutomaticKeepAliveClientMixin {
           if (scriptStr.contains("<a")) {
           } else if (scriptStr.contains("<img")) {
             imgUrl =
-                scriptEle.getElementsByTagName('img').first.attributes['src'];
+                scriptEle.getElementsByTagName('img').first.attributes['src']!;
           }
         });
 
@@ -456,12 +456,12 @@ class PornState extends State<PornPage> with AutomaticKeepAliveClientMixin {
     List<PornItem> list = [];
     var document = parse.parse(html);
     var body = document.getElementById('tab-featured');
-    var items = body.querySelectorAll('p');
+    var items = body!.querySelectorAll('p');
     for (var value in items) {
       String title = value.getElementsByClassName('title').first.text;
-      String imgUrl = value.querySelectorAll('img').first.attributes['src'];
+      String imgUrl = value.querySelectorAll('img').first.attributes['src']!;
       String duration = value.getElementsByClassName('duration').first.text;
-      String contentUrl = value.querySelectorAll('a').first.attributes['href'];
+      String contentUrl = value.querySelectorAll('a').first.attributes['href']!;
       String viewKey = contentUrl.substring(contentUrl.indexOf('=') + 1);
       String allInfo = value.text;
       String info = allInfo.substring(allInfo.indexOf('添加时间'));

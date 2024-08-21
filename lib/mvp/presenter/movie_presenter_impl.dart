@@ -92,7 +92,7 @@ class MoviePresenterImpl implements MoviePresenter {
         var imgElement =
             value.getElementsByClassName("myui-vodlist__thumb").first;
         videoListItem.imageUrl = imgElement.attributes["data-original"]; //图片地址
-        videoListItem.imageUrl = videoListItem.imageUrl.startsWith("http")?videoListItem.imageUrl:
+        videoListItem.imageUrl = videoListItem.imageUrl!.startsWith("http")?videoListItem.imageUrl:
             '${ApiConstant.movieBaseUrl}${videoListItem.imageUrl}';
         // var imgs = videoListItem.imageUrl.split(new RegExp(r'\)|\('));
         // videoListItem.imageUrl = imgs[1];
@@ -119,7 +119,7 @@ class MoviePresenterImpl implements MoviePresenter {
         if (elements != null && elements.length > 0) {
           var element = elements[0];
           String title = element.text;
-          String href = element.attributes['href'];
+          String href = element.attributes['href']??'';
           if (href != null && href.isNotEmpty) {
             ButtonBean bean = ButtonBean();
             bean.title = title;
@@ -208,14 +208,14 @@ class MoviePresenterImpl implements MoviePresenter {
         List<VideoListItem> list = [];
         var noHas = ['电影', '连续剧', '综艺', '动漫', '倫理', '短视频'];
         maHuaMovieList.type
-            .where((element) => !noHas.contains(element.typeName))
+            !.where((element) => !noHas.contains(element.typeName))
             .forEach((value) {
           ButtonBean buttonBean = new ButtonBean();
           buttonBean.value = value.typeId;
           buttonBean.title = value.typeName;
           btns.add(buttonBean);
         });
-        for (var value1 in maHuaMovieList.list) {
+        for (var value1 in maHuaMovieList.list!) {
           VideoListItem listItem = new VideoListItem();
           listItem.targetUrl =
               '${ApiConstant.movieBaseUrl2}?ac=detail&ids=${value1.vodId}';

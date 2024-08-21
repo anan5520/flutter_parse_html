@@ -56,8 +56,8 @@ class RulerViewPainter extends CustomPainter {
 
   var _textHeight; //尺子刻度下方数字  的高度
 
-  Paint _textPaint; // 尺子刻度下方数字( 也就是每隔10个出现的数值) paint
-  Paint _linePaint;
+  late Paint _textPaint; // 尺子刻度下方数字( 也就是每隔10个出现的数值) paint
+  late Paint _linePaint;
 
   double _lineSpaceWidth = 5.0;    //  尺子刻度2条线之间的距离
   var _lineWidth = 2.0;         //  尺子刻度的宽度
@@ -73,8 +73,8 @@ class RulerViewPainter extends CustomPainter {
     this.maxValue = 200,
     this.minValue = 0,
     this.textSize = 15.0,
-    this.textColor,
-    this.moveX,
+    this.textColor = '',
+    this.moveX = 0,
     this.selectorColor = "#007AFF",
     this.textMarginTop = 10.0,
     this.perValue = 1}){

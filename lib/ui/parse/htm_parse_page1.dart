@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_parse_html/book/main/book_view.dart';
 import 'package:flutter_parse_html/model/button_bean.dart';
 import 'package:flutter_parse_html/model/movie_bean.dart';
 import 'package:flutter_parse_html/model/video_list_item.dart';
@@ -12,7 +11,6 @@ import 'package:flutter_parse_html/ui/parse/gif_list_lsj_page.dart';
 import 'package:flutter_parse_html/ui/parse/video_list10_page.dart';
 import 'package:flutter_parse_html/ui/parse/video_list16_page.dart';
 import 'package:flutter_parse_html/ui/parse/video_list2_page.dart';
-import 'package:flutter_parse_html/ui/parse/video_list3_page.dart';
 import 'package:flutter_parse_html/ui/parse/video_list4_page.dart';
 import 'package:flutter_parse_html/ui/parse/video_list5_page.dart';
 import 'package:flutter_parse_html/ui/parse/video_list6_page.dart';
@@ -31,12 +29,9 @@ import 'package:html/parser.dart' as parse;
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_parse_html/ui/parse/book_page.dart';
-import 'package:unicorndial/unicorndial.dart';
 import 'package:flutter_parse_html/ui/video_play.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_parse_html/api/api_constant.dart';
-import 'book_list_1_page.dart';
-import 'video_list1_page.dart';
 
 class HtmlParsePage1 extends StatelessWidget {
   @override
@@ -54,7 +49,7 @@ class ParseHomePage extends StatefulWidget {
 
 class HomePageState extends State<ParseHomePage>
     with SingleTickerProviderStateMixin {
-  TabController _tabController;
+  late TabController _tabController;
   List<String> titles = ['视频1','视频2', '视频4','番号', '视频5', '视频10', '视频7', '视频8'];
 
   @override
@@ -85,16 +80,10 @@ class HomePageState extends State<ParseHomePage>
                       return GifListLsjPage();
                     }));
               }),
-          IconButton(
-              icon: Icon(Icons.book),
-              onPressed: () {
-                Navigator.push(context,
-                    new MaterialPageRoute(builder: (context) {
-                  return BookView();
-                }));
-              })
         ],
         bottom: TabBar(
+          unselectedLabelStyle:TextStyle(color: Colors.white),
+          labelStyle: TextStyle(color: Colors.white),
           isScrollable: true,
           tabs: <Widget>[
             Tab(
@@ -151,12 +140,12 @@ class HtmlParse2Page extends StatefulWidget {
 
 class ParseState extends State<HtmlParse2Page> with AutomaticKeepAliveClientMixin {
   int _page = 1,buttonType = 0;
-  RefreshController _refreshController;
+  late RefreshController _refreshController;
   List<VideoListItem> _data = [];
   String baseUrl = 'https://www.2019be.com'; //WWW.4455VW.COM WWW.2019TR.COM
   String parseUrl = '${ApiConstant.parse5Url}/xiaoshuo/list-情感小说-';
-  List<ButtonBean> childBtnValues;
-  SpUtil sp;
+  late List<ButtonBean> childBtnValues;
+  late SpUtil sp;
   String _currentKey = "/arttypehtml/28/";
   int _typeIndex = 0;
   @override
@@ -253,14 +242,14 @@ class ParseState extends State<HtmlParse2Page> with AutomaticKeepAliveClientMixi
     _refreshController.loadComplete();
     if(childBtnValues == null){
       var menu = document.getElementById("menu");
-      var menuEles = menu.getElementsByTagName('ul');
+      var menuEles = menu!.getElementsByTagName('ul');
       var liEles = menuEles[_typeIndex].getElementsByTagName("li");
       if(widget._type == HtmlParse2Type.video){
         liEles.addAll(menuEles[1].getElementsByTagName("li"));
       }
       childBtnValues = [];
       for (var value in liEles) {
-        String href = value.getElementsByTagName('a').first.attributes['href'];
+        String href = value.getElementsByTagName('a').first.attributes['href']!;
         if('/' != href){
           var btn = ButtonBean();
           btn.title = value.text;
@@ -291,9 +280,9 @@ class ParseState extends State<HtmlParse2Page> with AutomaticKeepAliveClientMixi
         try {
           var imgElement = element.getElementsByClassName('vodpic lazyload').first;
           VideoListItem item = new VideoListItem();
-          item.imageUrl = imgElement.attributes['data-original'].startsWith("http")?imgElement.attributes['data-original']
+          item.imageUrl = imgElement.attributes['data-original']!.startsWith("http")?imgElement.attributes['data-original']
           :"https:${imgElement.attributes['data-original']}";
-          String url = element.getElementsByTagName('a').first.attributes['href'];
+          String url = element.getElementsByTagName('a').first.attributes['href']!;
           item.targetUrl = '$baseUrl${url}${widget._type == HtmlParse2Type.video?'index_1_1.html':''}'.replaceAll("vodhtml", 'vodplayhtml');
           item.title =
                       CommonUtil.replaceStr(element.getElementsByTagName('a').first.text);
@@ -324,7 +313,7 @@ class ParseState extends State<HtmlParse2Page> with AutomaticKeepAliveClientMixi
         buttonType = 1;
       }else{
         buttonType = 0;
-        _currentKey = buttonBean.value;
+        _currentKey = buttonBean.value!;
       }
       _refreshController.requestRefresh();
     }
@@ -344,7 +333,7 @@ class ParseState extends State<HtmlParse2Page> with AutomaticKeepAliveClientMixi
   void itemClick(VideoListItem item) {
     switch (widget._type) {
       case HtmlParse2Type.image:
-        getImg(item.targetUrl);
+        getImg(item.targetUrl!);
         break;
       case HtmlParse2Type.book:
         Navigator.of(context)
@@ -353,7 +342,7 @@ class ParseState extends State<HtmlParse2Page> with AutomaticKeepAliveClientMixi
         }));
         break;
       case HtmlParse2Type.video:
-        getVideo(item.targetUrl, item.title);
+        getVideo(item.targetUrl!, item.title!);
         break;
     }
   }
@@ -368,7 +357,7 @@ class ParseState extends State<HtmlParse2Page> with AutomaticKeepAliveClientMixi
         .getElementsByTagName("img");
     List<String> imgs = [];
     for (var value in elments) {
-      imgs.add(value.attributes['src']);
+      imgs.add(value.attributes['src']!);
     }
     Navigator.pop(context);
     Navigator.pushNamed(context, "/ShowStaggeredImagePage", arguments: {"list": imgs});
@@ -381,7 +370,7 @@ class ParseState extends State<HtmlParse2Page> with AutomaticKeepAliveClientMixi
     var document = parse.parse(response);
     var element =
         document.getElementsByTagName('source').first;
-    String playUrl = element.attributes['src'];
+    String playUrl = element.attributes['src']!;
     LogUtils.d('', playUrl);
     CommonUtil.toVideoPlay(playUrl, context, title: title);
   }
@@ -420,14 +409,14 @@ class ParseState extends State<HtmlParse2Page> with AutomaticKeepAliveClientMixi
                 children: <Widget>[
                   Expanded(
                     child: CachedNetworkImage(
-                      imageUrl: _data[index].imageUrl,
+                      imageUrl: _data[index].imageUrl!,
                       placeholder: (context, url) => new Icon(Icons.image),
                       errorWidget: (context, url, error) => new Icon(Icons.error),
                       fit: BoxFit.cover,
                     ),
                   ),
                   Text(
-                    _data[index].title,
+                    _data[index].title!,
                     maxLines: 2,
                   )
                 ],

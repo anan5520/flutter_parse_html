@@ -1,9 +1,11 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_gbk2utf8/flutter_gbk2utf8.dart';
 import 'package:flutter_parse_html/api/api_constant.dart';
 import 'package:flutter_parse_html/model/button_bean.dart';
 import 'package:flutter_parse_html/model/movie_bean.dart';
@@ -13,11 +15,10 @@ import 'package:flutter_parse_html/util/common_util.dart';
 import 'package:flutter_parse_html/util/native_utils.dart';
 import 'package:flutter_parse_html/widget/dialog_page.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:gbk2utf8/gbk2utf8.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:html/parser.dart' as parse;
 import 'package:http/http.dart' as http;
-
+import 'package:rxdart/rxdart.dart';
 import '../video_play.dart';
 
 class GifPage extends StatefulWidget {
@@ -28,7 +29,7 @@ class GifPage extends StatefulWidget {
 }
 
 class GifPageState extends State with SingleTickerProviderStateMixin ,AutomaticKeepAliveClientMixin{
-  TabController _tabController;
+  late TabController _tabController;
 
   List<String> titles = ['随机图片', 'gif1', 'gif2'];
 
@@ -46,6 +47,8 @@ class GifPageState extends State with SingleTickerProviderStateMixin ,AutomaticK
       appBar: AppBar(
         title: Text("gif"),
         bottom: TabBar(
+          unselectedLabelStyle:TextStyle(color: Colors.white),
+          labelStyle: TextStyle(color: Colors.white),
           isScrollable: true,
           tabs: <Widget>[
             Tab(
@@ -97,17 +100,18 @@ class GifItemPage extends StatefulWidget {
 class GifItemPageState extends State with AutomaticKeepAliveClientMixin {
   List<GifItemBean> _data = [];
 
-  RefreshController _refreshController;
+  late RefreshController _refreshController;
 
-  GifType _gifType;
+  GifType _gifType= GifType.gif1;
 
   int _page = 1;
 
-  String _url;
+  String _url = '';
 
-  String _currentKey;
+  String _currentKey = '';
 
-  List<ButtonBean> childBtnValues;
+  List<ButtonBean> childBtnValues = [];
+  StreamController _controller = BehaviorSubject();
 
   GifItemPageState(this._gifType);
 
@@ -116,6 +120,7 @@ class GifItemPageState extends State with AutomaticKeepAliveClientMixin {
     _refreshController = new RefreshController(initialRefresh: true);
     super.initState();
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -161,9 +166,7 @@ class GifItemPageState extends State with AutomaticKeepAliveClientMixin {
     GifItemBean gifItemBean = _data[index];
     return GestureDetector(
       onTap: () {
-        CommonUtil.showLoading(context);
-        goToImage(gifItemBean.targetUrl,
-            title: gifItemBean.name, imgUrl: gifItemBean.imageUrl);
+        Navigator.pushNamed(context, "/ImagePage", arguments: {"list": [gifItemBean.imageUrl!]});
       },
       child: new Container(
         color: Colors.white,
@@ -171,12 +174,12 @@ class GifItemPageState extends State with AutomaticKeepAliveClientMixin {
           children: <Widget>[
             Expanded(
               child: new CachedNetworkImage(
-                imageUrl: gifItemBean.imageUrl,
+                imageUrl: gifItemBean.imageUrl!,
                 fit: BoxFit.cover,
               ),
             ),
             Text(
-              gifItemBean.name,
+              gifItemBean.name!,
               maxLines: 2,
             )
           ],
@@ -195,7 +198,7 @@ class GifItemPageState extends State with AutomaticKeepAliveClientMixin {
           );
         });
     if (buttonBean != null) {
-      _currentKey = buttonBean.value;
+      _currentKey = buttonBean.value!;
       if (_currentKey.contains('1.html')) {
         _currentKey = "/" + _currentKey.substring(0, _currentKey.length - 6);
       }
@@ -236,7 +239,7 @@ class GifItemPageState extends State with AutomaticKeepAliveClientMixin {
         var main = document.getElementsByClassName('nav');
         var aEles = main.first.getElementsByTagName('a');
         for (var value in aEles) {
-          String url = value.attributes['href'];
+          String url = value.attributes['href']!;
           if (url != null && !value.text.contains('首页')) {
             ButtonBean buttonBean = new ButtonBean();
             buttonBean.value = url;
@@ -248,23 +251,36 @@ class GifItemPageState extends State with AutomaticKeepAliveClientMixin {
 
       var items = document.getElementsByClassName('xxl-item');
       for (var value1 in items) {
-        var imgEles = value1.getElementsByTagName('img');
+        var imgEles = value1.getElementsByTagName('a');
         if (imgEles.length > 0) {
-          GifItemBean gifItemBean = new GifItemBean();
-          var img = imgEles.first;
-          gifItemBean.name = img.attributes['alt'];
-          gifItemBean.imageUrl = img.attributes['src'];
-          gifItemBean.targetUrl =
-              value1.getElementsByTagName('a').first.attributes['href'];
-          _data.add(gifItemBean);
+          imgEles.forEach((e) async {
+            String url = e.attributes['href']??'';
+            if(url.isNotEmpty){
+              var imgResponse = await NetUtil.getHtmlData(url);
+              var imgDoc = parse.parse(imgResponse);
+              var imgsEle = imgDoc.getElementById('wogif-text')?.getElementsByTagName('img');
+              imgsEle?.forEach((img){
+                GifItemBean gifItemBean = new GifItemBean();
+                gifItemBean.name = imgDoc.getElementsByTagName('h1').first.text;
+                gifItemBean.imageUrl = img.attributes['src'];
+                _data.add(gifItemBean);
+                setState(() {
+
+                });
+              });
+
+            }
+
+          });
+
         }
       }
     } else if (_gifType == GifType.gif2) {
       if (childBtnValues == null) {
         childBtnValues = [];
-        var aEles = document.getElementById('lf_36').getElementsByTagName('dd');
+        var aEles = document.getElementById('lf_36')!.getElementsByTagName('dd');
         for (var value in aEles) {
-          String url = value.getElementsByTagName('a').first.attributes['href'];
+          String url = value.getElementsByTagName('a').first.attributes['href']!;
           ButtonBean buttonBean = new ButtonBean();
           buttonBean.value = url;
           buttonBean.title = value.text.replaceAll('\n', '');
@@ -273,7 +289,7 @@ class GifItemPageState extends State with AutomaticKeepAliveClientMixin {
       }
 
       var items =
-          document.getElementById('waterfall').getElementsByTagName('li');
+          document.getElementById('waterfall')!.getElementsByTagName('li');
       for (var value1 in items) {
         GifItemBean gifItemBean = new GifItemBean();
         var img = value1.getElementsByTagName('img').first;
@@ -288,10 +304,10 @@ class GifItemPageState extends State with AutomaticKeepAliveClientMixin {
     setState(() {});
   }
 
-  void goToImage(String url, {String title, String imgUrl}) async {
+  void goToImage(String url, {String? title, String? imgUrl}) async {
     String response = '';
     List<String> images = [];
-    String videoUrl = null;
+    String? videoUrl = null;
     if (_gifType == GifType.gif2) {
       http.Response res = await http.get(Uri(path: url));
       response = gbk.decode(res.bodyBytes);
@@ -301,7 +317,7 @@ class GifItemPageState extends State with AutomaticKeepAliveClientMixin {
           .first
           .getElementsByTagName('img');
       imgs.forEach((img) {
-        images.add(img.attributes['src']);
+        images.add(img.attributes['src']!);
       });
       Navigator.pop(context);
     } else {
@@ -314,7 +330,7 @@ class GifItemPageState extends State with AutomaticKeepAliveClientMixin {
           ? content
           : document.getElementsByClassName('Article');
       if (content.length == 0) {
-        images.add(imgUrl);
+        images.add(imgUrl!);
       } else {
         var imgs = content.first.getElementsByTagName('img');
         var videoEles = document.getElementsByTagName('video');
@@ -322,14 +338,14 @@ class GifItemPageState extends State with AutomaticKeepAliveClientMixin {
           videoUrl = videoEles.first.attributes['src'];
         }
         imgs.forEach((img) {
-          images.add(img.attributes['src']);
+          images.add(img.attributes['src']!);
         });
       }
     }
     if (images.length > 0) {
       Navigator.pushNamed(context, "/ImagePage", arguments: {"list": images});
     } else if (videoUrl != null) {
-      CommonUtil.toVideoPlay(videoUrl, context, title: title);
+      CommonUtil.toVideoPlay(videoUrl, context, title: title!);
     }
   }
 
@@ -347,13 +363,13 @@ class PhotoItemPage extends StatefulWidget {
 class PhotoItemPageState extends State with AutomaticKeepAliveClientMixin {
   List<GifItemBean> _data = [];
 
-  RefreshController _refreshController;
+  late RefreshController _refreshController;
 
-  String _currentKey;
+  String? _currentKey;
 
-  List<ButtonBean> childBtnValues;
+  List<ButtonBean>? childBtnValues;
 
-  var urlIndex = ['1', '2', '3', '2', '1'];
+  var urlIndex = [ '2', '3', '2'];
 
   var _widgetContent;
 
@@ -397,7 +413,7 @@ class PhotoItemPageState extends State with AutomaticKeepAliveClientMixin {
                   },
                   child: new Center(
                     child: new CachedNetworkImage(
-                      imageUrl:_data[index].imageUrl,
+                      imageUrl:_data[index].imageUrl!,
                     ),
                   ),
                 )),
@@ -421,12 +437,12 @@ class PhotoItemPageState extends State with AutomaticKeepAliveClientMixin {
           children: <Widget>[
             Expanded(
               child: new CachedNetworkImage(
-                imageUrl: gifItemBean.imageUrl,
+                imageUrl: gifItemBean.imageUrl!,
                 fit: BoxFit.cover,
               ),
             ),
             Text(
-              gifItemBean.name,
+              gifItemBean.name!,
               maxLines: 2,
             )
           ],

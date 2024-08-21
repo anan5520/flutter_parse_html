@@ -4,9 +4,9 @@
 
 class Video11Bean {
   Video11Bean({
-      int code,
-      List<Rescont> rescont,
-      String msg,}){
+      int? code,
+      List<Rescont>? rescont,
+      String? msg,}){
     _code = code;
     _rescont = rescont;
     _msg = msg;
@@ -17,24 +17,24 @@ class Video11Bean {
     if (json['rescont'] != null) {
       _rescont = [];
       json['rescont'].forEach((v) {
-        _rescont.add(Rescont.fromJson(v));
+        _rescont!.add(Rescont.fromJson(v));
       });
     }
     _msg = json['msg'];
   }
-  int _code;
-  List<Rescont> _rescont;
-  String _msg;
+  int? _code;
+  List<Rescont>? _rescont;
+  String? _msg;
 
-  int get code => _code;
-  List<Rescont> get rescont => _rescont;
-  String get msg => _msg;
+  int? get code => _code;
+  List<Rescont>? get rescont => _rescont;
+  String? get msg => _msg;
 
-  Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
+  Map<String?, dynamic> toJson() {
+    final map = <String?, dynamic>{};
     map['code'] = _code;
     if (_rescont != null) {
-      map['rescont'] = _rescont.map((v) => v.toJson()).toList();
+      map['rescont'] = _rescont!.map((v) => v.toJson()).toList();
     }
     map['msg'] = _msg;
     return map;
@@ -49,10 +49,10 @@ class Video11Bean {
 
 class Rescont {
   Rescont({
-      int id,
-      String name,
-      String icopath,
-      int order,}){
+      int? id,
+      String? name,
+      String? icopath,
+      int? order,}){
     _id = id;
     _name = name;
     _icopath = icopath;
@@ -65,18 +65,18 @@ class Rescont {
     _icopath = json['icopath'];
     _order = json['order'];
   }
-  int _id;
-  String _name;
-  String _icopath;
-  int _order;
+  int? _id;
+  String? _name;
+  String? _icopath;
+  int? _order;
 
-  int get id => _id;
-  String get name => _name;
-  String get icopath => _icopath;
-  int get order => _order;
+  int? get id => _id;
+  String? get name => _name;
+  String? get icopath => _icopath;
+  int? get order => _order;
 
-  Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
+  Map<String?, dynamic> toJson() {
+    final map = <String?, dynamic>{};
     map['id'] = _id;
     map['name'] = _name;
     map['icopath'] = _icopath;

@@ -8,8 +8,6 @@ import 'package:crypto/crypto.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_parse_html/book/base/util/utils_screen.dart';
-import 'package:flutter_parse_html/model/video_list8_bean_entity.dart';
 import 'package:flutter_parse_html/model/video_list_item.dart';
 import 'package:flutter_parse_html/ui/movie/movie_detail_page.dart';
 import 'package:flutter_parse_html/ui/parse/fan_hao_content_page.dart';
@@ -21,6 +19,7 @@ import 'package:flutter_parse_html/util/escapeu_unescape.dart';
 import 'package:flutter_parse_html/util/files.dart';
 import 'package:flutter_parse_html/util/native_utils.dart';
 import 'package:flutter_parse_html/widget/fade_in_image_without_auth.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -41,13 +40,13 @@ class VideoList18Page extends StatefulWidget {
 class VideoList17State extends State<VideoList18Page>
     with AutomaticKeepAliveClientMixin {
   List<VideoListItem> _data = [];
-  List<ButtonBean> _btns;
+  List<ButtonBean>? _btns;
 
-  RefreshController _refreshController;
+  late RefreshController _refreshController;
   int _page = 1, buttonType = 0;
   String _currentKey = '1';
   bool _isSearch = false;
-  TextEditingController _editingController;
+  late TextEditingController _editingController;
   StreamController<VideoListItem> imgeStream = StreamController.broadcast();
 
   @override
@@ -84,7 +83,7 @@ class VideoList17State extends State<VideoList18Page>
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          if (_btns.length > 0) {
+          if (_btns?.isNotEmpty ?? false) {
             //有选项再显示
             _showDialog();
           }
@@ -97,14 +96,14 @@ class VideoList17State extends State<VideoList18Page>
   //跳转播放
   void goToPlay(VideoListItem data) async {
     showLoading();
-    if(data.isVideo){
-      var response = await PornHubUtil.getHtmlFromHttpDeugger(data.targetUrl);
+    if(data.isVideo!){
+      var response = await PornHubUtil.getHtmlFromHttpDeugger(data.targetUrl!);
       try {
         var doc = parse.parse(response);
-        String playUrl = doc.getElementsByClassName('danmu').first.attributes['src'].split('url=')[1];
+        String playUrl = doc.getElementsByClassName('danmu').first.attributes['src']!.split('url=')[1];
         Navigator.pop(context);
         if (playUrl.startsWith('http')) {
-          CommonUtil.toVideoPlay(playUrl, context, title: data.title);
+          CommonUtil.toVideoPlay(playUrl, context, title: data.title!);
         }
       } catch (e) {
         Navigator.pop(context);
@@ -114,7 +113,7 @@ class VideoList17State extends State<VideoList18Page>
       Navigator.pop(context);
       Navigator.of(context).push(
           new MaterialPageRoute(builder: (BuildContext context) {
-            return FanHaoContentPage(data.targetUrl);
+            return FanHaoContentPage(data.targetUrl!);
           }));
     }
 
@@ -130,7 +129,7 @@ class VideoList17State extends State<VideoList18Page>
       child: GestureDetector(
         onTap: () {
           Navigator.push(context, MaterialPageRoute(builder: (context){
-            return PornForumContentPage(0,2,item.targetUrl);
+            return PornForumContentPage(0,2,item.targetUrl!);
           }));
         },
         child: Container(
@@ -143,16 +142,16 @@ class VideoList17State extends State<VideoList18Page>
                 children: [
                   StreamBuilder<VideoListItem>(
                     builder: (context,snap){
-                      return Container(height: (ScreenUtils.getScreenWidth() -20)/2,width: double.infinity,
-                      child: item.index > -1? Image.file(
-                        File(item.imageUrl),
+                      return Container(height: (ScreenUtil().screenWidth -20)/2,width: double.infinity,
+                      child: item.index !> -1? Image.file(
+                        File(item.imageUrl!),
                         gaplessPlayback: true,
                         fit: BoxFit.cover,
                       ):Image.asset('images/video_bg.png'),);
                     },stream: imgeStream.stream,initialData: item,),
                   Container(
                     padding: EdgeInsets.symmetric(horizontal: 10),
-                    child: Text(item.title,style: TextStyle(color: Colors.white,fontSize: 20),),)
+                    child: Text(item.title!,style: TextStyle(color: Colors.white,fontSize: 20),),)
                 ],),
               Padding(
                 padding: EdgeInsets.only(top: 4, bottom: 4, left: 3, right: 3),
@@ -182,17 +181,17 @@ class VideoList17State extends State<VideoList18Page>
       var contentEle = doc.getElementsByClassName('video-list').first.getElementsByClassName('video-item ');
       for (var value in contentEle) {
         var classStr = value.attributes['class'];
-        if (classStr.isNotEmpty) {
+        if (classStr!.isNotEmpty) {
           var aEle = value.getElementsByTagName('a').first;
           VideoListItem item = VideoListItem();
           var hrefs = aEle.attributes['href'];
-          String href = hrefs;
+          String href = hrefs!;
           var imgEle = aEle.getElementsByTagName('img').first;
           var titleELe = value.getElementsByClassName('title').first;
           item.title = CommonUtil.replaceStr(titleELe.text);
-          if(item.title.isNotEmpty){
+          if(item.title!.isNotEmpty){
             // item.isVideo = aEle.getElementsByClassName("thumb-video").length > 0;
-            var loads = imgEle.attributes['onload'].split('https')[1];
+            var loads = imgEle.attributes['onload']!.split('https')[1];
             item.imageUrl = 'https${loads.substring(0,loads.length - 2)}';
             // String s = await NetUtil.getHtmlData(item.imageUrl);
             item.targetUrl = href.startsWith('http')?href:"${ApiConstant.videoList18Url}$href";
@@ -202,10 +201,10 @@ class VideoList17State extends State<VideoList18Page>
       }
       if (_btns == null) {
         _btns = [];
-        _btns.add(ButtonBean()..value = '1'..title = '热点');
-        _btns.add(ButtonBean()..value = '2'..title = '明星网红');
-        _btns.add(ButtonBean()..value = '3'..title = '奇葩');
-        _btns.add(ButtonBean()..value = '4'..title = '真实乱');
+        _btns?.add(ButtonBean()..value = '1'..title = '热点');
+        _btns?.add(ButtonBean()..value = '2'..title = '明星网红');
+        _btns?.add(ButtonBean()..value = '3'..title = '奇葩');
+        _btns?.add(ButtonBean()..value = '4'..title = '真实乱');
       }
     } catch (e) {
       print(e);
@@ -219,7 +218,7 @@ class VideoList17State extends State<VideoList18Page>
         context: context,
         builder: (context) {
           return new AlertDialog(
-            content: GridViewDialog(_btns),
+            content: GridViewDialog(_btns!),
           );
         });
     if (buttonBean != null) {
@@ -229,7 +228,7 @@ class VideoList17State extends State<VideoList18Page>
       } else {
         _isSearch = false;
         buttonType = 0;
-        _currentKey = buttonBean.value;
+        _currentKey = buttonBean.value!;
       }
       _refreshController.requestRefresh();
     }
@@ -250,12 +249,12 @@ class VideoList17State extends State<VideoList18Page>
   bool get wantKeepAlive => true;
   void _getImage(VideoListItem item,int index) async{
     Directory tempDir = await getTemporaryDirectory();
-    var path = '${tempDir.path}/${md5.convert(new Utf8Encoder().convert(item.imageUrl))}';
+    var path = '${tempDir.path}/${md5.convert(new Utf8Encoder().convert(item.imageUrl!))}';
     if(await File(path).exists()){
       item.index = index;
       imgeStream.sink.add(item..imageUrl = path);
     }else{
-      await NetUtil.dio.download(item.imageUrl,path).then((value) async{
+      await NetUtil.dio.download(item.imageUrl!,path).then((value) async{
         var file = File(path);
         return await file.readAsBytes().then((value){
           String old = base64Encode(value);

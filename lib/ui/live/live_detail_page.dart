@@ -28,7 +28,7 @@ class LiveDetailPage extends StatefulWidget {
 
 class LiveState extends State<LiveDetailPage> {
   List<Zhubo> _data = [];
-  Dio _dio;
+  late Dio _dio;
   @override
   void initState() {
     // TODO: implement initState
@@ -57,18 +57,18 @@ class LiveState extends State<LiveDetailPage> {
     Zhubo item = _data[index];
     return GestureDetector(
       onTap: (){
-        CommonUtil.toVideoPlay(item.address, context,title: item.title,isLive: true);
+        CommonUtil.toVideoPlay(item.address, context,title: item.title??'',isLive: true);
       },
       child: Column(
         children: <Widget>[
           Expanded(
               child: CachedNetworkImage(
-                imageUrl: item.img,
+                imageUrl: item.img!,
                 fit: BoxFit.cover,
               )),
           Padding(
             padding: EdgeInsets.only(top: 10),
-            child: Text(item.title),
+            child: Text(item.title!),
           )
         ],
       ),
@@ -79,8 +79,8 @@ class LiveState extends State<LiveDetailPage> {
   void getLiveData()async{
     Response response = await _dio.get(widget._url);
     String jsonStr = response.data;
-    List<Zhubo> list = LiveDetail.fromJson(json.decode(jsonStr)).zhubo;
-    _data.addAll(list);
+    List<Zhubo>? list = LiveDetail.fromJson(json.decode(jsonStr)).zhubo;
+    _data.addAll(list!);
     setState(() {
 
     });

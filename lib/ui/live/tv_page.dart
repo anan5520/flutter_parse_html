@@ -31,8 +31,8 @@ class TvPage extends StatefulWidget {
 
 class TvState extends State<TvPage>
     with AutomaticKeepAliveClientMixin, TickerProviderStateMixin {
-  TabController _tabController;
-  PageController _pageController;
+  late TabController _tabController;
+  late PageController _pageController;
   var isPageCanChanged = true;
   List<String> _titleName = [];
   List<TvBeanEntity> _data = [];
@@ -68,6 +68,8 @@ class TvState extends State<TvPage>
                   height: 38,
                   width: double.infinity,
                   child: TabBar(
+                    unselectedLabelStyle:TextStyle(color: Colors.white),
+                    labelStyle: TextStyle(color: Colors.white),
                     controller: _tabController,
                     isScrollable: true,
                     onTap: (index) {
@@ -104,7 +106,7 @@ class TvState extends State<TvPage>
   @override
   bool get wantKeepAlive => true;
 
-  void onPageChange(int index, {PageController p, TabController t}) async {
+  void onPageChange(int index, {PageController? p, TabController? t}) async {
     if (p != null) {
       //判断是哪一个切换
       isPageCanChanged = false;
@@ -119,7 +121,7 @@ class TvState extends State<TvPage>
 
   Widget getPageItem(BuildContext context, int index) {
     TvBeanEntity _tvBean = _data[index];
-    List<TvBeanChannel> _list = _tvBean.channels;
+    List<TvBeanChannel> _list = _tvBean.channels!;
     return GridView.builder(
       padding: EdgeInsets.all(10),
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -133,11 +135,11 @@ class TvState extends State<TvPage>
             onTap: (){
               String url = '';
               TvBeanChannel _tvBean = _list[index];
-              if(_tvBean.url.contains('.m3u8')){
-                url = _tvBean.url;
+              if(_tvBean.url!.contains('.m3u8')){
+                url = _tvBean.url!;
               }else{
-                _tvBean.streams.forEach((f){
-                  if(f.contains('.m3u8')){
+                _tvBean.streams!.forEach((f){
+                  if(f!.contains('.m3u8')){
                     url = f;
                   }
                 });

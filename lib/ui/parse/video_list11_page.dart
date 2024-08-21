@@ -60,13 +60,13 @@ class VideoList11Page extends StatefulWidget {
 class VideoList11State extends State<VideoList11Page>
     with AutomaticKeepAliveClientMixin {
   List<Data> _data = [];
-  List<ButtonBean> _btns;
+  List<ButtonBean>? _btns;
 
-  RefreshController _refreshController;
+  late RefreshController _refreshController;
   int _page = 1, buttonType = 0;
   String _currentKey = '/vodlist/33';
   bool _isSearch = false;
-  TextEditingController _editingController;
+  late TextEditingController _editingController;
 
   @override
   void initState() {
@@ -145,7 +145,7 @@ class VideoList11State extends State<VideoList11Page>
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          if (_btns.length > 0) {
+          if (_btns?.isNotEmpty ?? false) {
             //有选项再显示
             _showDialog();
           }
@@ -161,12 +161,12 @@ class VideoList11State extends State<VideoList11Page>
     var response = await PornHubUtil.getHtmlFromHttpDeugger("${VideoList11Page.videoBase}/api${(widget.type == 2 || widget.type == 4) ?"":"/v1"}/videoplay/${data.id}?&uuid=1",isMobile: false);
     try {
       var rescont = Video11PlayBean.fromJson(json.decode(response));
-      var url = rescont.rescont.videopath;
+      var url = rescont.rescont!.videopath;
       // if(widget.type != 2 && widget.type != 4){
       //   url = '${VideoList11Page.videoBase}/api/index.m3u8?m3u8=${rescont.rescont.videopath}';
       // }
       Navigator.pop(context);
-      CommonUtil.toVideoPlay(url, context,title: data.title);
+      CommonUtil.toVideoPlay(url, context,title: data.title!);
     } catch (e) {
       Navigator.pop(context);
       print(e);
@@ -191,7 +191,7 @@ class VideoList11State extends State<VideoList11Page>
                   child: CachedNetworkImage(
                     placeholder: (context, url) => new Icon(Icons.image),
                     errorWidget: (context, url, error) => new Icon(Icons.error),
-                    imageUrl: item.coverpath,
+                    imageUrl: item.coverpath!,
                     fit: BoxFit.cover,
                   ),
                   constraints: new BoxConstraints.expand(),
@@ -214,20 +214,20 @@ class VideoList11State extends State<VideoList11Page>
 
 
   void getBtn() async{
-    if (_btns == null || _btns.length == 0) {
+    if (_btns == null || (_btns?.isEmpty ?? true)) {
       _btns = [];
       String response = await PornHubUtil.getHtmlFromHttpDeugger('${VideoList11Page.videoBase}/api/videosort',isMobile: false);
       _refreshController.refreshCompleted();
       _refreshController.loadComplete();
       Video11Bean video11bean = Video11Bean.fromJson(json.decode(response));
-      video11bean.rescont.forEach((value1) {
+      video11bean.rescont!.forEach((value1) {
         ButtonBean buttonBean = ButtonBean();
         buttonBean.title = value1.name;
         buttonBean.value = value1.id.toString();
-        _btns.add(buttonBean);
+        _btns?.add(buttonBean);
       });
-      if(_btns.length > 0){
-        _currentKey = _btns[0].value;
+      if(_btns?.isNotEmpty ?? false){
+        _currentKey = _btns![0].value!;
         _getData();
       }
     }else{
@@ -247,7 +247,7 @@ class VideoList11State extends State<VideoList11Page>
     _refreshController.loadComplete();
     Video11ItemBean video11itemBean = Video11ItemBean.fromJson(json.decode(response));
     try {
-      _data.addAll(video11itemBean.rescont.data);
+      _data.addAll(video11itemBean.rescont!.data!);
     } catch (e) {
       print(e);
     }
@@ -259,7 +259,7 @@ class VideoList11State extends State<VideoList11Page>
         context: context,
         builder: (context) {
           return new AlertDialog(
-            content: GridViewDialog(_btns),
+            content: GridViewDialog(_btns!),
           );
         });
     if (buttonBean != null) {
@@ -269,7 +269,7 @@ class VideoList11State extends State<VideoList11Page>
       } else {
         _isSearch = false;
         buttonType = 0;
-        _currentKey = buttonBean.value;
+        _currentKey = buttonBean.value!;
       }
       _refreshController.requestRefresh();
     }

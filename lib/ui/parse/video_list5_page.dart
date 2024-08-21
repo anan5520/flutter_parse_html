@@ -29,13 +29,13 @@ class VideoList5Page extends StatefulWidget {
 class VideoList5State extends State<VideoList5Page>
     with AutomaticKeepAliveClientMixin {
   List<VideoListItem> _data = [];
-  List<ButtonBean> _btns;
+  late List<ButtonBean> _btns;
 
-  RefreshController _refreshController;
+  late RefreshController _refreshController;
   int _page = 1,buttonType = 0;
   String _currentKey = '/vodtypehtml/1';
   bool _isSearch = false;
-  TextEditingController _editingController;
+  late TextEditingController _editingController;
 
   @override
   void initState() {
@@ -131,7 +131,7 @@ class VideoList5State extends State<VideoList5Page>
   //获取数据
   void _getData() async {
     if(_page > 1 && !_isSearch && _currentKey.isEmpty && _btns != null){
-      _currentKey = _btns[0].value;
+      _currentKey = _btns[0].value!;
     }
     String url = _isSearch?'${ApiConstant.videoList5Url}/vod-search-pg-${_page < 3?2:_page}-wd-$_currentKey.html':
         '${ApiConstant.videoList5Url}${_currentKey.isNotEmpty?'$_currentKey${_page >1?'-$_page':''}.html':''}';
@@ -152,12 +152,12 @@ class VideoList5State extends State<VideoList5Page>
         var aEle = value.getElementsByTagName('a').first;
         var imgEle = value.getElementsByTagName('img').first;
         VideoListItem item = VideoListItem();
-        String title = imgEle.attributes['title'];
+        String title = imgEle.attributes['title']!;
         String href = ApiConstant.videoList5Url +
-            aEle.attributes['href'];
+            aEle.attributes['href']!;
         item.title = title;
         item.targetUrl = href;
-        item.imageUrl = ApiConstant.videoList5Url + imgEle.attributes['src'];
+        item.imageUrl = ApiConstant.videoList5Url + imgEle.attributes['src']!;
         _data.add(item);
       }
       if (_btns == null) {
@@ -166,7 +166,7 @@ class VideoList5State extends State<VideoList5Page>
             doc.getElementsByClassName('mobile_navbar_collapse  visible-xs').first.getElementsByTagName('li');
         for (var value1 in btnEles) {
           String value =
-              value1.getElementsByTagName('a').first.attributes['href'];
+              value1.getElementsByTagName('a').first.attributes['href']!;
           if(value.contains('.html') && !value.contains('arttypehtml')){
             ButtonBean buttonBean = ButtonBean();
             buttonBean.title = value1.text;
@@ -201,7 +201,7 @@ class VideoList5State extends State<VideoList5Page>
       }else{
         _isSearch = false;
         buttonType = 0;
-        String value = buttonBean.value;
+        String value = buttonBean.value!;
         if (value.startsWith('/?k=')) {
           value = value.replaceAll('/?k=', '');
           _isSearch = true;
@@ -219,7 +219,7 @@ class VideoList5State extends State<VideoList5Page>
     var body = utf8decoder.convert(response.bodyBytes);
     try {
       var doc = parse.parse(body);
-      String jsUrl = ApiConstant.videoList5Url + doc.getElementById('video-body').getElementsByTagName('script').first.attributes['src'];
+      String jsUrl = ApiConstant.videoList5Url + doc.getElementById('video-body')!.getElementsByTagName('script').first.attributes['src']!;
       String js = await NetUtil.getHtmlData(jsUrl);
       var strings = js.split(new RegExp(r"\'\);|unescape\(\'"));
       String playUrl = '';
@@ -227,7 +227,7 @@ class VideoList5State extends State<VideoList5Page>
         playUrl = 'http://yunbo1.gongyongplayer.science:2100/${strings[1]}/index.m3u8';
         Navigator.pop(context);
         if (playUrl.startsWith('http')) {
-          CommonUtil.toVideoPlay(playUrl,context,title :data.title);
+          CommonUtil.toVideoPlay(playUrl,context,title :data.title!);
         }
       }
 
@@ -266,7 +266,7 @@ class VideoList5State extends State<VideoList5Page>
                   child: CachedNetworkImage(
                     placeholder: (context, url) => new Icon(Icons.image),
                     errorWidget: (context, url, error) => new Icon(Icons.error),
-                    imageUrl: item.imageUrl,
+                    imageUrl: item.imageUrl!,
                     fit: BoxFit.cover,
                   ),
                   constraints: new BoxConstraints.expand(),

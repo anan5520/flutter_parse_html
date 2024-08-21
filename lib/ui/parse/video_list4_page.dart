@@ -25,13 +25,13 @@ class VideoList4Page extends StatefulWidget {
 class VideoList4State extends State<VideoList4Page>
     with AutomaticKeepAliveClientMixin {
   List<VideoListItem> _data = [];
-  List<ButtonBean> _btns;
+  late List<ButtonBean> _btns;
 
-  RefreshController _refreshController;
+  late RefreshController _refreshController;
   int _page = 1,buttonType = 0;
   String _currentKey = '/vodtype/1';
   bool _isSearch = false;
-  TextEditingController _editingController;
+  late TextEditingController _editingController;
 
   @override
   void initState() {
@@ -130,7 +130,7 @@ class VideoList4State extends State<VideoList4Page>
       }
       Navigator.pop(context);
       if (playUrl.startsWith('http')) {
-        CommonUtil.toVideoPlay(playUrl, context,title:data.title);
+        CommonUtil.toVideoPlay(playUrl, context,title:data.title!);
       }
     } catch (e) {
       Navigator.pop(context);
@@ -156,7 +156,7 @@ class VideoList4State extends State<VideoList4Page>
                   child: CachedNetworkImage(
                     placeholder: (context, url) => new Icon(Icons.image),
                     errorWidget: (context, url, error) => new Icon(Icons.error),
-                    imageUrl: item.imageUrl,
+                    imageUrl: item.imageUrl!,
                     fit: BoxFit.cover,
                   ),
                   constraints: new BoxConstraints.expand(),
@@ -196,7 +196,7 @@ class VideoList4State extends State<VideoList4Page>
         if (aEles.length > 0) {
           var aEle = aEles.first;
           VideoListItem item = VideoListItem();
-          String href = ApiConstant.videoList4Url + aEle.attributes['href'];
+          String href = ApiConstant.videoList4Url + aEle.attributes['href']!;
           var imgEle = aEle.getElementsByTagName('img').first;
           item.title = aEle.attributes['title'];
           item.imageUrl = imgEle.attributes['src'];
@@ -215,7 +215,7 @@ class VideoList4State extends State<VideoList4Page>
             buttonBean.title = value1.text;
             buttonBean.value = value1.text.contains('首页')
                 ? ''
-                : value1.attributes['href'].replaceAll('.html', '');
+                : value1.attributes['href']!.replaceAll('.html', '');
             _btns.add(buttonBean);
           }
         });
@@ -244,7 +244,7 @@ class VideoList4State extends State<VideoList4Page>
       }else{
         _isSearch = false;
         buttonType = 0;
-        _currentKey = buttonBean.value;
+        _currentKey = buttonBean.value!;
       }
       _refreshController.requestRefresh();
     }
@@ -288,7 +288,7 @@ class VideoList4State extends State<VideoList4Page>
     // }
 
     Navigator.pop(context);
-    CommonUtil.toVideoPlay(url, context,title: data.title);
+    CommonUtil.toVideoPlay(url, context,title: data.title!);
     // Navigator.of(context)
     //     .push(new MaterialPageRoute(builder: (BuildContext context) {
     //   return MovieDetailPage(1, movieBean);

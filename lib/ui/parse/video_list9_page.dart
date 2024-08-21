@@ -6,7 +6,6 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_parse_html/model/Video9_list_bean.dart';
 import 'package:flutter_parse_html/model/video9_cate_bean.dart';
 import 'package:flutter_parse_html/model/video9_detail_bean.dart';
-import 'package:flutter_parse_html/model/video_list8_bean_entity.dart';
 import 'package:flutter_parse_html/model/video_list_item.dart';
 import 'package:flutter_parse_html/ui/movie/movie_detail_page.dart';
 import 'package:flutter_parse_html/ui/pornhub/pornhub_util.dart';
@@ -34,13 +33,13 @@ class VideoList9Page extends StatefulWidget {
 class VideoList9State extends State<VideoList9Page>
     with AutomaticKeepAliveClientMixin {
   List<VideoListItem> _data = [];
-  List<ButtonBean> _btns;
+  List<ButtonBean>? _btns;
 
-  RefreshController _refreshController;
+  late RefreshController _refreshController;
   int _page = 1,buttonType = 0;
   String _currentKey = '';
   bool _isSearch = false;
-  TextEditingController _editingController;
+  late TextEditingController _editingController;
 
   @override
   void initState() {
@@ -116,7 +115,7 @@ class VideoList9State extends State<VideoList9Page>
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          if (_btns.length > 0) {
+          if (_btns?.isNotEmpty ??false) {
             //有选项再显示
             _showDialog();
           }
@@ -128,13 +127,13 @@ class VideoList9State extends State<VideoList9Page>
 
   void goToPlay(VideoListItem data) async {
     showLoading();
-    var response = await PornHubUtil.getHtmlFromJsonp(data.targetUrl);
+    var response = await PornHubUtil.getHtmlFromJsonp(data.targetUrl!);
     try {
       var doc = parse.parse(response);
-      String playUrl = doc.getElementsByTagName('iframe').first.attributes['src'].split('url=')[1];
+      String playUrl = doc.getElementsByTagName('iframe').first.attributes['src']!.split('url=')[1];
       Navigator.pop(context);
       if (playUrl.startsWith('http')) {
-        CommonUtil.toVideoPlay(playUrl, context,title:data.title);
+        CommonUtil.toVideoPlay(playUrl, context,title:data.title!);
       }
     } catch (e) {
       Navigator.pop(context);
@@ -157,9 +156,11 @@ class VideoList9State extends State<VideoList9Page>
             children: <Widget>[
               Expanded(
                 child: ConstrainedBox(
-                  child:  new FadeInImageWithoutAuth.assetNetwork(
-                    image: item.imageUrl,
-                    placeholder: 'images/video_bg.png',
+                  child:  new CachedNetworkImage(
+                    imageUrl: item.imageUrl!,
+                    placeholder: (e,u){
+                      return Image.asset('images/video_bg.png');
+                    },
                     fit: BoxFit.cover,
                   ),
                   constraints: new BoxConstraints.expand(),
@@ -207,19 +208,19 @@ class VideoList9State extends State<VideoList9Page>
       String response =  await NetUtil.getHtmlDataPost(url,paras: {'encrypt_data':"s8P0nRpxt8Vff+8ZzlLRhGbBoNuU/7HmFyfFH8bPrD0="},header: header);
       String responseStr = encryptUtil.aesDecode1(json.decode(response)['data']);
       Video9CateBean video9cateBean =  Video9CateBean.fromJson(json.decode(responseStr));
-      _currentKey = video9cateBean.categoryList[0].id;
+      _currentKey = video9cateBean.categoryList![0].id!;
       if (_btns == null) {
         _btns = [];
-        for (var value1 in video9cateBean.categoryList) {
+        for (var value1 in video9cateBean.categoryList!) {
           ButtonBean buttonBean = ButtonBean();
-          buttonBean.title = String.fromCharCodes(new Runes(value1.name));
+          buttonBean.title = String.fromCharCodes(new Runes(value1.name!));
           buttonBean.value = value1.id;
-          _btns.add(buttonBean);
+          _btns?.add(buttonBean);
         }
         ButtonBean buttonBean = ButtonBean();
         buttonBean.title = '头条';
         buttonBean.value = '头条';
-        _btns.add(buttonBean);
+        _btns?.add(buttonBean);
       }
     }
     String url = _isSearch
@@ -234,7 +235,7 @@ class VideoList9State extends State<VideoList9Page>
     String videoResponse = encryptUtil.aesDecode1(json.decode(response)['data']);
     Video9ListBean video9listBean =  Video9ListBean.fromJson(json.decode(videoResponse));
     try {
-      for (var value in video9listBean.list) {
+      for (var value in video9listBean.list!) {
         VideoListItem item = VideoListItem();
         item.title = value.title;
         item.imageUrl = value.thumbimg;
@@ -256,7 +257,7 @@ class VideoList9State extends State<VideoList9Page>
         context: context,
         builder: (context) {
           return new AlertDialog(
-            content: GridViewDialog(_btns),
+            content: GridViewDialog(_btns!),
           );
         });
     if (buttonBean != null) {
@@ -266,7 +267,7 @@ class VideoList9State extends State<VideoList9Page>
       }else{
         _isSearch = false;
         buttonType = 0;
-        _currentKey = buttonBean.value;
+        _currentKey = buttonBean.value!;
       }
       _refreshController.requestRefresh();
     }
@@ -311,7 +312,7 @@ class VideoList9State extends State<VideoList9Page>
     // }
 
     Navigator.pop(context);
-    CommonUtil.toVideoPlay(detail.info.urlS, context,title: data.title);
+    CommonUtil.toVideoPlay(detail.info!.urlS, context,title: data.title!);
     // Navigator.of(context)
     //     .push(new MaterialPageRoute(builder: (BuildContext context) {
     //   return MovieDetailPage(1, movieBean);

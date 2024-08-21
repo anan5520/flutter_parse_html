@@ -20,25 +20,25 @@
 
 class YsgcVideoBean {
   YsgcVideoBean({
-      String flag, 
-      num encrypt, 
-      num trysee, 
-      num points, 
-      String link, 
-      String linkNext, 
-      String linkPre, 
-      VodData vodData, 
-      String vodTitle, 
-      String vodPicThumb, 
-      String vodTitleName, 
-      String url, 
-      String urlNext, 
-      String from, 
-      String server, 
-      String note, 
-      String id, 
-      num sid, 
-      num nid,}){
+      String? flag, 
+      num? encrypt, 
+      num? trysee, 
+      num? points, 
+      String? link, 
+      String? linkNext, 
+      String? linkPre, 
+      VodData? vodData,
+      String? vodTitle, 
+      String? vodPicThumb, 
+      String? vodTitleName, 
+      String? url, 
+      String? urlNext, 
+      String? from, 
+      String? server, 
+      String? note, 
+      String? id, 
+      num? sid, 
+      num? nid,}){
     _flag = flag;
     _encrypt = encrypt;
     _trysee = trysee;
@@ -81,44 +81,44 @@ class YsgcVideoBean {
     _sid = json['sid'];
     _nid = json['nid'];
   }
-  String _flag;
-  num _encrypt;
-  num _trysee;
-  num _points;
-  String _link;
-  String _linkNext;
-  String _linkPre;
-  VodData _vodData;
-  String _vodTitle;
-  String _vodPicThumb;
-  String _vodTitleName;
-  String _url;
-  String _urlNext;
-  String _from;
-  String _server;
-  String _note;
-  String _id;
-  num _sid;
-  num _nid;
-YsgcVideoBean copyWith({  String flag,
-  num encrypt,
-  num trysee,
-  num points,
-  String link,
-  String linkNext,
-  String linkPre,
-  VodData vodData,
-  String vodTitle,
-  String vodPicThumb,
-  String vodTitleName,
-  String url,
-  String urlNext,
-  String from,
-  String server,
-  String note,
-  String id,
-  num sid,
-  num nid,
+  String? _flag;
+  num? _encrypt;
+  num? _trysee;
+  num? _points;
+  String? _link;
+  String? _linkNext;
+  String? _linkPre;
+  VodData? _vodData;
+  String? _vodTitle;
+  String? _vodPicThumb;
+  String? _vodTitleName;
+  String? _url;
+  String? _urlNext;
+  String? _from;
+  String? _server;
+  String? _note;
+  String? _id;
+  num? _sid;
+  num? _nid;
+YsgcVideoBean copyWith({  String? flag,
+  num? encrypt,
+  num? trysee,
+  num? points,
+  String? link,
+  String? linkNext,
+  String? linkPre,
+  VodData? vodData,
+  String? vodTitle,
+  String? vodPicThumb,
+  String? vodTitleName,
+  String? url,
+  String? urlNext,
+  String? from,
+  String? server,
+  String? note,
+  String? id,
+  num? sid,
+  num? nid,
 }) => YsgcVideoBean(  flag: flag ?? _flag,
   encrypt: encrypt ?? _encrypt,
   trysee: trysee ?? _trysee,
@@ -139,28 +139,28 @@ YsgcVideoBean copyWith({  String flag,
   sid: sid ?? _sid,
   nid: nid ?? _nid,
 );
-  String get flag => _flag;
-  num get encrypt => _encrypt;
-  num get trysee => _trysee;
-  num get points => _points;
-  String get link => _link;
-  String get linkNext => _linkNext;
-  String get linkPre => _linkPre;
-  VodData get vodData => _vodData;
-  String get vodTitle => _vodTitle;
-  String get vodPicThumb => _vodPicThumb;
-  String get vodTitleName => _vodTitleName;
-  String get url => _url;
-  String get urlNext => _urlNext;
-  String get from => _from;
-  String get server => _server;
-  String get note => _note;
-  String get id => _id;
-  num get sid => _sid;
-  num get nid => _nid;
+  String? get flag => _flag;
+  num? get encrypt => _encrypt;
+  num? get trysee => _trysee;
+  num? get points => _points;
+  String? get link => _link;
+  String? get linkNext => _linkNext;
+  String? get linkPre => _linkPre;
+  VodData? get vodData => _vodData;
+  String? get vodTitle => _vodTitle;
+  String? get vodPicThumb => _vodPicThumb;
+  String? get vodTitleName => _vodTitleName;
+  String? get url => _url;
+  String? get urlNext => _urlNext;
+  String? get from => _from;
+  String? get server => _server;
+  String? get note => _note;
+  String? get id => _id;
+  num? get sid => _sid;
+  num? get nid => _nid;
 
-  Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
+  Map<String?, dynamic> toJson() {
+    final map = <String?, dynamic>{};
     map['flag'] = _flag;
     map['encrypt'] = _encrypt;
     map['trysee'] = _trysee;
@@ -169,7 +169,7 @@ YsgcVideoBean copyWith({  String flag,
     map['link_next'] = _linkNext;
     map['link_pre'] = _linkPre;
     if (_vodData != null) {
-      map['vod_data'] = _vodData.toJson();
+      map['vod_data'] = _vodData!.toJson();
     }
     map['vod_title'] = _vodTitle;
     map['vod_pic_thumb'] = _vodPicThumb;
@@ -194,10 +194,10 @@ YsgcVideoBean copyWith({  String flag,
 
 class VodData {
   VodData({
-      String vodName, 
-      String vodActor, 
-      String vodDirector, 
-      String vodClass,}){
+      String? vodName, 
+      String? vodActor, 
+      String? vodDirector, 
+      String? vodClass,}){
     _vodName = vodName;
     _vodActor = vodActor;
     _vodDirector = vodDirector;
@@ -210,26 +210,26 @@ class VodData {
     _vodDirector = json['vod_director'];
     _vodClass = json['vod_class'];
   }
-  String _vodName;
-  String _vodActor;
-  String _vodDirector;
-  String _vodClass;
-VodData copyWith({  String vodName,
-  String vodActor,
-  String vodDirector,
-  String vodClass,
+  String? _vodName;
+  String? _vodActor;
+  String? _vodDirector;
+  String? _vodClass;
+VodData copyWith({  String? vodName,
+  String? vodActor,
+  String? vodDirector,
+  String? vodClass,
 }) => VodData(  vodName: vodName ?? _vodName,
   vodActor: vodActor ?? _vodActor,
   vodDirector: vodDirector ?? _vodDirector,
   vodClass: vodClass ?? _vodClass,
 );
-  String get vodName => _vodName;
-  String get vodActor => _vodActor;
-  String get vodDirector => _vodDirector;
-  String get vodClass => _vodClass;
+  String? get vodName => _vodName;
+  String? get vodActor => _vodActor;
+  String? get vodDirector => _vodDirector;
+  String? get vodClass => _vodClass;
 
-  Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
+  Map<String?, dynamic> toJson() {
+    final map = <String?, dynamic>{};
     map['vod_name'] = _vodName;
     map['vod_actor'] = _vodActor;
     map['vod_director'] = _vodDirector;

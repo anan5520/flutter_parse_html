@@ -2,8 +2,8 @@
 
 
 class FanHaoContent{
-  List<String> items;
-  String content;
+  List<String>? items;
+  String? content;
 
   @override
   String toString() {

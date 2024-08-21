@@ -23,19 +23,19 @@ class Video9ListItem {
     type = json['type'];
     userVip = json['user_vip'];
   }
-  String id;
-  String title;
-  String thumbimg;
-  String hits;
-  String times;
-  String scores;
-  String isVip;
-  String remark;
-  String type;
-  int userVip;
+  String? id;
+  String? title;
+  String? thumbimg;
+  String? hits;
+  String? times;
+  String? scores;
+  String? isVip;
+  String? remark;
+  String? type;
+  int? userVip;
 
-  Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
+  Map<String?, dynamic> toJson() {
+    final map = <String?, dynamic>{};
     map['id'] = id;
     map['title'] = title;
     map['thumbimg'] = thumbimg;

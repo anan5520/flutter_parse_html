@@ -3,15 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_parse_html/model/video_list_item.dart';
 import 'package:flutter_parse_html/ui/movie/movie_detail_page.dart';
-import 'package:flutter_parse_html/ui/parse/video_lifan2_page.dart';
-import 'package:flutter_parse_html/ui/parse/video_lifan_page.dart';
 import 'package:flutter_parse_html/ui/parse/video_list11_page.dart';
-import 'package:flutter_parse_html/ui/parse/yase_porn_page.dart';
 import 'package:flutter_parse_html/ui/xianfeng/xian_feng_page.dart';
 import 'package:flutter_parse_html/ui/xianfeng/xian_feng_page3.dart';
-import 'package:flutter_parse_html/ui/xianfeng/xian_feng_page5.dart';
-import 'package:flutter_parse_html/ui/xianfeng/xian_feng_page6.dart';
-import 'package:flutter_parse_html/util/native_utils.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:flutter_parse_html/model/button_bean.dart';
@@ -30,8 +24,8 @@ class XianFeng2Page extends StatefulWidget {
 
 class XianFeng2tate extends State<XianFeng2Page>
     with SingleTickerProviderStateMixin {
-  TabController _tabController;
-  PageController _pageController;
+  late TabController _tabController;
+  late PageController _pageController;
   var isPageCanChanged = true;
   List<String> _titleValue = [
     "index_1_1_",
@@ -64,6 +58,8 @@ class XianFeng2tate extends State<XianFeng2Page>
             height: 38,
             width: double.infinity,
             child: TabBar(
+              unselectedLabelStyle:TextStyle(color: Colors.white),
+              labelStyle: TextStyle(color: Colors.white),
               controller: _tabController,
               isScrollable: true,
               onTap: (index) {
@@ -94,7 +90,7 @@ class XianFeng2tate extends State<XianFeng2Page>
     );
   }
 
-  void onPageChange(int index, {PageController p, TabController t}) async {
+  void onPageChange(int index, {PageController? p, TabController? t}) async {
     if (p != null) {
       //判断是哪一个切换
       isPageCanChanged = false;
@@ -108,18 +104,14 @@ class XianFeng2tate extends State<XianFeng2Page>
   }
 
   Widget getPageItem(BuildContext context, int index) {
-    if(index == 0)
-      return YaSePornPage();
     if(index == 1)
       return VideoList11Page(0);
-    if(index == 2)
-      return VideoLiFanPage();
-    if(index == 3)
-      return VideoLiFan2Page();
     if(index == 4)
       return XianFengPage(0);
     if(index == 5)
       return XianFeng3Page();
+
+    return Container();
   }
 }
 
@@ -137,9 +129,9 @@ class XianFeng2ItemPage extends StatefulWidget {
 class XianFeng2ItemState extends State<XianFeng2ItemPage>
     with AutomaticKeepAliveClientMixin {
   List<VideoListItem> _data = [];
-  List<ButtonBean> _btns;
+  late List<ButtonBean> _btns;
 
-  RefreshController _refreshController;
+  late RefreshController _refreshController;
   int _page = 1,buttonType = 0;
   String _currentKey = '/sexsj/';
 
@@ -218,10 +210,10 @@ class XianFeng2ItemState extends State<XianFeng2ItemPage>
         VideoListItem item = VideoListItem();
         var ele = value1.getElementsByClassName('img_wrap').first;
         item.title = ele.attributes['title'];
-        item.targetUrl = ApiConstant.xianFeng2Url + ele.attributes['href'];
+        item.targetUrl = ApiConstant.xianFeng2Url + ele.attributes['href']!;
         var imgEle = ele.getElementsByTagName('img').first;
         String imgKey = imgEle.attributes.containsKey('data-original')?"imgEle.attributes.containsKey('data-original')":"src";
-        item.imageUrl = ApiConstant.xianFeng2Url + imgEle.attributes[imgKey];
+        item.imageUrl = ApiConstant.xianFeng2Url + imgEle.attributes[imgKey]!;
         _data.add(item);
       }
     } catch (e) {
@@ -248,7 +240,7 @@ class XianFeng2ItemState extends State<XianFeng2ItemPage>
         buttonType = 1;
       }else{
         buttonType = 0;
-        _currentKey = buttonBean.value;
+        _currentKey = buttonBean.value!;
       }
       _refreshController.requestRefresh();
     }
@@ -269,7 +261,7 @@ class XianFeng2ItemState extends State<XianFeng2ItemPage>
     List<MovieItemBean> list = [];
     for (var value in listEles) {
       MovieItemBean movieItemBean = MovieItemBean();
-      movieItemBean.targetUrl = ApiConstant.xianFeng2Url +  value.attributes['href'];
+      movieItemBean.targetUrl = ApiConstant.xianFeng2Url +  value.attributes['href']!;
       movieItemBean.name = value.text;
       list.add(movieItemBean);
     }
@@ -303,12 +295,12 @@ class XianFeng2ItemState extends State<XianFeng2ItemPage>
             child: CachedNetworkImage(
               placeholder: (context, url) => new Icon(Icons.image),
               errorWidget: (context, url, error) => new Icon(Icons.error),
-              imageUrl: _data[index].imageUrl,
+              imageUrl: _data[index].imageUrl!,
               fit: BoxFit.cover,
             ),
           ),
           Text(
-            _data[index].title,
+            _data[index].title!,
             maxLines: 1,
           )
         ],

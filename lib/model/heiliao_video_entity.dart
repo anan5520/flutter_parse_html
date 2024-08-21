@@ -13,18 +13,18 @@
 
 class HeiliaoVideoEntity {
   HeiliaoVideoEntity({
-      bool live, 
-      bool autoplay, 
-      String theme, 
-      bool loop, 
-      bool screenshot, 
-      bool hotkey, 
-      String preload, 
-      String lang, 
+      bool? live, 
+      bool? autoplay, 
+      String? theme, 
+      bool? loop, 
+      bool? screenshot, 
+      bool? hotkey, 
+      String? preload, 
+      String? lang, 
       dynamic logo, 
-      num volume, 
-      bool mutex, 
-      Video video,}){
+      num? volume, 
+      bool? mutex, 
+      Video? video,}){
     _live = live;
     _autoplay = autoplay;
     _theme = theme;
@@ -51,32 +51,32 @@ class HeiliaoVideoEntity {
     _logo = json['logo'];
     _volume = json['volume'];
     _mutex = json['mutex'];
-    _video = json['video'] != null ? Video.fromJson(json['video']) : null;
+    _video = json['video'] != null ? Video?.fromJson(json['video']) : null;
   }
-  bool _live;
-  bool _autoplay;
-  String _theme;
-  bool _loop;
-  bool _screenshot;
-  bool _hotkey;
-  String _preload;
-  String _lang;
+  bool? _live;
+  bool? _autoplay;
+  String? _theme;
+  bool? _loop;
+  bool? _screenshot;
+  bool? _hotkey;
+  String? _preload;
+  String? _lang;
   dynamic _logo;
-  num _volume;
-  bool _mutex;
-  Video _video;
-HeiliaoVideoEntity copyWith({  bool live,
-  bool autoplay,
-  String theme,
-  bool loop,
-  bool screenshot,
-  bool hotkey,
-  String preload,
-  String lang,
+  num? _volume;
+  bool? _mutex;
+  Video? _video;
+HeiliaoVideoEntity copyWith({  bool? live,
+  bool? autoplay,
+  String? theme,
+  bool? loop,
+  bool? screenshot,
+  bool? hotkey,
+  String? preload,
+  String? lang,
   dynamic logo,
-  num volume,
-  bool mutex,
-  Video video,
+  num? volume,
+  bool? mutex,
+  Video? video,
 }) => HeiliaoVideoEntity(  live: live ?? _live,
   autoplay: autoplay ?? _autoplay,
   theme: theme ?? _theme,
@@ -90,21 +90,21 @@ HeiliaoVideoEntity copyWith({  bool live,
   mutex: mutex ?? _mutex,
   video: video ?? _video,
 );
-  bool get live => _live;
-  bool get autoplay => _autoplay;
-  String get theme => _theme;
-  bool get loop => _loop;
-  bool get screenshot => _screenshot;
-  bool get hotkey => _hotkey;
-  String get preload => _preload;
-  String get lang => _lang;
+  bool? get live => _live;
+  bool? get autoplay => _autoplay;
+  String? get theme => _theme;
+  bool? get loop => _loop;
+  bool? get screenshot => _screenshot;
+  bool? get hotkey => _hotkey;
+  String? get preload => _preload;
+  String? get lang => _lang;
   dynamic get logo => _logo;
-  num get volume => _volume;
-  bool get mutex => _mutex;
-  Video get video => _video;
+  num? get volume => _volume;
+  bool? get mutex => _mutex;
+  Video? get video => _video;
 
-  Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
+  Map<String?, dynamic> toJson() {
+    final map = <String?, dynamic>{};
     map['live'] = _live;
     map['autoplay'] = _autoplay;
     map['theme'] = _theme;
@@ -117,7 +117,7 @@ HeiliaoVideoEntity copyWith({  bool live,
     map['volume'] = _volume;
     map['mutex'] = _mutex;
     if (_video != null) {
-      map['video'] = _video.toJson();
+      map['video'] = _video?.toJson();
     }
     return map;
   }
@@ -131,9 +131,9 @@ HeiliaoVideoEntity copyWith({  bool live,
 
 class Video {
   Video({
-      String url, 
-      String pic, 
-      String type, 
+      String? url, 
+      String? pic, 
+      String? type, 
       dynamic thumbnails,}){
     _url = url;
     _pic = pic;
@@ -147,26 +147,26 @@ class Video {
     _type = json['type'];
     _thumbnails = json['thumbnails'];
   }
-  String _url;
-  String _pic;
-  String _type;
+  String? _url;
+  String? _pic;
+  String? _type;
   dynamic _thumbnails;
-Video copyWith({  String url,
-  String pic,
-  String type,
+Video copyWith({  String? url,
+  String? pic,
+  String? type,
   dynamic thumbnails,
 }) => Video(  url: url ?? _url,
   pic: pic ?? _pic,
   type: type ?? _type,
   thumbnails: thumbnails ?? _thumbnails,
 );
-  String get url => _url;
-  String get pic => _pic;
-  String get type => _type;
+  String? get url => _url;
+  String? get pic => _pic;
+  String? get type => _type;
   dynamic get thumbnails => _thumbnails;
 
-  Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
+  Map<String?, dynamic> toJson() {
+    final map = <String?, dynamic>{};
     map['url'] = _url;
     map['pic'] = _pic;
     map['type'] = _type;

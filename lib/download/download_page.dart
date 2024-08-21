@@ -9,7 +9,7 @@ import 'package:flutter_parse_html/model/movie_bean.dart';
 import 'package:flutter_parse_html/ui/video_play.dart';
 import 'package:flutter_parse_html/util/native_utils.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:image_saver/image_saver.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -23,8 +23,8 @@ class DownloadPage extends StatefulWidget {
 
 class DownloadPageState extends State<DownloadPage>
     with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin {
-  TabController _tabController;
-  PageController _pageController;
+  TabController? _tabController;
+  PageController? _pageController;
   var db = DatabaseHelper();
   var isPageCanChanged = true;
   List<String> _titleName = ["下载中", "已完成"];
@@ -51,6 +51,8 @@ class DownloadPageState extends State<DownloadPage>
             height: 38,
             width: double.infinity,
             child: TabBar(
+              unselectedLabelStyle:TextStyle(color: Colors.white),
+              labelStyle: TextStyle(color: Colors.white),
               controller: _tabController,
               onTap: (index) {
                 onPageChange(index, p: _pageController);
@@ -80,16 +82,16 @@ class DownloadPageState extends State<DownloadPage>
     );
   }
 
-  void onPageChange(int index, {PageController p, TabController t}) async {
+  void onPageChange(int index, {PageController? p, TabController? t}) async {
     if (p != null) {
       //判断是哪一个切换
       isPageCanChanged = false;
-      await _pageController.animateToPage(index,
+      await _pageController?.animateToPage(index,
           duration: Duration(milliseconds: 500),
           curve: Curves.ease); //等待pageview切换完毕,再释放pageivew监听
       isPageCanChanged = true;
     } else {
-      _tabController.animateTo(index); //切换Tabbar
+      _tabController?.animateTo(index); //切换Tabbar
     }
   }
 
@@ -120,7 +122,7 @@ class DownloadItemPage extends StatefulWidget {
 
 class DownloadItemState extends State<DownloadItemPage>
     with AutomaticKeepAliveClientMixin {
-  RefreshController _refreshController;
+  RefreshController? _refreshController;
   List<Download> _data = [];
   bool hasInit = false;
   @override
@@ -138,7 +140,7 @@ class DownloadItemState extends State<DownloadItemPage>
     return Scaffold(
       body: SmartRefresher(
         enablePullDown: true,
-        controller: _refreshController,
+        controller: _refreshController!,
         onRefresh: () {
           _getData();
         },
@@ -154,7 +156,7 @@ class DownloadItemState extends State<DownloadItemPage>
     Download download = _data[index];
     return Dismissible(
       onDismissed: (_) async{
-        File file = new File(download.path);
+        File file = new File(download.path??'');
         bool exists = await file.parent.exists();
         if(exists){
           try {
@@ -169,27 +171,27 @@ class DownloadItemState extends State<DownloadItemPage>
           }
         }
         _data.removeAt(index);
-        DownloadUtil.dbHelper.deleteItem(download.title);
-        Scaffold.of(context).showSnackBar(
+        DownloadUtil.dbHelper.deleteItem(download.title!);
+        ScaffoldMessenger.of(context).showSnackBar(
             new SnackBar(content: new Text("删除成功")));
       },
       movementDuration: Duration(microseconds: 100),
-      key: Key(download.title),
+      key: Key(download.title??''),
       background: Container(
         color: Color(0xffff0000),
       ),
       child: GestureDetector(
         onLongPressStart: (detail) {
           if (download.status == 1 && download.isVideo == 1 && Platform.isIOS) {
-            _showMenu(context, detail, download.path);
+            _showMenu(context, detail, download.path??'');
           }
         },
         onTap: () {
           if (download.isVideo == 1) {
             Navigator.push(context, MaterialPageRoute(builder: (context) {
               MovieBean movieBean = MovieBean();
-              movieBean.playUrl = download.path;
-              movieBean.name = download.title;
+              movieBean.playUrl = download.path??'';
+              movieBean.name = download.title??'';
               return VideoPlayPage(movieBean,0,false);
             }));
           }
@@ -201,7 +203,7 @@ class DownloadItemState extends State<DownloadItemPage>
               child:  Row(
                 children: <Widget>[
                   Expanded(
-                    child: Padding(padding: EdgeInsets.only(left: 10),child: Text(download.title),),
+                    child: Padding(padding: EdgeInsets.only(left: 10),child: Text(download.title??''),),
                   ),
                   Column(children: <Widget>[   Padding(padding: EdgeInsets.only(top: 10),
                   child: download.status == 1?Text('已完成'):GestureDetector(
@@ -209,11 +211,11 @@ class DownloadItemState extends State<DownloadItemPage>
                     onTap: (){
                       if(download.status == 2){
                         Fluttertoast.showToast(msg: '继续下载');
-                        DownloadUtil.continueDown(download.url, download.path, download.title, download.isVideo);
+                        DownloadUtil.continueDown(download.url, download.path, download.title, download.isVideo!);
                       }
                     },
                   ),),
-                    Text('${(download.progress).toStringAsFixed(2)}%',)
+                    Text('${(download.progress)?.toStringAsFixed(2)}%',)
                   ],)
 
                 ],
@@ -226,7 +228,7 @@ class DownloadItemState extends State<DownloadItemPage>
               divisions: 1000,
               activeColor: Colors.blue,
               inactiveColor: Colors.grey,
-              value: download.progress,
+              value: download.progress??0,
               onChanged: (double) {},
             )
           ],
@@ -250,7 +252,7 @@ class DownloadItemState extends State<DownloadItemPage>
       print(e);
     }
     setState(() {
-      _refreshController.refreshCompleted();
+      _refreshController?.refreshCompleted();
     });
   }
 
@@ -271,10 +273,10 @@ class DownloadItemState extends State<DownloadItemPage>
     ).then((newValue) {
       if (!mounted) return null;
       if (newValue == null) {
-        if (pop.onCanceled != null) pop.onCanceled();
+        if (pop.onCanceled != null) pop.onCanceled?.call();
         return null;
       }
-      if (pop.onSelected != null) pop.onSelected(newValue);
+      if (pop.onSelected != null) pop.onSelected?.call(newValue);
     });
   }
 
@@ -282,8 +284,7 @@ class DownloadItemState extends State<DownloadItemPage>
     print('保存视频>>>$path');
 
     if (Platform.isAndroid) {
-      Uint8List fileData = await new File(path).readAsBytes();
-      File savedFile = await ImageSaver.toFile(fileData: fileData);
+      File savedFile = await ImageGallerySaver.saveFile(path);
       print('保存成功>>>' + savedFile.path);
       Fluttertoast.showToast(msg: '保存成功');
     } else {

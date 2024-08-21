@@ -31,13 +31,13 @@ class VideoList2Page extends StatefulWidget {
 class VideoList2State extends State<VideoList2Page>
     with AutomaticKeepAliveClientMixin {
   List<VideoListItem> _data = [];
-  List<ButtonBean> _btns;
+  late List<ButtonBean> _btns;
 
-  RefreshController _refreshController;
+  late RefreshController _refreshController;
   int _page = 0,buttonType = 0;
   String _currentKey = ApiConstant.xVideosKey;
   bool _isSearch = true;
-  TextEditingController _editingController;
+  late TextEditingController _editingController;
 
   @override
   void initState() {
@@ -155,7 +155,7 @@ class VideoList2State extends State<VideoList2Page>
         VideoListItem item = VideoListItem();
         String title = aEle.text;
         String href = ApiConstant.videoList2Url +
-            aEle.getElementsByTagName('a').first.attributes['href'];
+            aEle.getElementsByTagName('a').first.attributes['href']!;
         item.title = title;
         item.targetUrl = href;
         item.imageUrl = imgEle.attributes['data-src'];
@@ -164,10 +164,10 @@ class VideoList2State extends State<VideoList2Page>
       if (_btns == null) {
         _btns = [];
         var btnEles =
-            doc.getElementById('main-cat-sub-list').getElementsByTagName('li');
+            doc.getElementById('main-cat-sub-list')!.getElementsByTagName('li');
         for (var value1 in btnEles) {
           String value =
-              value1.getElementsByTagName('a').first.attributes['href'];
+              value1.getElementsByTagName('a').first.attributes['href']!;
           if (value != '#' && value != '/lang') {
             ButtonBean buttonBean = ButtonBean();
             buttonBean.title = value1.text;
@@ -204,7 +204,7 @@ class VideoList2State extends State<VideoList2Page>
       }else{
         _isSearch = false;
         buttonType = 0;
-        String value = buttonBean.value;
+        String value = buttonBean.value!;
         if (value.startsWith('/?k=')) {
           value = value.replaceAll('/?k=', '');
           _isSearch = true;
@@ -217,7 +217,7 @@ class VideoList2State extends State<VideoList2Page>
 
   void goToPlay(VideoListItem data) async {
     showLoading();
-    var body = await PornHubUtil.getHtmlFromHttpDeugger(data.targetUrl,isMobile: false,isXvideos: true);
+    var body = await PornHubUtil.getHtmlFromHttpDeugger(data.targetUrl!,isMobile: false,isXvideos: true);
     try {
       var strings = body.split(new RegExp(r"setVideoHLS\(\'|\'\);"));
       String playUrl = '';
@@ -228,7 +228,7 @@ class VideoList2State extends State<VideoList2Page>
       }
       Navigator.pop(context);
       if (playUrl.startsWith('http')) {
-        CommonUtil.toVideoPlay(playUrl, context,title:data.title);
+        CommonUtil.toVideoPlay(playUrl, context,title:data.title!);
       }
     } catch (e) {
       Navigator.pop(context);
@@ -265,7 +265,7 @@ class VideoList2State extends State<VideoList2Page>
                   child: CachedNetworkImage(
                     placeholder: (context, url) => new Icon(Icons.image),
                     errorWidget: (context, url, error) => new Icon(Icons.error),
-                    imageUrl: item.imageUrl,
+                    imageUrl: item.imageUrl!,
                     fit: BoxFit.cover,
                   ),
                   constraints: new BoxConstraints.expand(),

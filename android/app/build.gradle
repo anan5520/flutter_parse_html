@@ -25,53 +25,52 @@ apply plugin: 'com.android.application'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
-    packagingOptions {
-        // Fixes duplicate libraries build issue,
-        // when your project uses more than one plugin that depend on C++ libs.
-        pickFirst 'lib/**/libc++_shared.so'
-    }
-    compileSdkVersion 28
+//    packagingOptions {
+//        // Fixes duplicate libraries build issue,
+//        // when your project uses more than one plugin that depend on C++ libs.
+//        pickFirst 'lib/**/libc++_shared.so'
+//    }
+    compileSdkVersion 34
+//    ndkVersion '21.3.6528147'
 
-    lintOptions {
-        disable 'InvalidPackage'
-    }
-    ndkVersion '21.3.6528147'
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId "com.arvin.flutter_parse_html"
         minSdkVersion 21
-        targetSdkVersion 28
+        targetSdkVersion 34
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        ndk {
+            //设置支持的SO库架构
+            abiFilters "arm64-v8a", "armeabi-v7a"
+        }
     }
     signingConfigs {
-        debug {
+        debugConfig {
             storeFile file("../key.keystore")
             storePassword "123456"
             keyAlias "key0"
             keyPassword "123456"
         }
-        release {
+        releaseConfig {
             storeFile file("../key.keystore")
             storePassword "123456"
             keyAlias "key0"
             keyPassword "123456"
         }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
     buildTypes {
         release {
+            signingConfig android.signingConfigs.releaseConfig
+            shrinkResources true
             minifyEnabled true
-            useProguard true
-            proguardFiles getDefaultProguardFile(
-                    'proguard-android-optimize.txt'),
-                    'proguard-rules.pro'
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig signingConfigs.debug
-            ndk{
-                //这里其实我觉可以直接是用"armeabi-v7a"，但国内几个大哥之前使用的都是"armeabi"
-                abiFilters "armeabi-v7a"
+            zipAlignEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            ndk {
+                abiFilters "arm64-v8a", "armeabi-v7a"
             }
         }
     }
@@ -93,16 +92,10 @@ dependencies {
 //    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation files('libs/tbs_sdk_thirdapp_v4.3.0.151_44051_sharewithdownloadwithfile_withoutGame_obfs_20210524_174029.jar')
     testImplementation 'junit:junit:4.12'
-    implementation  'com.umeng.umsdk:analytics:8.0.0'
-    implementation 'com.umeng.umsdk:common:2.1.0'
-    //PushSDK必须依赖utdid库，所以需要加入对应依赖
-    implementation 'com.umeng.umsdk:utdid:1.1.5.3'
-//PushSDK
-    implementation 'com.umeng.umsdk:push:6.0.1'
     implementation("com.squareup.okhttp3:okhttp:4.9.0")
     implementation 'androidx.multidex:multidex:2.0.1'
     implementation 'com.ldoublem.loadingview:loadingviewlib:1.0'
-
+    implementation 'androidx.appcompat:appcompat:1.5.0'
     //完整版引入
     implementation 'com.github.CarGuo.GSYVideoPlayer:GSYVideoPlayer:v8.5.0-release-jitpack'
 

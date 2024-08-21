@@ -3,13 +3,13 @@
 class GirlBean{
    static final int serialVersionUID = 1;
 
-   int id;
-   String name;
-   String date;
-   String viewCount;
-   String thumbUrl;
-   double height;
-   double width;
+   int? id;
+   String? name;
+   String? date;
+   String? viewCount;
+   String? thumbUrl;
+   double? height;
+   double? width;
 
    @override
    String toString() {

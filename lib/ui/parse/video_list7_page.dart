@@ -25,13 +25,13 @@ class VideoList7Page extends StatefulWidget {
 class VideoList7State extends State<VideoList7Page>
     with AutomaticKeepAliveClientMixin {
   List<VideoListItem> _data = [];
-  List<ButtonBean> _btns;
+  late List<ButtonBean> _btns;
 
-  RefreshController _refreshController;
+  late RefreshController _refreshController;
   int _page = 1,buttonType = 0;
   String _currentKey = '/h/2';
   bool _isSearch = false;
-  TextEditingController _editingController;
+  late TextEditingController _editingController;
 
   @override
   void initState() {
@@ -119,14 +119,14 @@ class VideoList7State extends State<VideoList7Page>
 
   void goToPlay(VideoListItem data) async {
     showLoading();
-    var response = await PornHubUtil.getHtmlFromHttpDeugger(data.targetUrl);
+    var response = await PornHubUtil.getHtmlFromHttpDeugger(data.targetUrl!);
     try {
       var doc = parse.parse(response);
-      var playUrl = doc.getElementById('downurl').text;
+      var playUrl = doc.getElementById('downurl')!.text;
       playUrl = playUrl.replaceAll('.mp4', '.m3u8');
       Navigator.pop(context);
       if (playUrl.startsWith('http')) {
-        CommonUtil.toVideoPlay(playUrl, context,title:data.title);
+        CommonUtil.toVideoPlay(playUrl, context,title:data.title!);
       }
     } catch (e) {
       Navigator.pop(context);
@@ -152,7 +152,7 @@ class VideoList7State extends State<VideoList7Page>
                   child: CachedNetworkImage(
                     placeholder: (context, url) => new Icon(Icons.image),
                     errorWidget: (context, url, error) => new Icon(Icons.error),
-                    imageUrl: item.imageUrl,
+                    imageUrl: item.imageUrl!,
                     fit: BoxFit.cover,
                   ),
                   constraints: new BoxConstraints.expand(),
@@ -190,7 +190,7 @@ class VideoList7State extends State<VideoList7Page>
         if (aEles.length > 0) {
           var aEle = aEles.first;
           VideoListItem item = VideoListItem();
-          String href = ApiConstant.videoList7Url + aEle.attributes['href'];//https://5pfjgjhk1.com
+          String href = ApiConstant.videoList7Url + aEle.attributes['href']!;//https://5pfjgjhk1.com
           var imgEle = aEle.getElementsByTagName('img').first;
           item.title = value.getElementsByTagName('figcaption').first.text;
           item.imageUrl = imgEle.attributes['data-original'];
@@ -240,7 +240,7 @@ class VideoList7State extends State<VideoList7Page>
       }else{
         _isSearch = false;
         buttonType = 0;
-        _currentKey = buttonBean.value;
+        _currentKey = buttonBean.value!;
       }
       _refreshController.requestRefresh();
     }
@@ -248,9 +248,9 @@ class VideoList7State extends State<VideoList7Page>
 
   void goToDetail(VideoListItem data) async {
     showLoading();
-    String response = await PornHubUtil.getHtmlFromHttpDeugger(data.targetUrl);
+    String response = await PornHubUtil.getHtmlFromHttpDeugger(data.targetUrl!);
     var doc = parse.parse(response);
-    var url = doc.getElementById('downurl').text;
+    var url = doc.getElementById('downurl')!.text;
     // MovieBean movieBean = MovieBean();
     // try {
     //   var tbody = doc.getElementsByClassName('ibox').first;
@@ -283,7 +283,7 @@ class VideoList7State extends State<VideoList7Page>
     // }
 
     Navigator.pop(context);
-    CommonUtil.toVideoPlay(url, context,title: data.title);
+    CommonUtil.toVideoPlay(url, context,title: data.title!);
     // Navigator.of(context)
     //     .push(new MaterialPageRoute(builder: (BuildContext context) {
     //   return MovieDetailPage(1, movieBean);

@@ -28,10 +28,10 @@ class AbjForumContentPage extends StatefulWidget {
 
 class AbjForumContentState extends State<AbjForumContentPage> {
 
-  PornForumContent _forumContent;
-  Widget content;
+  late PornForumContent _forumContent;
+  late Widget content;
 
-  RefreshController _refreshController;
+  late RefreshController _refreshController;
   List<VideoComment> _data = [];
   int _page = 1;
   @override
@@ -90,7 +90,7 @@ class AbjForumContentState extends State<AbjForumContentPage> {
       child: ListView.separated(
           itemBuilder: (context, index) {
             VideoComment videoComment = _data[index];
-            return index == 0?HtmlWidget( videoComment.pornForumContent != null?videoComment.pornForumContent.content:""): Padding(
+            return index == 0?HtmlWidget( (videoComment.pornForumContent != null?videoComment.pornForumContent!.content:"")!): Padding(
               padding: EdgeInsets.all(5),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -98,12 +98,12 @@ class AbjForumContentState extends State<AbjForumContentPage> {
                   Padding(
                     padding: EdgeInsets.only(bottom: 5, top: 5),
                     child: Text(
-                      '${CommonUtil.replaceStr(videoComment.uName == null?'':videoComment.uName)}----'
-                          '${CommonUtil.replaceStr(videoComment.replyTime == null?'':videoComment.replyTime)}',
+                      '${CommonUtil.replaceStr((videoComment.uName == null?'':videoComment.uName)!)}----'
+                          '${CommonUtil.replaceStr((videoComment.replyTime == null?'':videoComment.replyTime)!)}',
                       style: TextStyle(color: Colors.blueAccent),
                     ),
                   ),
-                  Text(CommonUtil.replaceStr(videoComment.content == null?'':videoComment.content))
+                  Text(CommonUtil.replaceStr((videoComment.content == null?'':videoComment.content)!))
                 ],
               ),
             );
@@ -119,7 +119,7 @@ class AbjForumContentState extends State<AbjForumContentPage> {
 
     var list = await YaSeHelper.parseAbjContent(widget._url,_page);
     _data.addAll(list);
-    _forumContent = _data[0].pornForumContent;
+    _forumContent = _data[0].pornForumContent!;
     setState(() {
       _refreshController.refreshCompleted();
       _refreshController.refreshCompleted();

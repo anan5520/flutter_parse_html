@@ -5,38 +5,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_parse_html/resources/shared_preferences_keys.dart';
 import 'package:flutter_parse_html/ui/gif/gif_page.dart';
 import 'package:flutter_parse_html/ui/home_other_page.dart';
-import 'package:flutter_parse_html/ui/jd/jd_search_list.dart';
 import 'package:flutter_parse_html/ui/live/tv_page.dart';
 import 'package:flutter_parse_html/ui/parse/abj_list_page.dart';
 import 'package:flutter_parse_html/ui/parse/book_list3_page.dart';
 import 'package:flutter_parse_html/ui/parse/book_list_4_page.dart';
 import 'package:flutter_parse_html/ui/parse/dong_man_page.dart';
-import 'package:flutter_parse_html/ui/parse/gif_list_lsj_page.dart';
-import 'package:flutter_parse_html/ui/parse/htm_parse_page1.dart';
-import 'package:flutter_parse_html/ui/parse/htm_parse_page2.dart';
-import 'package:flutter_parse_html/ui/parse/video_lifan2_page.dart';
-import 'package:flutter_parse_html/ui/parse/video_lifan_page.dart';
-import 'package:flutter_parse_html/ui/parse/video_list10_page.dart';
-import 'package:flutter_parse_html/ui/parse/video_list11_page.dart';
-import 'package:flutter_parse_html/ui/parse/video_list12_page.dart';
-import 'package:flutter_parse_html/ui/parse/video_list13_page.dart';
-import 'package:flutter_parse_html/ui/parse/video_list15_page.dart';
-import 'package:flutter_parse_html/ui/parse/video_list16_page.dart';
-import 'package:flutter_parse_html/ui/parse/video_list17_page.dart';
-import 'package:flutter_parse_html/ui/parse/video_list18_page.dart';
-import 'package:flutter_parse_html/ui/parse/video_list2_page.dart';
-import 'package:flutter_parse_html/ui/parse/video_list3_page.dart';
-import 'package:flutter_parse_html/ui/parse/video_list4_page.dart';
-import 'package:flutter_parse_html/ui/parse/video_list6_page.dart';
-import 'package:flutter_parse_html/ui/parse/video_list9_page.dart';
-import 'package:flutter_parse_html/ui/parse/yase_porn_page.dart';
-import 'package:flutter_parse_html/ui/porn/porn_forum_page.dart';
-import 'package:flutter_parse_html/ui/porn/porn_page.dart';
-import 'package:flutter_parse_html/ui/pornhub/porn_hub_page.dart';
 import 'package:flutter_parse_html/util/shared_preferences.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:installed_apps/installed_apps.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
+import 'package:umeng_common_sdk/umeng_common_sdk.dart';
 import 'live/live_page.dart';
 import 'movie/movie_page.dart';
 import 'package:http/http.dart' as http;
@@ -47,9 +26,6 @@ import 'dart:io';
 import 'dart:convert';
 import 'package:flutter_parse_html/util/native_utils.dart';
 import 'package:package_info/package_info.dart';
-import 'douyin/dou_yin_page.dart';
-import 'video_play.dart';
-import 'package:flutter_parse_html/ui/yaSe/ya_se.dart';
 
 class HomePage extends StatefulWidget {
   static bool goToFuLi = false;
@@ -58,13 +34,14 @@ class HomePage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
     initUrl();
+    UmengCommonSdk.initCommon('5ddc8b37570df395b0000af1', '', 'lsj');
     return HomeState();
   }
 
   void initUrl() async {
     SpUtil sp = await SpUtil.getInstance();
-    String localStr = sp.getString(SharedPreferencesKeys.urls);
-    UrlsBean localUrl;
+    String? localStr = sp.getString(SharedPreferencesKeys.urls);
+    UrlsBean? localUrl;
     if (localStr != null && localStr.isNotEmpty) {
       localUrl = UrlsBean.fromJson(json.decode(localStr));
       updateUrl(localUrl);
@@ -75,11 +52,11 @@ class HomePage extends StatefulWidget {
     String urlJson =
     await NetUtil.getHtmlData(ApiConstant.urlsUrl, isWeb: true);
     UrlsBean urlsBean = UrlsBean.fromJson(json.decode(urlJson));
-    goToFuLi = urlsBean.goToFuLi;
-    if (localUrl == null || urlsBean.version > localUrl.version) {
+    goToFuLi = urlsBean.goToFuLi!;
+    if (localUrl == null || urlsBean.version !> localUrl.version!) {
       sp.putString(SharedPreferencesKeys.urls, json.encode(urlsBean));
       updateUrl(urlsBean);
-      if (urlsBean.isUpSiSeUrl != null && urlsBean.isUpSiSeUrl) {
+      if (urlsBean.isUpSiSeUrl != null && urlsBean.isUpSiSeUrl!) {
         sp.putString(SharedPreferencesKeys.htmlUrl1, '');
       }
     }
@@ -87,74 +64,74 @@ class HomePage extends StatefulWidget {
 
   //更新地址
   void updateUrl(UrlsBean urls) {
-    ApiConstant.movieBaseUrl = urls.s4kMovie;
-    ApiConstant.pornForumBaseUrl = urls.pornForum;
-    ApiConstant.pornBaseUrl = urls.pornVideo;
-    ApiConstant.siSeUrl = urls.lsjUrl;
-    ApiConstant.liveUrl = urls.liveUrl;
-    ApiConstant.searchUrl = urls.searchUrl;
-    ApiConstant.fanHao1 = urls.fanHao1;
-    ApiConstant.fanHao2 = urls.fanHao2;
-    ApiConstant.fanHao3 = urls.fanHao3;
-    ApiConstant.xianFengUrl = urls.xianFengUrl;
-    ApiConstant.videoList1Url = urls.videoList1Url;
+    ApiConstant.movieBaseUrl = urls.s4kMovie!;
+    ApiConstant.pornForumBaseUrl = urls.pornForum!;
+    ApiConstant.pornBaseUrl = urls.pornVideo!;
+    ApiConstant.siSeUrl = urls.lsjUrl!;
+    ApiConstant.liveUrl = urls.liveUrl!;
+    ApiConstant.searchUrl = urls.searchUrl!;
+    ApiConstant.fanHao1 = urls.fanHao1!;
+    ApiConstant.fanHao2 = urls.fanHao2!;
+    ApiConstant.fanHao3 = urls.fanHao3!;
+    ApiConstant.xianFengUrl = urls.xianFengUrl!;
+    ApiConstant.videoList1Url = urls.videoList1Url!;
     ApiConstant.videoList4Url = urls.videoList4Url != null
-        ? urls.videoList4Url
+        ? urls.videoList4Url!
         : ApiConstant.videoList4Url;
     ApiConstant.videoList5Url = urls.videoList5Url != null
-        ? urls.videoList5Url
+        ? urls.videoList5Url!
         : ApiConstant.videoList5Url;
     ApiConstant.videoList6Url = urls.videoList6Url != null
-        ? urls.videoList6Url
+        ? urls.videoList6Url!
         : ApiConstant.videoList6Url;
     ApiConstant.videoList7Url = urls.videoList7Url != null
-        ? urls.videoList7Url
+        ? urls.videoList7Url!
         : ApiConstant.videoList7Url;
     ApiConstant.videoList8Url = urls.videoList8Url != null
-        ? urls.videoList8Url
+        ? urls.videoList8Url!
         : ApiConstant.videoList8Url;
     ApiConstant.videoList9Url = urls.videoList9Url != null
-        ? urls.videoList9Url
+        ? urls.videoList9Url!
         : ApiConstant.videoList9Url;
     ApiConstant.videoList10Url = urls.videoList10Url != null
-        ? urls.videoList10Url
+        ? urls.videoList10Url!
         : ApiConstant.videoList10Url;
     ApiConstant.videoList18Url = urls.videoList18Url != null
-        ? urls.videoList18Url
+        ? urls.videoList18Url!
         : ApiConstant.videoList18Url;
     ApiConstant.yaSeUrl =
-        urls.yaSeUrl != null ? urls.yaSeUrl : ApiConstant.yaSeUrl;
+        urls.yaSeUrl != null ? urls.yaSeUrl! : ApiConstant.yaSeUrl;
     ApiConstant.videoList3Url =
         (urls.videoList3Url != null && urls.videoList3Url != "")
-            ? urls.videoList3Url
+            ? urls.videoList3Url!
             : ApiConstant.videoList3Url;
     ApiConstant.parse2Url =
-        urls.parse2Url != null ? urls.parse2Url : ApiConstant.parse2Url;
+        urls.parse2Url != null ? urls.parse2Url! : ApiConstant.parse2Url;
     ApiConstant.parse3Url =
-        urls.parse3Url != null ? urls.parse3Url : ApiConstant.parse3Url;
+        urls.parse3Url != null ? urls.parse3Url! : ApiConstant.parse3Url;
     ApiConstant.parse4Url =
-        urls.parse4Url != null ? urls.parse4Url : ApiConstant.parse4Url;
+        urls.parse4Url != null ? urls.parse4Url! : ApiConstant.parse4Url;
     ApiConstant.parse5Url =
-        urls.parse5Url != null ? urls.parse5Url : ApiConstant.parse5Url;
+        urls.parse5Url != null ? urls.parse5Url! : ApiConstant.parse5Url;
     ApiConstant.movieBaseUrl1 = urls.movieBaseUrl1 != null
-        ? urls.movieBaseUrl1
+        ? urls.movieBaseUrl1!
         : ApiConstant.movieBaseUrl1;
-    ApiConstant.gif1 = urls.gif1 != null ? urls.gif1 : ApiConstant.gif1;
-    ApiConstant.gif2 = urls.gif2 != null ? urls.gif2 : ApiConstant.gif2;
+    ApiConstant.gif1 = urls.gif1 != null ? urls.gif1! : ApiConstant.gif1;
+    ApiConstant.gif2 = urls.gif2 != null ? urls.gif2! : ApiConstant.gif2;
     ApiConstant.xianFeng3Url = urls.xianFeng3Url != null
-        ? urls.xianFeng3Url
+        ? urls.xianFeng3Url!
         : ApiConstant.xianFeng3Url;
     ApiConstant.xianFeng4Url = urls.xianFeng4Url != null
-        ? urls.xianFeng4Url
+        ? urls.xianFeng4Url!
         : ApiConstant.xianFeng4Url;
     ApiConstant.xianFeng5Url = urls.xianFeng5Url != null
-        ? urls.xianFeng5Url
+        ? urls.xianFeng5Url!
         : ApiConstant.xianFeng5Url;
     ApiConstant.douYinUrl =
-        urls.douYinUrl != null ? urls.douYinUrl : ApiConstant.douYinUrl;
+        urls.douYinUrl != null ? urls.douYinUrl! : ApiConstant.douYinUrl;
     ApiConstant.douYin2Url =
-        urls.douYin2Url != null ? urls.douYin2Url : ApiConstant.douYin2Url;
-    ApiConstant.abjUrl = urls.abjUrl != null ? urls.abjUrl : ApiConstant.abjUrl;
+        urls.douYin2Url != null ? urls.douYin2Url! : ApiConstant.douYin2Url;
+    ApiConstant.abjUrl = urls.abjUrl != null ? urls.abjUrl! : ApiConstant.abjUrl;
   }
 }
 
@@ -169,9 +146,9 @@ class HomeState extends State<HomePage> with WidgetsBindingObserver {
   ];
   List<BottomNavigationBarItem> _bottomItems = [];
   int _currentIndex = 0;
-  PageController _controller;
+  late PageController _controller;
 
-  TvPage tvPage;
+  late TvPage tvPage;
 
   @override
   void initState() {
@@ -190,6 +167,7 @@ class HomeState extends State<HomePage> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
+    ScreenUtil.init(context);
     return Scaffold(
       body: PageView(
         children: <Widget>[
@@ -257,27 +235,27 @@ class HomeState extends State<HomePage> with WidgetsBindingObserver {
   void _initTables() {
     for (var value in _tabData) {
       _bottomItems.add(BottomNavigationBarItem(
-          icon: value['icon'], title: Text('${value['text']}')));
+          icon: value['icon'], label: '${value['text']}'));
     }
   }
 
   void initNotice() async {
     String jsonStr = await NetUtil.getHtmlData(ApiConstant.noticeUrl);
     NoticeBean noticeBean = NoticeBean.fromJson(json.decode(jsonStr));
-    if (noticeBean.isShow) {
+    if (noticeBean.isShow!) {
       showDialog(
           context: context,
-          barrierDismissible: noticeBean.canCancel,
+          barrierDismissible: noticeBean.canCancel!,
           builder: (context) {
             return AlertDialog(
-              title: Text(noticeBean.title),
-              content: Text(noticeBean.content),
+              title: Text(noticeBean.title!),
+              content: Text(noticeBean.content!),
               contentPadding: EdgeInsets.all(10),
               actions: <Widget>[
-                RaisedButton(
+                TextButton(
                   onPressed: () {
                     Navigator.pop(context);
-                    if (!noticeBean.canCancel) {
+                    if (!noticeBean.canCancel!) {
                       Navigator.pop(context);
                     }
                   },
@@ -296,10 +274,10 @@ class HomeState extends State<HomePage> with WidgetsBindingObserver {
     String jsonStr = await NetUtil.getHtmlData(ApiConstant.upDateKeyUrl);
     SpUtil sp = await SpUtil.getInstance();
     UpdateKey updateKey = UpdateKey.fromJson(json.decode(jsonStr));
-    ApiConstant.xVideosKey = updateKey.xVideosKey;
+    ApiConstant.xVideosKey = updateKey.xVideosKey!;
     bool isShowDialog = true;
     if(updateKey.onlyShowOne ?? false){
-      isShowDialog = sp.getBool(updateKey.spKey) ?? true;
+      isShowDialog = sp.getBool(updateKey.spKey!) ?? true;
     }else{
       int now = DateTime.now().millisecondsSinceEpoch;
       int spTime =sp.getInt("showActivityDialog") ?? 0;
@@ -313,8 +291,8 @@ class HomeState extends State<HomePage> with WidgetsBindingObserver {
         isShowDialog = await InstalledApps.getAppInfo('com.taobao.taobao').then((value) => value.versionName?.isNotEmpty ?? false);
       }
     }
-    if(updateKey.copyKey.isNotEmpty && isShowDialog){
-      sp.putBool(updateKey.spKey, false);
+    if(updateKey.copyKey!.isNotEmpty && isShowDialog){
+      sp.putBool(updateKey.spKey!, false);
       sp.putInt('showActivityDialog', (DateTime.now().millisecondsSinceEpoch));
       _showActivityDialog(updateKey);
     }
@@ -325,19 +303,19 @@ class HomeState extends State<HomePage> with WidgetsBindingObserver {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
     UpdateBean updateBean = UpdateBean.fromJson(json.decode(jsonStr));
     int version = int.parse(packageInfo.buildNumber);
-    if (updateBean.version > version) {
+    if (updateBean.version !> version) {
       showDialog(
           context: context,
-          barrierDismissible: updateBean.isForce,
+          barrierDismissible: updateBean.isForce!,
           builder: (context) {
             return AlertDialog(
               title: Text('提示'),
-              content: Text(updateBean.des),
+              content: Text(updateBean.des!),
               contentPadding: EdgeInsets.all(10),
               actions: <Widget>[
-                RaisedButton(
+                TextButton(
                   onPressed: () {
-                    NativeUtils.toBrowser(updateBean.url);
+                    NativeUtils.toBrowser(updateBean.url!);
                   },
                   child: Text(
                     "更新",
@@ -372,19 +350,14 @@ class HomeState extends State<HomePage> with WidgetsBindingObserver {
         NativeUtils.onPause();
         break;
       case AppLifecycleState.detached:
-        // TODO: Handle this case.
+
         break;
+      case AppLifecycleState.hidden:
     }
   }
 
   void checkAndGetPermission() async {
-    var status = await Permission.storage.status;
-    if (status != PermissionStatus.granted) {
-      await Permission.storage.request();
-      NativeUtils.initX5Web();
-    } else {
-      NativeUtils.initX5Web();
-    }
+    NativeUtils.initX5Web();
   }
 
   void _showActivityDialog(UpdateKey updateKey) {
@@ -397,10 +370,10 @@ class HomeState extends State<HomePage> with WidgetsBindingObserver {
             content: Text('点击支持下吧'),
             contentPadding: EdgeInsets.all(10),
             actions: <Widget>[
-              RaisedButton(
+              TextButton(
                 onPressed: () async{
-                  Clipboard.setData(new ClipboardData(text: updateKey.copyKey));
-                  if(updateKey.isJd){
+                  Clipboard.setData(new ClipboardData(text: updateKey.copyKey!));
+                  if(updateKey.isJd!){
                     await InstalledApps.startApp('com.jingdong.app.mall');
                   }else{
                     await InstalledApps.startApp('com.taobao.taobao');

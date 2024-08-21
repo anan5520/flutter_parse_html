@@ -31,9 +31,9 @@ class PornForumContentPage extends StatefulWidget {
 }
 
 class PornForumContentState extends State<PornForumContentPage> {
-  PornForumContent _forumContent;
+  PornForumContent? _forumContent;
   bool _showLoading = true;
-  Widget content;
+  late Widget content;
 
   @override
   void initState() {
@@ -62,7 +62,7 @@ class PornForumContentState extends State<PornForumContentPage> {
                         delegate: new SliverChildListDelegate(
                           <Widget>[
                             HtmlWidget(_forumContent != null
-                                ? _forumContent.content
+                                ? _forumContent?.content??''
                                 : ""),
                           ],
                         ),
@@ -89,10 +89,10 @@ class PornForumContentState extends State<PornForumContentPage> {
                       color: Colors.blue,
                       textColor: Colors.white,
                       onPressed: () {
-                        if (_forumContent != null && _forumContent.imageList.isNotEmpty) {
+                        if (_forumContent != null && _forumContent!.imageList!.isNotEmpty) {
                           Navigator.pushNamed(
                               context, "/ShowStaggeredImagePage", arguments: {
-                            "list": _forumContent.imageList,
+                            "list": _forumContent!.imageList,
                             'type': widget._type == 2 ? 1 : 0
                           });
                         }
@@ -100,8 +100,8 @@ class PornForumContentState extends State<PornForumContentPage> {
                       child: Text('看图片')),
                   Visibility(
                       visible: _forumContent != null &&
-                          _forumContent.videoList != null &&
-                          _forumContent.videoList.isNotEmpty,
+                          _forumContent!.videoList != null &&
+                          _forumContent!.videoList.isNotEmpty,
                       child: MaterialButton(
                           color: Colors.blue,
                           textColor: Colors.white,
@@ -159,8 +159,8 @@ class PornForumContentState extends State<PornForumContentPage> {
             .forEach((imgEle) {
               if(imgEle.attributes.containsKey('onload') ){
                 var onload = imgEle.attributes['onload'];
-                if(onload.contains('https')){
-                  var loads = imgEle.attributes['onload'].split('https')[1];
+                if(onload!.contains('https')){
+                  var loads = imgEle.attributes['onload']!.split('https')[1];
                   if(loads.endsWith('\')')){
                     imgs.add('https${loads.split("'")[0]}');
                   }
@@ -171,9 +171,9 @@ class PornForumContentState extends State<PornForumContentPage> {
         doc.getElementsByClassName('dplayer').forEach((element) {
           var videoDataConfig = element.attributes['config'];
           HeiliaoVideoEntity videoEntity =
-              HeiliaoVideoEntity.fromJson(json.decode(videoDataConfig));
+              HeiliaoVideoEntity.fromJson(json.decode(videoDataConfig!));
           content.videoList
-              .add(videoEntity.video.url == null ? '' : videoEntity.video.url);
+              .add(videoEntity.video!.url == null ? '' : videoEntity.video!.url);
         });
       } catch (e) {
         print(e);
@@ -186,7 +186,7 @@ class PornForumContentState extends State<PornForumContentPage> {
   void _showVideoDialog() async {
     int start = 0;
     List<ButtonBean> _btns = [];
-    _forumContent.videoList.forEach((element) {
+    _forumContent?.videoList.forEach((element) {
       _btns.add(ButtonBean()
         ..title = '视频${start++}'
         ..value = element);

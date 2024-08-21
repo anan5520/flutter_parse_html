@@ -3,9 +3,6 @@ import 'dart:convert';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_parse_html/book/main/book_view.dart';
-import 'package:flutter_parse_html/book/main/main_page_view.dart';
-import 'package:flutter_parse_html/book/widget/banner.dart';
 import 'package:flutter_parse_html/download/history_page.dart';
 import 'package:flutter_parse_html/model/button_bean.dart';
 import 'package:flutter_parse_html/model/movie_bean.dart';
@@ -18,14 +15,12 @@ import 'package:flutter_parse_html/util/escapeu_unescape.dart';
 import 'package:flutter_parse_html/util/native_utils.dart';
 import 'package:flutter_parse_html/util/shared_preferences.dart';
 import 'package:flutter_parse_html/widget/dialog_page.dart';
-import 'package:flutter_parse_html/widget/movie_search_bar.dart';
+import 'package:flutter_parse_html/widget/movie_search_bar.dart' as customSearch;
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:flutter_parse_html/ui/movie/movie_detail_page.dart';
 import 'package:flutter_parse_html/api/api_constant.dart';
 import 'package:flutter_parse_html/ui/home_other_page.dart';
-import 'package:unicorndial/unicorndial.dart';
 
 import '../home_page.dart';
 
@@ -46,20 +41,20 @@ class MoviePage extends StatefulWidget {
 class _MyHomePageState extends State<MoviePage>
     with TickerProviderStateMixin, AutomaticKeepAliveClientMixin
     implements MovieView {
-  AnimationController controller;
-  CurvedAnimation curvedAnimation;
-  MoviePresenter _presenter;
-  SpUtil sp;
+  late AnimationController controller;
+  late CurvedAnimation curvedAnimation;
+  late MoviePresenter _presenter;
+  late SpUtil sp;
 
   // 放大动画
-  Animation<double> animationCurved;
-  Animation<EdgeInsets> movement;
+  late Animation<double> animationCurved;
+  late Animation<EdgeInsets> movement;
   List<VideoListItem> data = [];
   var _index = 1;
-  RefreshController _refreshController;
+  late RefreshController _refreshController;
   String _videoUrl = '${ApiConstant.movieBaseUrl}/index.php/vod/show/id/1/';
   String _title = '电影';
-  List<ButtonBean> _childButtons;
+  List<ButtonBean>? _childButtons;
   int _type = -1; // 1 4k     2 ok
   String _currentKey = '';
   int buttonType = 0;
@@ -145,14 +140,6 @@ class _MyHomePageState extends State<MoviePage>
                     _refreshController.requestRefresh();
                   })),
           IconButton(
-              icon: Icon(Icons.book),
-              onPressed: () {
-                Navigator.push(context,
-                    new MaterialPageRoute(builder: (context) {
-                  return BookView();
-                }));
-              }),
-          IconButton(
               icon: Icon(Icons.history),
               onPressed: () {
                 Navigator.push(context,
@@ -164,7 +151,7 @@ class _MyHomePageState extends State<MoviePage>
               icon: Icon(Icons.search),
               onPressed: () {
                 // 调用写好的方法
-                showSearch(context: context, delegate: SearchBar(_type));
+                showSearch(context: context, delegate: new customSearch.SearchBar(_type));
               })
         ],
       ),
@@ -198,33 +185,30 @@ class _MyHomePageState extends State<MoviePage>
                 right: 1,
                 child: Column(
                   children: [
-                    RaisedButton(
-                      padding: EdgeInsets.all(20),
-                      color: Colors.blue,
-                      textColor: Colors.white,
-                      elevation: 10,
-                      splashColor: Colors.grey,
-                      shape: CircleBorder(side: BorderSide(color: Colors.blue)),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        shape: CircleBorder(), // 圆形边框
+                        backgroundColor: Colors.blue,
+                        padding: EdgeInsets.all(24), // 调整按钮大小
+                      ),
                       onPressed: () {
                         NativeUtils.goToDouYin("0");
                       },
-                      child: Text("抖音"),
+                      child: Text("抖音",style: TextStyle(color: Colors.white),),
                     ),
                     Padding(
                       padding: EdgeInsets.only(top: 10),
-                      child: RaisedButton(
-                        padding: EdgeInsets.all(17),
-                        color: Colors.blue,
-                        textColor: Colors.white,
-                        elevation: 10,
-                        splashColor: Colors.grey,
-                        shape:
-                            CircleBorder(side: BorderSide(color: Colors.blue)),
+                      child: TextButton(
+                        style: ElevatedButton.styleFrom(
+                          shape: CircleBorder(), // 圆形边框
+                          backgroundColor: Colors.blue,
+                          padding: EdgeInsets.all(24), // 调整按钮大小
+                        ),
                         onPressed: () {
                           // NativeUtils.goToDouYin("1");
                           _showDialog();
                         },
-                        child: Icon(Icons.add),
+                        child: Icon(Icons.add,color: Colors.white,),
                       ),
                     )
                   ],
@@ -236,12 +220,12 @@ class _MyHomePageState extends State<MoviePage>
   }
 
   void _showDialog() async {
-    if(_childButtons.isEmpty) return;
+    if(_childButtons?.isEmpty ?? true) return;
     ButtonBean buttonBean = await showDialog(
         context: context,
         builder: (context) {
           return new AlertDialog(
-            content: GridViewDialog(_childButtons),
+            content: GridViewDialog(_childButtons!),
           );
         });
     if (buttonBean != null) {
@@ -250,7 +234,7 @@ class _MyHomePageState extends State<MoviePage>
         buttonType = 1;
       } else {
         buttonType = 0;
-        _currentKey = buttonBean.value;
+        _currentKey = buttonBean.value!;
       }
       if (_type == 1) {
         if (buttonBean.type == 0) {
@@ -260,7 +244,7 @@ class _MyHomePageState extends State<MoviePage>
       } else {
         if (buttonBean.type == 0) {
           _isType = true;
-          _videoUrl = '${ApiConstant.movieBaseUrl1}${buttonBean.value.replaceAll('--------.html', '')}';
+          _videoUrl = '${ApiConstant.movieBaseUrl1}${buttonBean.value!.replaceAll('--------.html', '')}';
         }
         _refreshController.requestRefresh();
       }
@@ -272,7 +256,7 @@ class _MyHomePageState extends State<MoviePage>
     return new GestureDetector(
       onTap: () {
         showLoading();
-        _presenter.getVideoUrl(item.targetUrl, _type);
+        _presenter.getVideoUrl(item.targetUrl!, _type);
       },
       child: ClipRRect(
         borderRadius: BorderRadius.circular(5),
@@ -289,7 +273,7 @@ class _MyHomePageState extends State<MoviePage>
                         placeholder: (context, url) => new Icon(Icons.image),
                         errorWidget: (context, url, error) =>
                             new Icon(Icons.error),
-                        imageUrl: item.imageUrl,
+                        imageUrl: item.imageUrl!,
                         fit: BoxFit.cover,
                       ),
                       constraints: new BoxConstraints.expand(),
@@ -333,7 +317,7 @@ class _MyHomePageState extends State<MoviePage>
   @override
   loadMovieListSuc(
       List<VideoListItem> list, List<ButtonBean> btns, bool isRefresh,
-      {List<VideoListItem> bannerList}) {
+      {List<VideoListItem>? bannerList}) {
     if (isRefresh) {
       data.clear();
     }
@@ -413,12 +397,12 @@ class _MyHomePageState extends State<MoviePage>
 
   void initChildBtn(List<ButtonBean> btns) {
     if (_childButtons == null) {
-      _childButtons = List<ButtonBean>();
+      _childButtons = [];
     } else {
-      _childButtons.clear();
+      _childButtons?.clear();
     }
     for (var value in btns) {
-      _childButtons.add(value);
+      _childButtons?.add(value);
     }
   }
 
@@ -426,22 +410,23 @@ class _MyHomePageState extends State<MoviePage>
     return SingleChildScrollView(
       child: Column(
         children: [
-          (widget._type == MovieType.movie && bannerList.isNotEmpty)
-              ? SizedBox(
-                  height: 250,
-                  child: Swiper(
-                    autoplay: true,
-                    autoplayDelay: 3000,
-                    loop: true,
-                    itemCount: bannerList.length,
-                    viewportFraction: 0.5,
-                    scale: 0.75,
-                    itemBuilder: (context, index) {
-                      return geBannerItem(index);
-                    },
-                  ),
-                )
-              : Container(),
+          // (widget._type == MovieType.movie && bannerList.isNotEmpty)
+              // ? SizedBox(
+              //     height: 250,
+              //     child: Swiper(
+              //       autoplay: true,
+              //       autoplayDelay: 3000,
+              //       loop: true,
+              //       itemCount: bannerList.length,
+              //       viewportFraction: 0.5,
+              //       scale: 0.75,
+              //       itemBuilder: (context, index) {
+              //         return geBannerItem(index);
+              //       },
+              //     ),
+              //   )
+              // : Container(),
+          Container(),
           GridView.builder(
             physics: new NeverScrollableScrollPhysics(),
             shrinkWrap: true,
@@ -478,10 +463,10 @@ class _MyHomePageState extends State<MoviePage>
   }
 
   generateItemList() {
-    List<DropdownMenuItem> items = new List();
-    DropdownMenuItem item1 =
+    List<DropdownMenuItem<String>> items = [];
+    DropdownMenuItem<String> item1 =
         new DropdownMenuItem(value: '1', child: new Text('数据源1'));
-    DropdownMenuItem item2 =
+    DropdownMenuItem<String> item2 =
         new DropdownMenuItem(value: '2', child: new Text('数据源2'));
     items.add(item1);
     items.add(item2);
@@ -491,7 +476,7 @@ class _MyHomePageState extends State<MoviePage>
   void initType(bool isInit) async {
     if (_type == -1) {
       sp = await SpUtil.getInstance();
-      String ty = await sp.getString(SharedPreferencesKeys.movieType);
+      String? ty = await sp.getString(SharedPreferencesKeys.movieType);
       if (ty != null) {
         int type = int.parse(ty);
         _type = type == null ? 1 : type;
@@ -510,7 +495,7 @@ class _MyHomePageState extends State<MoviePage>
     return new GestureDetector(
       onTap: () {
         showLoading();
-        _presenter.getVideoUrl(item.targetUrl, _type);
+        _presenter.getVideoUrl(item.targetUrl!, _type);
       },
       child: Padding(
         padding: EdgeInsets.only(left: 10, right: 10, top: 20),
@@ -522,7 +507,7 @@ class _MyHomePageState extends State<MoviePage>
               child: CachedNetworkImage(
                 placeholder: (context, url) => new Icon(Icons.image),
                 errorWidget: (context, url, error) => new Icon(Icons.error),
-                imageUrl: item.imageUrl,
+                imageUrl: item.imageUrl!,
                 fit: BoxFit.cover,
               ),
               constraints: new BoxConstraints.expand(),

@@ -30,9 +30,9 @@ class FanHaoContentPage extends StatefulWidget {
 }
 
 class FanHaoContentState extends State<FanHaoContentPage> {
-  PornForumContent _forumContent;
+  late PornForumContent _forumContent;
   bool _showLoading = true;
-  Widget content;
+  late Widget content;
 
   @override
   void initState() {
@@ -51,13 +51,13 @@ class FanHaoContentState extends State<FanHaoContentPage> {
         : Center(
             child: ListView.builder(
             itemBuilder: _getImageItem,
-            itemCount: _forumContent.imageList.length + _forumContent.ciLiList.length + 1,
+            itemCount: _forumContent.imageList!.length + _forumContent.ciLiList!.length + 1,
           ));
     return Scaffold(
       appBar: AppBar(
         title: Text('帖子详情'),
         actions: [
-          FlatButton(
+          ElevatedButton(
             child: Text(
               '下载磁力软件',
               style: TextStyle(color: Colors.white, fontSize: 12),
@@ -107,7 +107,7 @@ class FanHaoContentState extends State<FanHaoContentPage> {
     contentEle.getElementsByTagName('img').forEach((element) {
       element.attributes['src'] =
           "${ApiConstant.videoList17Url}${element.attributes['src']}";
-      _forumContent.imageList.add(element.attributes['src']);
+      _forumContent.imageList!.add(element.attributes['src']);
     });
     _forumContent.content =
         contentEle.getElementsByTagName('blockquote').first.text;
@@ -132,7 +132,7 @@ class FanHaoContentState extends State<FanHaoContentPage> {
         ciLiUrl.title = element.text;
         var jsStr =  ciliUrls[i];
         ciLiUrl.url = 'magnet:?xt=urn:btih:${_reurl(jsStr)}';
-        _forumContent.ciLiList.add(ciLiUrl);
+        _forumContent.ciLiList!.add(ciLiUrl);
       }
 
     } catch (e) {
@@ -146,15 +146,15 @@ class FanHaoContentState extends State<FanHaoContentPage> {
 
   Widget _getImageItem(BuildContext context, int index) {
     if(index == 0){
-      return Text(_forumContent.content);
-    }else if(index > 0 && index <= _forumContent.ciLiList.length){
+      return Text(_forumContent.content!);
+    }else if(index > 0 && index <= _forumContent.ciLiList!.length){
       var ciLiIndex = index - 1;
-      var item = _forumContent.ciLiList[ciLiIndex];
+      var item = _forumContent.ciLiList![ciLiIndex];
       return GestureDetector(
         onTap: () {
           Fluttertoast.showToast(
               msg: '磁力链接已复制到粘贴板', toastLength: Toast.LENGTH_SHORT);
-          Clipboard.setData(new ClipboardData(text: item.url));
+          Clipboard.setData(new ClipboardData(text: item.url!));
         },
         child: Padding(
           padding: EdgeInsets.only(top: 10, bottom: 10, left: 5, right: 5),
@@ -162,8 +162,8 @@ class FanHaoContentState extends State<FanHaoContentPage> {
         ),
       );
     }else {
-      var imageIndex = index - 1 - _forumContent.ciLiList.length;
-      return CachedNetworkImage(imageUrl: _forumContent.imageList[imageIndex]);
+      var imageIndex = index - 1 - _forumContent.ciLiList!.length;
+      return CachedNetworkImage(imageUrl: _forumContent.imageList![imageIndex]!);
     }
 
   }

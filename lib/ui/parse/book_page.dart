@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_gbk2utf8/flutter_gbk2utf8.dart';
 import 'package:flutter_parse_html/ui/pornhub/pornhub_util.dart';
 import 'package:flutter_parse_html/widget/dialog_page.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
@@ -10,7 +11,6 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_parse_html/api/api_constant.dart';
 import 'package:flutter_parse_html/net/net_util.dart';
-import 'package:gbk2utf8/gbk2utf8.dart';
 
 class BookHomePage extends StatefulWidget {
   var url;
@@ -27,9 +27,9 @@ class BookHomePage extends StatefulWidget {
 
 class BookState extends State<BookHomePage> {
   String content = '';
-  var url;
+  String? url;
   var showLoading = true;
-  ScrollController _controller;
+  late ScrollController _controller;
   BookState(this.url);
 
   @override
@@ -116,7 +116,7 @@ class BookState extends State<BookHomePage> {
   }
 
   void getData() async {
-    var response = await http.get(url);
+    var response = await http.get(Uri.parse(url!));
     Utf8Decoder utf8decoder = new Utf8Decoder();
     var body = utf8decoder.convert(response.bodyBytes);
     var document = parse.parse(body);
@@ -135,7 +135,7 @@ class BookState extends State<BookHomePage> {
     });
   }
   void getData5() async {
-    var body = await PornHubUtil.getHtmlFromHttpDeugger(url);
+    var body = await PornHubUtil.getHtmlFromHttpDeugger(url!);
     var document = parse.parse(body);
     var eles = document.getElementsByClassName("content");
     if (eles.length > 0) {
@@ -153,7 +153,7 @@ class BookState extends State<BookHomePage> {
   }
 
   void getData3() async {
-    var response = await http.get(url);
+    var response = await http.get(Uri.parse(url!));
     var body = gbk.decode(response.bodyBytes);
     var document = parse.parse(body);
     content = document.getElementsByClassName("mainAreaBlack").first.outerHtml;
@@ -163,7 +163,7 @@ class BookState extends State<BookHomePage> {
   }
 
   void getData4() async {
-    var response = await PornHubUtil.getHtmlFromHttpDeugger(url);
+    var response = await PornHubUtil.getHtmlFromHttpDeugger(url!);
     var document = parse.parse(response);
     content = document.getElementsByClassName("nbodys").first.outerHtml;
     setState(() {
@@ -172,7 +172,7 @@ class BookState extends State<BookHomePage> {
   }
 
   void getBookList1Data() async {
-    var response = await http.get(url);
+    var response = await http.get(Uri.parse(url!));
     content = gbk.decode(response.bodyBytes);
     content =
         content.replaceAll('&nbsp', '').replaceAll(new RegExp(r'(<br />)'), '');
@@ -182,7 +182,7 @@ class BookState extends State<BookHomePage> {
   }
 
   void getBookList2Data() async {
-    var response = await http.get(url);
+    var response = await http.get(Uri.parse(url!));
     Utf8Decoder utf8decoder = new Utf8Decoder();
     var body = utf8decoder.convert(response.bodyBytes);
     var document = parse.parse(body);
@@ -196,7 +196,7 @@ class BookState extends State<BookHomePage> {
   }
 
   void getBookList3Data() async {
-    var response = await http.get(url);
+    var response = await http.get(Uri.parse(url!));
     Utf8Decoder utf8decoder = new Utf8Decoder();
     var body = utf8decoder.convert(response.bodyBytes);
     var document = parse.parse(body);
@@ -208,7 +208,7 @@ class BookState extends State<BookHomePage> {
   }
 
   void getBookList4Data() async {
-    var body = await PornHubUtil.getHtmlFromHttpDeugger(url);
+    var body = await PornHubUtil.getHtmlFromHttpDeugger(url!);
     var document = parse.parse(body);
     var articles = document.getElementsByClassName("articleList");
     articles.forEach((element) { 
@@ -222,7 +222,7 @@ class BookState extends State<BookHomePage> {
   }
 
   void getBookList7Data() async {
-    var body = await PornHubUtil.getHtmlFromHttpDeugger(url);
+    var body = await PornHubUtil.getHtmlFromHttpDeugger(url!);
     var document = parse.parse(body);
     var articles = document.getElementsByClassName("post-content-post").first;
     content = articles.text;

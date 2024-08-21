@@ -5,7 +5,6 @@ import 'package:flutter_parse_html/model/movie_bean.dart';
 import 'package:flutter_parse_html/model/porn_hub_video_entity.dart';
 import 'package:flutter_parse_html/model/video_list_item.dart';
 import 'package:flutter_parse_html/net/net_util.dart';
-import 'package:gbk2utf8/gbk2utf8.dart';
 import 'package:html/dom.dart';
 import 'package:html/parser.dart';
 class PornHubUtil {
@@ -46,7 +45,7 @@ class PornHubUtil {
         String accessRequest = "";
         for (var value1 in accepts) {
           if(value1.attributes.containsValue("accessRequest")){
-            accessRequest = value1.attributes['value'];
+            accessRequest = value1.attributes['value']!;
           }
         }
         if(accessRequest.isNotEmpty){
@@ -62,7 +61,7 @@ class PornHubUtil {
   }
 
   //从Jsonp代理 获取网页内容
-  static Future<String> getHtmlFromJsonp(String url, {bool isMobile = true,Map<String, dynamic> params,bool isGbk = false}) {
+  static Future<String> getHtmlFromJsonp(String url, {bool isMobile = true,Map<String, dynamic>? params,bool isGbk = false}) {
     var header = isMobile
         ? {
             "User-Agent":
@@ -90,9 +89,9 @@ class PornHubUtil {
   //从HttpDeugger代理 获取网页内容
   static Future<String> getHtmlFromHttpDeugger(String url,
       {bool isMobile = true,
-      Map<String, dynamic> params,
-      Map<String, String> header,
-      String referer,bool isGbk,
+      Map<String, dynamic>? params ,
+      Map<String, String>? header,
+      String referer = '',bool isGbk = false,
       bool isXvideos = false}) {
     if (params == null) {
       params = new Map<String, dynamic>();
@@ -160,7 +159,7 @@ class PornHubUtil {
       var elements = document.querySelectorAll('ul#categoriesListSection > li');
       for (var value in elements) {
         String href =
-            '${value.querySelector('div.category-wrapper > a').attributes['href']}';
+            '${value.querySelector('div.category-wrapper > a')!.attributes['href']}';
         if (href.contains("?")) {
           // 只获取高清视频
           href += "&" + _params;
@@ -169,7 +168,7 @@ class PornHubUtil {
         }
         String title = value
             .querySelector('div.category-wrapper > h5 > a')
-            .attributes['data-mxptext'];
+            !.attributes['data-mxptext']!;
         ButtonBean buttonBean = new ButtonBean();
         buttonBean.title = title;
         buttonBean.value = href;
@@ -183,18 +182,18 @@ class PornHubUtil {
     return getHtmlFromHttpDeugger(
             '$pornHubUrl/video/search?search=$key&page=$page')
         .then((response) {
-      List<VideoListItem> viewUrls = new List<VideoListItem>();
+      List<VideoListItem> viewUrls = [];
       Document doc = parse(response);
       try {
         var videoResult = doc.getElementById('videoListSearchResults');
-        var lis = videoResult.getElementsByTagName('li');
+        var lis = videoResult!.getElementsByTagName('li');
         for (var value in lis) {
           VideoListItem videoListItem = new VideoListItem();
           videoListItem.targetUrl =
               '$pornHubUrl${value.getElementsByTagName('a').first.attributes['href']}';
           videoListItem.imageUrl =
               value.getElementsByTagName('img').first.attributes['src'];
-          if (!videoListItem.imageUrl.startsWith('http')) {
+          if (!videoListItem.imageUrl!.startsWith('http')) {
             videoListItem.imageUrl = value
                 .getElementsByTagName('img')
                 .first
@@ -233,14 +232,14 @@ class PornHubUtil {
         Document document = parse(resultText);
         var container = document.getElementById('mobileContainer');
         var videoShow = document.getElementById('videoShow');
-        var js = container.getElementsByTagName('script').first.text;
+        var js = container!.getElementsByTagName('script').first.text;
         var urlJsons = js.split(new RegExp(r'("};|= {")'));
         String urlJson = '{"${urlJsons[1]}"}';
         PornHubVideoEntity pornHubVideoEntity =
             PornHubVideoEntity.fromJson(json.decode(urlJson));
         List<MovieItemBean> list = [];
-        movieBean.playUrl = videoShow.attributes['data-default'];
-        pornHubVideoEntity.mediaDefinitions.forEach((value) {
+        movieBean.playUrl = videoShow!.attributes['data-default'];
+        pornHubVideoEntity.mediaDefinitions!.forEach((value) {
           if (value.videoUrl != '') {
             if (movieBean.playUrl == null || movieBean.playUrl == '') {
               movieBean.playUrl = value.videoUrl;
@@ -283,7 +282,7 @@ class PornHubUtil {
                 value.text.replaceAll(new RegExp('\n|\t| '), '');
             videoListItem.targetUrl =
                 value.getElementsByTagName('a').first.attributes['href'];
-            if (playUrl.playUrl == null || playUrl.playUrl.isEmpty) {
+            if (playUrl.playUrl == null || playUrl.playUrl!.isEmpty) {
               playUrl.playUrl = videoListItem.targetUrl;
               playUrl.name = videoListItem.name;
             }
@@ -326,7 +325,7 @@ class PornHubUtil {
             videoListItem.name = value.getElementsByTagName('p').first.text;
             videoListItem.targetUrl =
                 value.getElementsByTagName('a').first.attributes['href'];
-            if (playUrl.playUrl == null || playUrl.playUrl.isEmpty) {
+            if (playUrl.playUrl == null || playUrl.playUrl!.isEmpty) {
               playUrl.playUrl = videoListItem.targetUrl;
               playUrl.name = videoListItem.name;
             }
@@ -375,7 +374,7 @@ class PornHubUtil {
             videoListItem.name = value.getElementsByTagName('p').first.text;
             videoListItem.targetUrl =
                 value.getElementsByTagName('a').first.attributes['href'];
-            if (playUrl.playUrl == null || playUrl.playUrl.isEmpty) {
+            if (playUrl.playUrl == null || playUrl.playUrl!.isEmpty) {
               playUrl.playUrl = videoListItem.targetUrl;
               playUrl.name = videoListItem.name;
             }
@@ -393,7 +392,7 @@ class PornHubUtil {
   }
 
   static List<VideoListItem> _parseHtml(String response) {
-    List<VideoListItem> viewUrls = new List<VideoListItem>();
+    List<VideoListItem> viewUrls = [];
     Document doc = parse(response);
     var lis = doc.querySelectorAll('ul#videoCategory > li.js-pop');
     if (lis.length > 0) {
@@ -401,11 +400,11 @@ class PornHubUtil {
         VideoListItem videoListItem = new VideoListItem();
         String viewkey = value.attributes[value.attributes.containsKey('_vkey')
             ? '_vkey'
-            : 'data-video-vkey'];
+            : 'data-video-vkey']!;
         videoListItem.targetUrl = '$pornHubUrl/view_video.php?viewkey=$viewkey';
         videoListItem.imageUrl =
             value.getElementsByTagName('img').first.attributes['src'];
-        if (!videoListItem.imageUrl.startsWith('http')) {
+        if (!videoListItem.imageUrl!.startsWith('http')) {
           videoListItem.imageUrl = value
               .getElementsByTagName('img')
               .first
@@ -428,7 +427,7 @@ class PornHubUtil {
       var videoResult = result.first;
       var lis = videoResult.getElementsByTagName('li');
       for (var value in lis) {
-        String viewKey = value.attributes['_vkey'];
+        String viewKey = value.attributes['_vkey']!;
         if (viewKey != null && viewKey.isNotEmpty) {
           VideoListItem videoListItem = new VideoListItem();
           videoListItem.targetUrl =

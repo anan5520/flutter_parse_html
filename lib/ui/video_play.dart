@@ -17,8 +17,8 @@ import 'package:flutter_parse_html/widget/dialog_page.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:path/path.dart';
-import 'package:screen/screen.dart';
 import 'package:video_player/video_player.dart';
+import 'package:keep_screen_on/keep_screen_on.dart';
 
 class VideoPlayPage extends StatefulWidget {
   MovieBean _movieBean;
@@ -35,40 +35,33 @@ class VideoPlayPage extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    Screen.keepOn(true);
+    KeepScreenOn.turnOn();
     print('播放地址>>>${_movieBean.playUrl}');
-    getScreen();
-    return _VideoAppState(_movieBean.playUrl);
-  }
-
-  void getScreen() async {
-    // Check if the screen is kept on:
-    bool isKeptOn = await Screen.isKeptOn;
-    print('isKeptOn>>>$isKeptOn');
+    return _VideoAppState(_movieBean.playUrl!);
   }
 }
 
 class _VideoAppState extends State<VideoPlayPage> {
-  FlickManager flickManager;
-  String playUrl;
+  late FlickManager flickManager;
+  late String playUrl;
   List<ButtonBean> _btns = [];
 
   _VideoAppState(this.playUrl);
 
-  Timer _timer;
+  late Timer _timer;
 
   bool isFilePlay = false;
 
   int fileTemp = 0;
 
-  Widget state;
+  late Widget state;
 
   bool visible = false;
 
   @override
   void initState() {
     if (widget._movieBean.list != null) {
-      for (var value in widget._movieBean.list) {
+      for (var value in widget._movieBean.list!) {
         ButtonBean buttonBean = new ButtonBean();
         buttonBean.value = value.targetUrl;
         buttonBean.title = value.name;
@@ -93,9 +86,9 @@ class _VideoAppState extends State<VideoPlayPage> {
     return Scaffold(
       body: Scaffold(
         appBar: AppBar(
-          title: Text((widget._movieBean.name.isNotEmpty
+          title: Text((widget._movieBean.name!.isNotEmpty
                   ? widget._movieBean.name
-                  : '播放') +
+                  : '播放') !+
               '${widget._movieBean.number != null ? widget._movieBean.number : ""}'),
           actions: <Widget>[
             GestureDetector(
@@ -183,19 +176,19 @@ class _VideoAppState extends State<VideoPlayPage> {
     if (_timer != null) {
       _timer.cancel();
     }
-    flickManager.flickVideoManager.dispose();
-    Screen.keepOn(false);
+    flickManager.flickVideoManager!.dispose();
+    KeepScreenOn.turnOff();
     super.dispose();
   }
 
   void startPlay() async {
-    await flickManager.flickVideoManager.videoPlayerController.play();
+    await flickManager.flickVideoManager!.videoPlayerController!.play();
   }
 
   void _addDownload(BuildContext context, String title) async {
-    String url = widget._movieBean.playUrl;
+    String url = widget._movieBean.playUrl!;
     if (url.startsWith('http')) {
-      DownloadUtil.downVideo(widget._movieBean.playUrl, title, 1,
+      DownloadUtil.downVideo(widget._movieBean.playUrl!, title, 1,
           maxTaskNum: widget.isYaSe ? 3 : 6,
           isM3u8: widget._movieBean.isM3u8 == null
               ? false
@@ -218,15 +211,15 @@ class _VideoAppState extends State<VideoPlayPage> {
         });
     if (buttonBean != null) {
       widget._progress = 0;
-      if (buttonBean.value.contains('.m3u8') ||
-          buttonBean.value.contains('.mp4')) {
-        playUrl = buttonBean.value;
+      if (buttonBean.value!.contains('.m3u8') ||
+          buttonBean.value!.contains('.mp4')) {
+        playUrl = buttonBean.value!;
         flickManager = FlickManager(
             videoPlayerController: VideoPlayerController.network(playUrl));
         startPlay();
         return;
       }
-      playUrl = await MovieUtil.getVideoUrl(buttonBean.value);
+      playUrl = await MovieUtil.getVideoUrl(buttonBean.value!);
       startPlay();
     }
   }

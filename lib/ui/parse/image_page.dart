@@ -7,15 +7,17 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:gallery_saver/gallery_saver.dart';
 import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' as parse;
 import 'package:flutter_parse_html/util/native_utils.dart';
 import 'package:extended_image/extended_image.dart';
-import 'package:image_saver/image_saver.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:crypto/crypto.dart';
 
+import '../../net/net_util.dart';
 class ImagePage extends StatefulWidget {
-  List<String> imgs;
+  late List<String> imgs;
   bool addHeader = false;
   var parentContext;
   final Map arguments;
@@ -33,11 +35,11 @@ class ImagePage extends StatefulWidget {
 
 class BookState extends State<ImagePage> {
   String content = '';
-  List<String> imgs;
+  late List<String> imgs;
 
-  PageController _pageController;
-  var parentContext;
-  Map<String, String> header;
+  late PageController _pageController;
+  late var parentContext;
+  late Map<String, String> header;
 
   BookState(this.imgs, this.parentContext);
 
@@ -124,10 +126,10 @@ class BookState extends State<ImagePage> {
     ).then((newValue) {
       if (!mounted) return null;
       if (newValue == null) {
-        if (pop.onCanceled != null) pop.onCanceled();
+        if (pop.onCanceled != null) pop.onCanceled!.call();
         return null;
       }
-      if (pop.onSelected != null) pop.onSelected(newValue);
+      if (pop.onSelected != null) pop.onSelected!.call(newValue);
     });
   }
 
@@ -138,9 +140,17 @@ class BookState extends State<ImagePage> {
       // var response = await http.get(url, headers: header);
       // File savedFile = await ImageSaver.toFile(fileData: response.bodyBytes);
       // print('保存成功>>>' + savedFile.path);
-      GallerySaver.saveImage(url).then((value){
-        Fluttertoast.showToast(msg: '保存成功$value');
-      });
+      if(url.endsWith('gif')){
+        Directory tempDir = await getTemporaryDirectory();
+        var path = '${tempDir.path}/${md5.convert(new Utf8Encoder().convert(url))}.gif';
+        await NetUtil.dio.download(url, path);
+        await ImageGallerySaver.saveFile(path, isReturnPathOfIOS: true);
+      }else{
+        var response = await Dio().get(url,
+            options: Options(responseType: ResponseType.bytes));
+        final result = await ImageGallerySaver.saveImage(Uint8List.fromList(response.data));
+      }
+      Fluttertoast.showToast(msg: '保存成功');
 
     } else {
       NativeUtils.saveImage(url, albumName: 'Media',headers: header).then((bool success) {

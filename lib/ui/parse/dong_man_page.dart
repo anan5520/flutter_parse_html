@@ -26,13 +26,13 @@ class DongManPage extends StatefulWidget {
 class DongManState extends State<DongManPage>
     with AutomaticKeepAliveClientMixin {
   List<VideoListItem> _data = [];
-  List<ButtonBean> _btns;
+  late List<ButtonBean> _btns;
 
-  RefreshController _refreshController;
+  late RefreshController _refreshController;
   int _page = 1,buttonType = 0;
   String _currentKey = '/type/1-';
   bool _isSearch = false;
-  TextEditingController _editingController;
+  late TextEditingController _editingController;
 
   @override
   void initState() {
@@ -121,7 +121,7 @@ class DongManState extends State<DongManPage>
 
   void goToPlay(VideoListItem data) async {
     showLoading();
-    var response = await NetUtil.getHtmlData(data.targetUrl);
+    var response = await NetUtil.getHtmlData(data.targetUrl!);
     try {
       var strings = response.split(new RegExp(r'"url":"https|.m3u8'));
       String playUrl = '';
@@ -132,7 +132,7 @@ class DongManState extends State<DongManPage>
       }
       Navigator.pop(context);
       if (playUrl.startsWith('http')) {
-        CommonUtil.toVideoPlay(playUrl, context,title:data.title);
+        CommonUtil.toVideoPlay(playUrl, context,title:data.title!);
       }
     } catch (e) {
       Navigator.pop(context);
@@ -158,7 +158,7 @@ class DongManState extends State<DongManPage>
                   child: CachedNetworkImage(
                     placeholder: (context, url) => new Icon(Icons.image),
                     errorWidget: (context, url, error) => new Icon(Icons.error),
-                    imageUrl: item.imageUrl,
+                    imageUrl: item.imageUrl!,
                     fit: BoxFit.cover,
                   ),
                   constraints: new BoxConstraints.expand(),
@@ -195,7 +195,7 @@ class DongManState extends State<DongManPage>
         var aEle = liEle.getElementsByTagName('a').first;
         var imgELe = liEle.getElementsByTagName('img').first;
         VideoListItem item = VideoListItem();
-        String href = ApiConstant.dongManDaoUrl +  aEle.attributes['href'];
+        String href = ApiConstant.dongManDaoUrl +  aEle.attributes['href']!;
         item.title = aEle.attributes['title'];
         item.imageUrl = imgELe.attributes['src'];
         item.targetUrl = href;
@@ -209,7 +209,7 @@ class DongManState extends State<DongManPage>
           if(!value1.text.contains('首页')){
             ButtonBean buttonBean = ButtonBean();
             buttonBean.title = value1.text;
-            buttonBean.value = value1.attributes['href'].replaceAll('1.html', '');
+            buttonBean.value = value1.attributes['href']!.replaceAll('1.html', '');
             _btns.add(buttonBean);
           }
         });
@@ -238,7 +238,7 @@ class DongManState extends State<DongManPage>
       }else{
         _isSearch = false;
         buttonType = 0;
-        _currentKey = buttonBean.value;
+        _currentKey = buttonBean.value!;
       }
       _refreshController.requestRefresh();
     }
@@ -246,10 +246,10 @@ class DongManState extends State<DongManPage>
 
   void goToDetail(VideoListItem data) async {
     showLoading();
-    String response = await PornHubUtil.getHtmlFromHttpDeugger(data.targetUrl);
+    String response = await PornHubUtil.getHtmlFromHttpDeugger(data.targetUrl!);
     var doc = parse.parse(response);
     var detailUrl = '';
-    var items = doc.getElementById('zhankai').getElementsByTagName('li');
+    var items = doc.getElementById('zhankai')!.getElementsByTagName('li');
     items.forEach((element) {
       detailUrl = '${ApiConstant.dongManDaoUrl}${element.getElementsByTagName('a').first.attributes['href']}';
     });
@@ -258,7 +258,7 @@ class DongManState extends State<DongManPage>
         var detailResponse = await PornHubUtil.getHtmlFromHttpDeugger(detailUrl);
         var doc = parse.parse(detailResponse);
         try {
-          var tbody = doc.getElementById('bofang').text;
+          var tbody = doc.getElementById('bofang')!.text;
           movieBean.imgUrl = data.imageUrl;
           movieBean.info = data.title;
           movieBean.name = data.title;
@@ -272,7 +272,7 @@ class DongManState extends State<DongManPage>
             MovieItemBean itemBean = MovieItemBean();
             itemBean.name = '第${i + 1}集(${itemUrls[0]})';
             itemBean.targetUrl = itemUrls[1];
-            movieBean.list.add(itemBean);
+            movieBean.list!.add(itemBean);
           }
         } catch (e) {
           print(e);

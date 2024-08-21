@@ -15,7 +15,6 @@ import 'package:html/parser.dart' as parse;
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_parse_html/ui/parse/book_page.dart';
-import 'package:unicorndial/unicorndial.dart';
 import 'package:flutter_parse_html/ui/video_play.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_parse_html/api/api_constant.dart';
@@ -38,7 +37,7 @@ class ParseHomePage extends StatefulWidget {
 
 class HomePageState extends State<ParseHomePage>
     with SingleTickerProviderStateMixin {
-  TabController _tabController;
+  late TabController _tabController;
 
   List<String> titles = ['图片', '小说', '视频','图片1', '小说1', '视频1'];
 
@@ -55,6 +54,8 @@ class HomePageState extends State<ParseHomePage>
       appBar: AppBar(
         title: Text("老司机"),
         bottom: TabBar(
+          unselectedLabelStyle:TextStyle(color: Colors.white),
+          labelStyle: TextStyle(color: Colors.white),
           isScrollable: true,
           tabs: <Widget>[
             Tab(
@@ -110,13 +111,12 @@ class ParsePage extends StatefulWidget {
 
 class ParseState extends State<ParsePage> with AutomaticKeepAliveClientMixin {
   int _page = 1,buttonType = 0;
-  RefreshController _refreshController;
+  late RefreshController _refreshController;
   List<VideoListItem> _data = [];
   String baseUrl = 'https://www.2019be.com'; //WWW.4455VW.COM WWW.2019TR.COM
   String parseUrl = '${ApiConstant.siSeUrl}/xiaoshuo/list-情感小说-';
   List<ButtonBean> childBtnValues = [];
-  List<UnicornButton> _childButtons;
-  String _currentKey;
+  late String _currentKey;
 
   @override
   void initState() {
@@ -232,7 +232,7 @@ class ParseState extends State<ParsePage> with AutomaticKeepAliveClientMixin {
         buttonType = 1;
       }else{
         buttonType = 0;
-        _currentKey = buttonBean.value;
+        _currentKey = buttonBean.value!;
       }
       _refreshController.requestRefresh();
     }
@@ -252,7 +252,7 @@ class ParseState extends State<ParsePage> with AutomaticKeepAliveClientMixin {
   void itemClick(VideoListItem item) {
     switch (widget._type) {
       case ParseType.image:
-        getImg(item.targetUrl);
+        getImg(item.targetUrl!);
         break;
       case ParseType.book:
         Navigator.of(context)
@@ -261,7 +261,7 @@ class ParseState extends State<ParsePage> with AutomaticKeepAliveClientMixin {
         }));
         break;
       case ParseType.video:
-        getVideo(item.targetUrl, item.title);
+        getVideo(item.targetUrl!, item.title!);
         break;
     }
   }
@@ -277,7 +277,7 @@ class ParseState extends State<ParsePage> with AutomaticKeepAliveClientMixin {
         .getElementsByTagName("img");
     List<String> imgs = [];
     for (var value in elments) {
-      imgs.add(value.attributes['src']);
+      imgs.add(value.attributes['src']!);
     }
     Navigator.pop(context);
     Navigator.pushNamed(context, "/ShowStaggeredImagePage", arguments: {"list": imgs});
@@ -296,11 +296,11 @@ class ParseState extends State<ParsePage> with AutomaticKeepAliveClientMixin {
       if (playEle == null) {
         var source = document.getElementsByClassName('play-list');
         if(source == null || source.length == 0){
-          playUrl = document.getElementById('vpath').text;
+          playUrl = document.getElementById('vpath')!.text;
           playUrl.replaceAll('"', '');
         }else{
           var element = source.first;
-          String url = element.getElementsByTagName("A").first.attributes['href'];
+          String url = element.getElementsByTagName("A").first.attributes['href']!;
 
           var response1 = await http.get(Uri(path: '$baseUrl$url'));
           var body1 = utf8decoder.convert(response1.bodyBytes);
@@ -324,7 +324,7 @@ class ParseState extends State<ParsePage> with AutomaticKeepAliveClientMixin {
           }
         }
       } else {
-        playUrl = playEle.getElementsByTagName('source').first.attributes['src'];
+        playUrl = playEle.getElementsByTagName('source').first.attributes['src']!;
       }
       if(!playUrl.contains('http')){
         String  m3u8Url = '';
@@ -342,7 +342,7 @@ class ParseState extends State<ParsePage> with AutomaticKeepAliveClientMixin {
       var playList = document.getElementsByClassName('film_bar clearfix');
       String url = '';
       for(var value in playList){
-         url = value.getElementsByTagName('a').first.attributes['href'];
+         url = value.getElementsByTagName('a').first.attributes['href']!;
       }
       var respon = await NetUtil.getHtmlData(baseUrl + url);
       var playUrls = respon.split(new RegExp(r"unescape\('|.m3u8'\);"));
@@ -395,7 +395,7 @@ class ParseState extends State<ParsePage> with AutomaticKeepAliveClientMixin {
                 children: <Widget>[
                   Expanded(
                     child: CachedNetworkImage(
-                      imageUrl: _data[index].imageUrl,
+                      imageUrl: _data[index].imageUrl!,
                       errorWidget: (context,url,error){
                         return Icon(Icons.error);
                       },
@@ -406,7 +406,7 @@ class ParseState extends State<ParsePage> with AutomaticKeepAliveClientMixin {
                     ),
                   ),
                   Text(
-                    _data[index].title,
+                    _data[index].title!,
                     maxLines: 1,
                   )
                 ],
@@ -442,9 +442,9 @@ class ParseState extends State<ParsePage> with AutomaticKeepAliveClientMixin {
         item.targetUrl =
             '$baseUrl${titleEle.getElementsByTagName('a').first.attributes['href']}';
         String url =
-            value.getElementsByTagName('a').first.attributes['data-original'];
+            value.getElementsByTagName('a').first.attributes['data-original']!;
         if (url == null || url == "") {
-          url = value.getElementsByTagName('img').first.attributes['src'];
+          url = value.getElementsByTagName('img').first.attributes['src']!;
         }
         item.imageUrl = url;
         _data.add(item);
@@ -482,11 +482,11 @@ class ParseState extends State<ParsePage> with AutomaticKeepAliveClientMixin {
       try {
         for (var element in elements) {
           var aElement = element.getElementsByTagName('a').first;
-          String title = aElement.attributes['title'];
+          String title = aElement.attributes['title']!;
           if (title != null && title != "") {
             VideoListItem item = new VideoListItem();
             item.title = aElement.attributes['title'];
-            String url = aElement.attributes['href'];
+            String url = aElement.attributes['href']!;
             item.targetUrl = '$baseUrl$url';
             _data.add(item);
           }
@@ -509,7 +509,7 @@ class ParseState extends State<ParsePage> with AutomaticKeepAliveClientMixin {
           var items = menuEle.getElementsByTagName('li');
           items.forEach((element) {
             String value =
-            element.getElementsByTagName('a').first.attributes['href'];
+            element.getElementsByTagName('a').first.attributes['href']!;
             if (value != null && value != '/') {
               ButtonBean buttonBean = new ButtonBean();
               buttonBean.title = element.getElementsByTagName('a').first.text;
@@ -524,7 +524,7 @@ class ParseState extends State<ParsePage> with AutomaticKeepAliveClientMixin {
       for (var value1 in items) {
         var item = new VideoListItem();
         item.imageUrl = value1.getElementsByTagName('img').first.attributes['src'];
-        item.targetUrl = baseUrl +  value1.getElementsByTagName('a').first.attributes['href'];
+        item.targetUrl = baseUrl +  value1.getElementsByTagName('a').first.attributes['href']!;
         item.title = value1.text;
         _data.add(item);
       }
@@ -534,7 +534,7 @@ class ParseState extends State<ParsePage> with AutomaticKeepAliveClientMixin {
       var menuItem = menuEle.getElementsByTagName('li');
       menuItem.forEach((element) {
         String value =
-        element.getElementsByTagName('a').first.attributes['href'];
+        element.getElementsByTagName('a').first.attributes['href']!;
         if (value != null && value != '/') {
           ButtonBean buttonBean = new ButtonBean();
           buttonBean.title = element.getElementsByTagName('a').first.text;

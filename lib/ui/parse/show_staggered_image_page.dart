@@ -12,18 +12,17 @@ import 'package:flutter_parse_html/widget/dialog_page.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:gallery_saver/gallery_saver.dart';
 import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' as parse;
 import 'package:flutter_parse_html/util/native_utils.dart';
 import 'package:extended_image/extended_image.dart';
-import 'package:image_saver/image_saver.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:crypto/crypto.dart';
 
 // ignore: must_be_immutable
 class ShowStaggeredImagePage extends StatefulWidget {
-  List<String> imgs;
+  late List<String> imgs;
   bool addHeader = false;
   var parentContext;
   final Map arguments;
@@ -33,7 +32,9 @@ class ShowStaggeredImagePage extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    imgs = arguments['list'];
+    imgs = (arguments['list'] as List).map((v){
+      return v.toString();
+    }).toList();
     type = arguments['type'] == null ? 0 : arguments['type'];
     addHeader = arguments['addHeader'] == null ? false : arguments['addHeader'];
     return BookState(imgs, parentContext);
@@ -42,11 +43,11 @@ class ShowStaggeredImagePage extends StatefulWidget {
 
 class BookState extends State<ShowStaggeredImagePage> {
   String content = '';
-  List<String> imgs;
+  late List<String> imgs;
 
-  PageController _pageController;
+  late PageController _pageController;
   var parentContext;
-  Map<String, String> header;
+  late Map<String, String> header;
   StreamController<List<String>> imgeStream = StreamController.broadcast();
 
   BookState(this.imgs, this.parentContext);
@@ -146,10 +147,10 @@ class BookState extends State<ShowStaggeredImagePage> {
     ).then((newValue) {
       if (!mounted) return null;
       if (newValue == null) {
-        if (pop.onCanceled != null) pop.onCanceled();
+        if (pop.onCanceled != null) pop.onCanceled!.call();
         return null;
       }
-      if (pop.onSelected != null) pop.onSelected(newValue);
+      if (pop.onSelected != null) pop.onSelected!.call(newValue);
     });
   }
 
@@ -170,9 +171,17 @@ class BookState extends State<ShowStaggeredImagePage> {
       // var response = await http.get(url, headers: header);
       // File savedFile = await ImageSaver.toFile(fileData: response.bodyBytes);
       // print('保存成功>>>' + savedFile.path);
-      GallerySaver.saveImage(url).then((value) {
-        Fluttertoast.showToast(msg: '保存成功$value');
-      });
+      if(url.endsWith('gif')){
+        Directory tempDir = await getTemporaryDirectory();
+        var path = '${tempDir.path}/${md5.convert(new Utf8Encoder().convert(url))}.gif';
+        await NetUtil.dio.download(url, path);
+        await ImageGallerySaver.saveFile(path, isReturnPathOfIOS: true);
+      }else{
+        var response = await Dio().get(url,
+            options: Options(responseType: ResponseType.bytes));
+        final result = await ImageGallerySaver.saveImage(Uint8List.fromList(response.data));
+      }
+      Fluttertoast.showToast(msg: '保存成功');
     } else {
       NativeUtils.saveImage(url, albumName: 'Media', headers: header)
           .then((bool success) {

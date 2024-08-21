@@ -35,7 +35,8 @@ import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 /**
  * * Copyright (C) 2018 爱瑞智健康科技（北京）有限公司
  * 爱瑞智完全享有此软件的著作权，违者必究
@@ -162,11 +163,11 @@ public class CustomFlutterPlugins {
 
     //这里是判断APP中是否有相应APP的方法
     public static boolean isAppInstalled(Context context, String packageName) {
+        PackageManager pm = context.getPackageManager();
         try {
-            context.getPackageManager().getPackageInfo(packageName,0);
+            pm.getPackageInfo(packageName, PackageManager.GET_ACTIVITIES);
             return true;
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (PackageManager.NameNotFoundException e) {
             return false;
         }
     }

@@ -14,22 +14,20 @@ class PornForumPage extends StatefulWidget {
 class PornForumState extends State<PornForumPage>
     with SingleTickerProviderStateMixin {
   final List<String> _titles = [
-    '主页',
     '自拍达人原创申请',
     '我爱我妻',
     'x趣分享',
     '两x健康',
   ];
   final List<String> _values = [
-    'index',
     '19',
     '21',
     '33',
     '34',
   ];
 
-  TabController _tabController;
-  PageController _pageController;
+  late TabController _tabController;
+  late PageController _pageController;
   var isPageCanChanged = true;
 
   @override
@@ -48,9 +46,11 @@ class PornForumState extends State<PornForumPage>
       body: Column(
         children: <Widget>[
           Container(
-            color: Colors.blue,
+            color: Colors.white,
             height: 38,
             child: TabBar(
+              unselectedLabelStyle:TextStyle(color: Colors.white),
+              labelStyle: TextStyle(color: Colors.white),
               controller: _tabController,
               isScrollable: true,
               onTap: (index) {
@@ -81,7 +81,7 @@ class PornForumState extends State<PornForumPage>
     );
   }
 
-  void onPageChange(int index, {PageController p, TabController t}) async {
+  void onPageChange(int index, {PageController? p, TabController? t}) async {
     if (p != null) {
       //判断是哪一个切换
       isPageCanChanged = false;
@@ -113,7 +113,7 @@ class ForumDisplayPage extends StatefulWidget {
 class ForumDisplayState extends State<ForumDisplayPage>
     with AutomaticKeepAliveClientMixin {
   List<PornForumItem> _data = [];
-  RefreshController _refreshController;
+  late RefreshController _refreshController;
   int _page = 1;
 
   @override
@@ -155,7 +155,7 @@ class ForumDisplayState extends State<ForumDisplayPage>
     PornForumItem item = _data[index];
     return GestureDetector(onTap: (){
       Navigator.push(context, MaterialPageRoute(builder: (context){
-        return PornForumContentPage(item.tid,0,'');
+        return PornForumContentPage(item.tid!,0,'');
       }));
     },child: Padding(
       padding: EdgeInsets.only(left: 5, right: 5, top: 5),
@@ -165,7 +165,7 @@ class ForumDisplayState extends State<ForumDisplayPage>
           Padding(
             padding: EdgeInsets.only(top: 5, bottom: 5),
             child: Text(
-              '${item.title}   ${item.agreeCount == null || item.agreeCount.isEmpty ? '' : item.agreeCount}(${item.replyCount}/${item.viewCount})',
+              '${item.title}   ${item.agreeCount == null || item.agreeCount!.isEmpty ? '' : item.agreeCount}(${item.replyCount}/${item.viewCount})',
               style: TextStyle(color: Colors.blue),
             ),
           ),

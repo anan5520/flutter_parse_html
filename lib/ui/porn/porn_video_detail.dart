@@ -34,8 +34,8 @@ class PornVideoDetailPage extends StatefulWidget {
 
 class PornVideoDetailState extends State<PornVideoDetailPage> {
   bool _showThumb = true;
-  FlickManager _controller;
-  RefreshController _refreshController;
+  late FlickManager _controller;
+  late RefreshController _refreshController;
   List<VideoComment> _data = [];
   int _page = 1;
 
@@ -45,7 +45,7 @@ class PornVideoDetailState extends State<PornVideoDetailPage> {
     super.initState();
     _controller = new FlickManager(
         videoPlayerController:
-            VideoPlayerController.network(widget._videoResult.videoUrl));
+            VideoPlayerController.network(widget._videoResult.videoUrl!));
     _refreshController = RefreshController(initialRefresh: true);
     startVideo();
   }
@@ -57,7 +57,7 @@ class PornVideoDetailState extends State<PornVideoDetailPage> {
       appBar: AppBar(
         title: Text('视频详情'),
         actions: <Widget>[
-          FlatButton(
+          ElevatedButton(
             child: Text(
               '查看所有作品',
               style: TextStyle(color: Colors.white, fontSize: 12),
@@ -67,7 +67,7 @@ class PornVideoDetailState extends State<PornVideoDetailPage> {
               Navigator.pop(context);
               Navigator.of(context)
                   .push(new MaterialPageRoute(builder: (BuildContext context) {
-                return PornPage.authorId(widget._videoResult.ownerId);
+                return PornPage.authorId(widget._videoResult.ownerId!);
               }));
             },
           ),
@@ -76,7 +76,7 @@ class PornVideoDetailState extends State<PornVideoDetailPage> {
               Fluttertoast.showToast(
                   msg: '已复制到粘贴板', toastLength: Toast.LENGTH_SHORT);
               Clipboard.setData(
-                  new ClipboardData(text: widget._videoResult.videoUrl));
+                  new ClipboardData(text: widget._videoResult.videoUrl!));
             },
             child: Center(
               child: Padding(
@@ -113,7 +113,7 @@ class PornVideoDetailState extends State<PornVideoDetailPage> {
                         fit: BoxFit.cover,
                         imageUrl: widget._videoResult.thumbImgUrl == null
                             ? ''
-                            : widget._videoResult.thumbImgUrl)),
+                            : widget._videoResult.thumbImgUrl!)),
               ],
             ),
           ),
@@ -128,9 +128,9 @@ class PornVideoDetailState extends State<PornVideoDetailPage> {
               children: <Widget>[
                 Padding(
                   padding: EdgeInsets.only(bottom: 5, left: 5, right: 5),
-                  child: widget._videoResult.videoName.startsWith('http')
+                  child: widget._videoResult.videoName!.startsWith('http')
                       ? CachedNetworkImage(
-                          imageUrl: widget._videoResult.videoName)
+                          imageUrl: widget._videoResult.videoName!)
                       : Text(
                           '${widget._videoResult.videoName}',
                           style: TextStyle(color: Colors.white),
@@ -139,14 +139,14 @@ class PornVideoDetailState extends State<PornVideoDetailPage> {
                 Padding(
                   padding: EdgeInsets.only(left: 5, right: 5),
                   child: Visibility(
-                    visible: widget._videoResult.ownerId.isNotEmpty,
+                    visible: widget._videoResult.ownerId!.isNotEmpty,
                     child: GestureDetector(
                       onTap: () {
                         //跳转查看作者其他作品
                         Navigator.pop(context);
                         Navigator.of(context).push(new MaterialPageRoute(
                             builder: (BuildContext context) {
-                          return PornPage.authorId(widget._videoResult.ownerId);
+                          return PornPage.authorId(widget._videoResult.ownerId!);
                         }));
                       },
                       child: Text(
@@ -199,7 +199,7 @@ class PornVideoDetailState extends State<PornVideoDetailPage> {
             itemBuilder: (context, index) {
               VideoComment videoComment = _data[index];
               String content = '';
-              for (var value in videoComment.commentQuoteList) {
+              for (var value in videoComment.commentQuoteList!) {
                 content = '$content${value}\n';
               }
 
@@ -230,7 +230,7 @@ class PornVideoDetailState extends State<PornVideoDetailPage> {
 
   void getData() async {
     List<VideoComment> list = await PornHelper.parseVideoComment(
-        widget._videoResult.videoId, _page, widget._videoResult.viewKey);
+        widget._videoResult.videoId!, _page, widget._videoResult.viewKey!);
     _refreshController.refreshCompleted();
     _refreshController.loadComplete();
     _data.addAll(list);
@@ -238,6 +238,6 @@ class PornVideoDetailState extends State<PornVideoDetailPage> {
   }
 
   void startVideo() async {
-    _controller.flickVideoManager.videoPlayerController.play();
+    _controller.flickVideoManager!.videoPlayerController!.play();
   }
 }

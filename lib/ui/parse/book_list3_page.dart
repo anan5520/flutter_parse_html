@@ -27,13 +27,13 @@ class BookList3Page extends StatefulWidget {
 class BookList3State extends State<BookList3Page>
     with AutomaticKeepAliveClientMixin {
   List<VideoListItem> _data = [];
-  List<ButtonBean> _btns;
+  late List<ButtonBean> _btns;
 
-  RefreshController _refreshController;
+  late RefreshController _refreshController;
   int _page = 1,buttonType = 0;
   String _currentKey = 'article.php?cate=1';
   bool _isSearch = false;
-  TextEditingController _editingController;
+  late TextEditingController _editingController;
 
   @override
   void initState() {
@@ -94,7 +94,7 @@ class BookList3State extends State<BookList3Page>
 
   void goToPlay(VideoListItem data) async {
     showLoading();
-    var response = await NetUtil.getHtmlData(data.targetUrl);
+    var response = await NetUtil.getHtmlData(data.targetUrl!);
     try {
       var strings = response.split(new RegExp(r'"url":"https|.m3u8'));
       String playUrl = '';
@@ -105,7 +105,7 @@ class BookList3State extends State<BookList3Page>
       }
       Navigator.pop(context);
       if (playUrl.startsWith('http')) {
-        CommonUtil.toVideoPlay(playUrl, context,title:data.title);
+        CommonUtil.toVideoPlay(playUrl, context,title:data.title!);
       }
     } catch (e) {
       Navigator.pop(context);
@@ -134,7 +134,7 @@ class BookList3State extends State<BookList3Page>
                   child: CachedNetworkImage(
                     placeholder: (context, url) => new Icon(Icons.image),
                     errorWidget: (context, url, error) => new Icon(Icons.error),
-                    imageUrl: item.imageUrl,
+                    imageUrl: item.imageUrl!,
                     fit: BoxFit.cover,
                   ),
                   constraints: new BoxConstraints.expand(),
@@ -176,7 +176,7 @@ class BookList3State extends State<BookList3Page>
         if (aEles.length > 0) {
           var aEle = aEles.first;
           VideoListItem item = VideoListItem();
-          String href = ApiConstant.bookList3 +  aEle.attributes['href'];
+          String href = ApiConstant.bookList3 +  aEle.attributes['href']!;
           item.title = aEle.text;
           item.targetUrl = href;
           _data.add(item);
@@ -234,7 +234,7 @@ class BookList3State extends State<BookList3Page>
       }else{
         _isSearch = false;
         buttonType = 0;
-        _currentKey = buttonBean.value;
+        _currentKey = buttonBean.value!;
       }
       _refreshController.requestRefresh();
     }
@@ -242,7 +242,7 @@ class BookList3State extends State<BookList3Page>
 
   void goToDetail(VideoListItem data) async {
     showLoading();
-    String response = await PornHubUtil.getHtmlFromHttpDeugger(data.targetUrl);
+    String response = await PornHubUtil.getHtmlFromHttpDeugger(data.targetUrl!);
     var doc = parse.parse(response);
     MovieBean movieBean = MovieBean();
     try {
@@ -257,8 +257,8 @@ class BookList3State extends State<BookList3Page>
       ukMargin.forEach((aEle) {
         MovieItemBean itemBean = MovieItemBean();
         itemBean.name = aEle.getElementsByTagName('a').first.text;
-        itemBean.targetUrl = ApiConstant.bookList3 +  aEle.getElementsByTagName('a').first.attributes['href'];
-        movieBean.list.add(itemBean);
+        itemBean.targetUrl = ApiConstant.bookList3 +  aEle.getElementsByTagName('a').first.attributes['href']!;
+        movieBean.list!.add(itemBean);
       });
     } catch (e) {
       print(e);

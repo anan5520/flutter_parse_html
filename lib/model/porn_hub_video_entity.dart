@@ -1,55 +1,55 @@
 class PornHubVideoEntity {
-	String mp4Seek;
-	String videoDuration;
-	String vcServerUrl;
-	PornHubVideoNextvideo nextVideo;
-	String quality720p;
-	String relatedUrl;
-	String isp;
-	int startLagThreshold;
-	String pauserollUrl;
-	String language;
-	String mostviewedUrl;
-	int disableSharebar;
-	List<int> hotspots;
-	String actionTags;
-	String topratedUrl;
-	String geo;
-	String videoUnavailableCountry;
-	PornHubVideoPrerollglobalconfig prerollGlobalConfig;
-	String autoreplay;
-	String isHD;
-	String appId;
-	bool hidePostPauseRoll;
-	String options;
-	String linkUrl;
-	String tubesCmsPrerollConfigType;
-	String experimentId;
-	String quality480p;
-	bool enableBitmovinDebug;
-	String embedCode;
-	String errorReports;
-	String htmlPauseRoll;
-	String quality240p;
-	List<PornHubVideoMediadefinition> mediaDefinitions;
-	String htmlPostRoll;
-	int outBufferLagThreshold;
-	int maxInitialBufferLength;
-	String videoUnavailable;
-	String imageUrl;
-	String postrollUrl;
-	String cdn;
-	String autoplay;
-	String videoTitle;
-	String isVertical;
-	String service;
-	String cdnProvider;
-	List<int> defaultQuality;
-	PornHubVideoThumbs thumbs;
+	String? mp4Seek;
+	String? videoDuration;
+	String? vcServerUrl;
+	PornHubVideoNextvideo? nextVideo;
+	String? quality720p;
+	String? relatedUrl;
+	String? isp;
+	int? startLagThreshold;
+	String? pauserollUrl;
+	String? language;
+	String? mostviewedUrl;
+	int? disableSharebar;
+	List<int?>? hotspots;
+	String? actionTags;
+	String? topratedUrl;
+	String? geo;
+	String? videoUnavailableCountry;
+	PornHubVideoPrerollglobalconfig? prerollGlobalConfig;
+	String? autoreplay;
+	String? isHD;
+	String? appId;
+	bool? hidePostPauseRoll;
+	String? options;
+	String? linkUrl;
+	String? tubesCmsPrerollConfigType;
+	String? experimentId;
+	String? quality480p;
+	bool? enableBitmovinDebug;
+	String? embedCode;
+	String? errorReports;
+	String? htmlPauseRoll;
+	String? quality240p;
+	List<PornHubVideoMediadefinition>? mediaDefinitions;
+	String? htmlPostRoll;
+	int? outBufferLagThreshold;
+	int? maxInitialBufferLength;
+	String? videoUnavailable;
+	String? imageUrl;
+	String? postrollUrl;
+	String? cdn;
+	String? autoplay;
+	String? videoTitle;
+	String? isVertical;
+	String? service;
+	String? cdnProvider;
+	List<int?>? defaultQuality;
+	PornHubVideoThumbs? thumbs;
 
 	PornHubVideoEntity({this.mp4Seek, this.videoDuration, this.vcServerUrl, this.nextVideo, this.quality720p, this.relatedUrl, this.isp, this.startLagThreshold, this.pauserollUrl, this.language, this.mostviewedUrl, this.disableSharebar, this.hotspots, this.actionTags, this.topratedUrl, this.geo, this.videoUnavailableCountry, this.prerollGlobalConfig, this.autoreplay, this.isHD, this.appId, this.hidePostPauseRoll, this.options, this.linkUrl, this.tubesCmsPrerollConfigType, this.experimentId, this.quality480p, this.enableBitmovinDebug, this.embedCode, this.errorReports, this.htmlPauseRoll, this.quality240p, this.mediaDefinitions, this.htmlPostRoll, this.outBufferLagThreshold, this.maxInitialBufferLength, this.videoUnavailable, this.imageUrl, this.postrollUrl, this.cdn, this.autoplay, this.videoTitle, this.isVertical, this.service, this.cdnProvider, this.defaultQuality, this.thumbs});
 
-	PornHubVideoEntity.fromJson(Map<String, dynamic> json) {
+	PornHubVideoEntity.fromJson(Map<String?, dynamic> json) {
 		mp4Seek = json['mp4_seek'];
 		videoDuration = json['video_duration'];
 		vcServerUrl = json['vcServerUrl'];
@@ -62,12 +62,12 @@ class PornHubVideoEntity {
 		language = json['language'];
 		mostviewedUrl = json['mostviewed_url'];
 		disableSharebar = json['disable_sharebar'];
-		hotspots = json['hotspots']?.cast<int>();
+		hotspots = json['hotspots']?.cast<int?>();
 		actionTags = json['actionTags'];
 		topratedUrl = json['toprated_url'];
 		geo = json['geo'];
 		videoUnavailableCountry = json['video_unavailable_country'];
-		prerollGlobalConfig = json['prerollGlobalConfig'] != null ? new PornHubVideoPrerollglobalconfig.fromJson(json['prerollGlobalConfig']) : null;
+		prerollGlobalConfig = (json['prerollGlobalConfig'] != null ? new PornHubVideoPrerollglobalconfig.fromJson(json['prerollGlobalConfig']) : null)!;
 		autoreplay = json['autoreplay'];
 		isHD = json['isHD'];
 		appId = json['appId'];
@@ -83,7 +83,7 @@ class PornHubVideoEntity {
 		htmlPauseRoll = json['htmlPauseRoll'];
 		quality240p = json['quality_240p'];
 		if (json['mediaDefinitions'] != null) {
-			mediaDefinitions = new List<PornHubVideoMediadefinition>();(json['mediaDefinitions'] as List).forEach((v) { mediaDefinitions.add(new PornHubVideoMediadefinition.fromJson(v)); });
+			mediaDefinitions = [];(json['mediaDefinitions'] as List).forEach((v) { mediaDefinitions!.add(new PornHubVideoMediadefinition.fromJson(v)); });
 		}
 		htmlPostRoll = json['htmlPostRoll'];
 		outBufferLagThreshold = json['outBufferLagThreshold'];
@@ -97,17 +97,17 @@ class PornHubVideoEntity {
 		isVertical = json['isVertical'];
 		service = json['service'];
 		cdnProvider = json['cdnProvider'];
-		defaultQuality = json['defaultQuality']?.cast<int>();
+		defaultQuality = json['defaultQuality']?.cast<int?>();
 		thumbs = json['thumbs'] != null ? new PornHubVideoThumbs.fromJson(json['thumbs']) : null;
 	}
 
-	Map<String, dynamic> toJson() {
-		final Map<String, dynamic> data = new Map<String, dynamic>();
+	Map<String?, dynamic> toJson() {
+		final Map<String?, dynamic> data = new Map<String?, dynamic>();
 		data['mp4_seek'] = this.mp4Seek;
 		data['video_duration'] = this.videoDuration;
 		data['vcServerUrl'] = this.vcServerUrl;
 		if (this.nextVideo != null) {
-      data['nextVideo'] = this.nextVideo.toJson();
+      data['nextVideo'] = this.nextVideo!.toJson();
     }
 		data['quality_720p'] = this.quality720p;
 		data['related_url'] = this.relatedUrl;
@@ -123,7 +123,7 @@ class PornHubVideoEntity {
 		data['geo'] = this.geo;
 		data['video_unavailable_country'] = this.videoUnavailableCountry;
 		if (this.prerollGlobalConfig != null) {
-      data['prerollGlobalConfig'] = this.prerollGlobalConfig.toJson();
+      data['prerollGlobalConfig'] = this.prerollGlobalConfig!.toJson();
     }
 		data['autoreplay'] = this.autoreplay;
 		data['isHD'] = this.isHD;
@@ -140,7 +140,7 @@ class PornHubVideoEntity {
 		data['htmlPauseRoll'] = this.htmlPauseRoll;
 		data['quality_240p'] = this.quality240p;
 		if (this.mediaDefinitions != null) {
-      data['mediaDefinitions'] =  this.mediaDefinitions.map((v) => v.toJson()).toList();
+      data['mediaDefinitions'] =  this.mediaDefinitions!.map((v) => v.toJson()).toList();
     }
 		data['htmlPostRoll'] = this.htmlPostRoll;
 		data['outBufferLagThreshold'] = this.outBufferLagThreshold;
@@ -156,26 +156,26 @@ class PornHubVideoEntity {
 		data['cdnProvider'] = this.cdnProvider;
 		data['defaultQuality'] = this.defaultQuality;
 		if (this.thumbs != null) {
-      data['thumbs'] = this.thumbs.toJson();
+      data['thumbs'] = this.thumbs!.toJson();
     }
 		return data;
 	}
 }
 
 class PornHubVideoNextvideo {
-	String duration;
-	String thumb;
-	String isHD;
-	String nextUrl;
-	String video;
-	String title;
-	bool isJoinPageEntry;
-	String vkey;
+	String? duration;
+	String? thumb;
+	String? isHD;
+	String? nextUrl;
+	String? video;
+	String? title;
+	bool? isJoinPageEntry;
+	String? vkey;
 	dynamic channelTitle;
 
 	PornHubVideoNextvideo({this.duration, this.thumb, this.isHD, this.nextUrl, this.video, this.title, this.isJoinPageEntry, this.vkey, this.channelTitle});
 
-	PornHubVideoNextvideo.fromJson(Map<String, dynamic> json) {
+	PornHubVideoNextvideo.fromJson(Map<String?, dynamic> json) {
 		duration = json['duration'];
 		thumb = json['thumb'];
 		isHD = json['isHD'];
@@ -187,8 +187,8 @@ class PornHubVideoNextvideo {
 		channelTitle = json['channelTitle'];
 	}
 
-	Map<String, dynamic> toJson() {
-		final Map<String, dynamic> data = new Map<String, dynamic>();
+	Map<String?, dynamic> toJson() {
+		final Map<String?, dynamic> data = new Map<String?, dynamic>();
 		data['duration'] = this.duration;
 		data['thumb'] = this.thumb;
 		data['isHD'] = this.isHD;
@@ -203,20 +203,20 @@ class PornHubVideoNextvideo {
 }
 
 class PornHubVideoPrerollglobalconfig {
-	int skipDelay;
-	List<int> delay;
-	String userAcceptLanguage;
-	int forgetUserAfter;
-	bool vastSkipDelay;
-	bool skippable;
-	String vast;
-	int onNth;
+	int? skipDelay;
+	List<int?>? delay;
+	String? userAcceptLanguage;
+	int? forgetUserAfter;
+	bool? vastSkipDelay;
+	bool? skippable;
+	String? vast;
+	int? onNth;
 
 	PornHubVideoPrerollglobalconfig({this.skipDelay, this.delay, this.userAcceptLanguage, this.forgetUserAfter, this.vastSkipDelay, this.skippable, this.vast, this.onNth});
 
-	PornHubVideoPrerollglobalconfig.fromJson(Map<String, dynamic> json) {
+	PornHubVideoPrerollglobalconfig.fromJson(Map<String?, dynamic> json) {
 		skipDelay = json['skipDelay'];
-		delay = json['delay']?.cast<int>();
+		delay = json['delay']?.cast<int?>();
 		userAcceptLanguage = json['user_accept_language'];
 		forgetUserAfter = json['forgetUserAfter'];
 		vastSkipDelay = json['vastSkipDelay'];
@@ -225,8 +225,8 @@ class PornHubVideoPrerollglobalconfig {
 		onNth = json['onNth'];
 	}
 
-	Map<String, dynamic> toJson() {
-		final Map<String, dynamic> data = new Map<String, dynamic>();
+	Map<String?, dynamic> toJson() {
+		final Map<String?, dynamic> data = new Map<String?, dynamic>();
 		data['skipDelay'] = this.skipDelay;
 		data['delay'] = this.delay;
 		data['user_accept_language'] = this.userAcceptLanguage;
@@ -240,22 +240,22 @@ class PornHubVideoPrerollglobalconfig {
 }
 
 class PornHubVideoMediadefinition {
-	String videoUrl;
-	String format;
-	bool defaultQuality;
-	String quality;
+	String? videoUrl;
+	String? format;
+	bool? defaultQuality;
+	String? quality;
 
 	PornHubVideoMediadefinition({this.videoUrl, this.format, this.defaultQuality, this.quality});
 
-	PornHubVideoMediadefinition.fromJson(Map<String, dynamic> json) {
+	PornHubVideoMediadefinition.fromJson(Map<String?, dynamic> json) {
 		videoUrl = json['videoUrl'];
 		format = json['format'];
 		defaultQuality = json['defaultQuality'];
-		quality = json['quality'] is String?json['quality']:'';
+		quality = (json['quality'] is String)?json['quality']:'';
 	}
 
-	Map<String, dynamic> toJson() {
-		final Map<String, dynamic> data = new Map<String, dynamic>();
+	Map<String?, dynamic> toJson() {
+		final Map<String?, dynamic> data = new Map<String?, dynamic>();
 		data['videoUrl'] = this.videoUrl;
 		data['format'] = this.format;
 		data['defaultQuality'] = this.defaultQuality;
@@ -265,16 +265,16 @@ class PornHubVideoMediadefinition {
 }
 
 class PornHubVideoThumbs {
-	String thumbHeight;
-	String cdnType;
-	int samplingFrequency;
-	String urlPattern;
-	String thumbWidth;
-	String type;
+	String? thumbHeight;
+	String? cdnType;
+	int? samplingFrequency;
+	String? urlPattern;
+	String? thumbWidth;
+	String? type;
 
 	PornHubVideoThumbs({this.thumbHeight, this.cdnType, this.samplingFrequency, this.urlPattern, this.thumbWidth, this.type});
 
-	PornHubVideoThumbs.fromJson(Map<String, dynamic> json) {
+	PornHubVideoThumbs.fromJson(Map<String?, dynamic> json) {
 		thumbHeight = json['thumbHeight'];
 		cdnType = json['cdnType'];
 		samplingFrequency = json['samplingFrequency'];
@@ -283,8 +283,8 @@ class PornHubVideoThumbs {
 		type = json['type'];
 	}
 
-	Map<String, dynamic> toJson() {
-		final Map<String, dynamic> data = new Map<String, dynamic>();
+	Map<String?, dynamic> toJson() {
+		final Map<String?, dynamic> data = new Map<String?, dynamic>();
 		data['thumbHeight'] = this.thumbHeight;
 		data['cdnType'] = this.cdnType;
 		data['samplingFrequency'] = this.samplingFrequency;
