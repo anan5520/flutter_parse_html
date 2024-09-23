@@ -185,7 +185,7 @@ class _MyHomePageState extends State<MoviePage>
                 right: 1,
                 child: Column(
                   children: [
-                    ElevatedButton(
+                    TextButton(
                       style: ElevatedButton.styleFrom(
                         shape: CircleBorder(), // 圆形边框
                         backgroundColor: Colors.blue,

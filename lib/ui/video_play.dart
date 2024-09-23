@@ -144,7 +144,7 @@ class _VideoAppState extends State<VideoPlayPage> {
   }
 
   @override
-  void dispose() {
+  void dispose() async{
 //    _controller.getVideoInfo().then((videoInfo) {
 //      var db = HistoryDatabaseHelper();
 //      db.getItem(widget._movieBean.name).then((history) {
@@ -173,12 +173,13 @@ class _VideoAppState extends State<VideoPlayPage> {
 //        }
 //      });
 //    });
+    await flickManager.flickVideoManager!.videoPlayerController!.pause();
+    flickManager.dispose();
+    KeepScreenOn.turnOff();
+    super.dispose();
     if (_timer != null) {
       _timer.cancel();
     }
-    flickManager.flickVideoManager!.dispose();
-    KeepScreenOn.turnOff();
-    super.dispose();
   }
 
   void startPlay() async {

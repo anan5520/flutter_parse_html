@@ -142,52 +142,52 @@ RoadList copyWith({  String? id,
 
 class Info {
   Info({
-      num? id, 
+      String? id,
       String? title, 
       String? url, 
-      String? urlS, 
-      num? isTrans, 
-      num? scores, 
+      String? urlS,
+    String? isTrans,
+    String? scores,
       String? times, 
       String? thumbimg, 
-      String? remark, 
-      num? category, 
+      String? remark,
+    String? category,
       String? tags, 
       dynamic photos, 
-      String? type, 
-      num? status, 
-      num? isRec, 
-      num? hits, 
-      num? comments, 
-      num? zan, 
-      num? collect, 
-      num? userId, 
+      String? type,
+    String? status,
+      String? isRec, 
+      String? hits, 
+      String? comments, 
+      String? zan, 
+      String? collect, 
+      String? userId, 
       String? userName, 
       String? userAvatar, 
-      num? userType, 
+      String? userType, 
       String? subTime, 
       String? createTime, 
       String? updateTime, 
-      num? isDy, 
-      num? thumbType, 
-      num? isVip, 
+      String? isDy, 
+      String? thumbType, 
+      String? isVip, 
       List<dynamic>? topic, 
-      num? cityId, 
+      String? cityId, 
       String? cityName, 
-      num? isTop, 
+      String? isTop, 
       String? userTop, 
       String? userShow, 
-      num? scoresFan, 
+      String? scoresFan, 
       String? passMsg, 
-      num? passTime, 
+      String? passTime, 
       String? content, 
       List<dynamic>? imglist, 
       String? urlSS, 
-      num? userVip, 
-      num? hasZan, 
-      num? hasCollect, 
-      num? hasDown, 
-      num? isFollow,}){
+      String? userVip, 
+      String? hasZan, 
+      String? hasCollect, 
+      String? hasDown, 
+      String? isFollow,}){
     _id = id;
     _title = title;
     _url = url;
@@ -288,104 +288,104 @@ class Info {
       });
     }
     _urlSS = json['url_s_s'];
-    _userVip = json['user_vip'];
-    _hasZan = json['hasZan'];
-    _hasCollect = json['hasCollect'];
-    _hasDown = json['hasDown'];
-    _isFollow = json['isFollow'];
+    _userVip = json['user_vip'].toString();
+    _hasZan = json['hasZan'].toString();
+    _hasCollect = json['hasCollect'].toString();
+    _hasDown = json['hasDown'].toString();
+    _isFollow = json['isFollow'].toString();
   }
-  num? _id;
+  String? _id;
   String? _title;
   String? _url;
   String? _urlS;
-  num? _isTrans;
-  num? _scores;
+  String? _isTrans;
+  String? _scores;
   String? _times;
   String? _thumbimg;
   String? _remark;
-  num? _category;
+  String? _category;
   String? _tags;
   dynamic _photos;
   String? _type;
-  num? _status;
-  num? _isRec;
-  num? _hits;
-  num? _comments;
-  num? _zan;
-  num? _collect;
-  num? _userId;
+  String? _status;
+  String? _isRec;
+  String? _hits;
+  String? _comments;
+  String? _zan;
+  String? _collect;
+  String? _userId;
   String? _userName;
   String? _userAvatar;
-  num? _userType;
+  String? _userType;
   String? _subTime;
   String? _createTime;
   String? _updateTime;
-  num? _isDy;
-  num? _thumbType;
-  num? _isVip;
+  String? _isDy;
+  String? _thumbType;
+  String? _isVip;
   List<dynamic>? _topic;
-  num? _cityId;
+  String? _cityId;
   String? _cityName;
-  num? _isTop;
+  String? _isTop;
   String? _userTop;
   String? _userShow;
-  num? _scoresFan;
+  String? _scoresFan;
   String? _passMsg;
-  num? _passTime;
+  String? _passTime;
   String? _content;
   List<dynamic>? _imglist;
   String? _urlSS;
-  num? _userVip;
-  num? _hasZan;
-  num? _hasCollect;
-  num? _hasDown;
-  num? _isFollow;
-Info copyWith({  num? id,
+  String? _userVip;
+  String? _hasZan;
+  String? _hasCollect;
+  String? _hasDown;
+  String? _isFollow;
+Info copyWith({  String? id,
   String? title,
   String? url,
   String? urlS,
-  num? isTrans,
-  num? scores,
+  String? isTrans,
+  String? scores,
   String? times,
   String? thumbimg,
   String? remark,
-  num? category,
+  String? category,
   String? tags,
   dynamic photos,
   String? type,
-  num? status,
-  num? isRec,
-  num? hits,
-  num? comments,
-  num? zan,
-  num? collect,
-  num? userId,
+  String? status,
+  String? isRec,
+  String? hits,
+  String? comments,
+  String? zan,
+  String? collect,
+  String? userId,
   String? userName,
   String? userAvatar,
-  num? userType,
+  String? userType,
   String? subTime,
   String? createTime,
   String? updateTime,
-  num? isDy,
-  num? thumbType,
-  num? isVip,
+  String? isDy,
+  String? thumbType,
+  String? isVip,
   List<dynamic>? topic,
-  num? cityId,
+  String? cityId,
   String? cityName,
-  num? isTop,
+  String? isTop,
   String? userTop,
   String? userShow,
-  num? scoresFan,
+  String? scoresFan,
   String? passMsg,
-  num? passTime,
+  String? passTime,
   String? content,
   List<dynamic>? imglist,
   String? urlSS,
-  num? userVip,
-  num? hasZan,
-  num? hasCollect,
-  num? hasDown,
-  num? isFollow,
+  String? userVip,
+  String? hasZan,
+  String? hasCollect,
+  String? hasDown,
+  String? isFollow,
 }) => Info(  id: id ?? _id,
   title: title ?? _title,
   url: url ?? _url,
@@ -433,52 +433,52 @@ Info copyWith({  num? id,
   hasDown: hasDown ?? _hasDown,
   isFollow: isFollow ?? _isFollow,
 );
-  num? get id => _id;
+  String? get id => _id;
   String? get title => _title;
   String? get url => _url;
   String? get urlS => _urlS;
-  num? get isTrans => _isTrans;
-  num? get scores => _scores;
+  String? get isTrans => _isTrans;
+  String? get scores => _scores;
   String? get times => _times;
   String? get thumbimg => _thumbimg;
   String? get remark => _remark;
-  num? get category => _category;
+  String? get category => _category;
   String? get tags => _tags;
   dynamic get photos => _photos;
   String? get type => _type;
-  num? get status => _status;
-  num? get isRec => _isRec;
-  num? get hits => _hits;
-  num? get comments => _comments;
-  num? get zan => _zan;
-  num? get collect => _collect;
-  num? get userId => _userId;
+  String? get status => _status;
+  String? get isRec => _isRec;
+  String? get hits => _hits;
+  String? get comments => _comments;
+  String? get zan => _zan;
+  String? get collect => _collect;
+  String? get userId => _userId;
   String? get userName => _userName;
   String? get userAvatar => _userAvatar;
-  num? get userType => _userType;
+  String? get userType => _userType;
   String? get subTime => _subTime;
   String? get createTime => _createTime;
   String? get updateTime => _updateTime;
-  num? get isDy => _isDy;
-  num? get thumbType => _thumbType;
-  num? get isVip => _isVip;
+  String? get isDy => _isDy;
+  String? get thumbType => _thumbType;
+  String? get isVip => _isVip;
   List<dynamic>? get topic => _topic;
-  num? get cityId => _cityId;
+  String? get cityId => _cityId;
   String? get cityName => _cityName;
-  num? get isTop => _isTop;
+  String? get isTop => _isTop;
   String? get userTop => _userTop;
   String? get userShow => _userShow;
-  num? get scoresFan => _scoresFan;
+  String? get scoresFan => _scoresFan;
   String? get passMsg => _passMsg;
-  num? get passTime => _passTime;
+  String? get passTime => _passTime;
   String? get content => _content;
   List<dynamic>? get imglist => _imglist;
   String? get urlSS => _urlSS;
-  num? get userVip => _userVip;
-  num? get hasZan => _hasZan;
-  num? get hasCollect => _hasCollect;
-  num? get hasDown => _hasDown;
-  num? get isFollow => _isFollow;
+  String? get userVip => _userVip;
+  String? get hasZan => _hasZan;
+  String? get hasCollect => _hasCollect;
+  String? get hasDown => _hasDown;
+  String? get isFollow => _isFollow;
 
   Map<String?, dynamic> toJson() {
     final map = <String?, dynamic>{};

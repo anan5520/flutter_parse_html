@@ -57,7 +57,7 @@ class FanHaoContentState extends State<FanHaoContentPage> {
       appBar: AppBar(
         title: Text('帖子详情'),
         actions: [
-          ElevatedButton(
+          TextButton(
             child: Text(
               '下载磁力软件',
               style: TextStyle(color: Colors.white, fontSize: 12),

@@ -57,7 +57,7 @@ class PornVideoDetailState extends State<PornVideoDetailPage> {
       appBar: AppBar(
         title: Text('视频详情'),
         actions: <Widget>[
-          ElevatedButton(
+          TextButton(
             child: Text(
               '查看所有作品',
               style: TextStyle(color: Colors.white, fontSize: 12),

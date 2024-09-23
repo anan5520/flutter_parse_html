@@ -52,15 +52,15 @@ class CommonUtil {
             return SimpleDialog(
               title:Text('选择播放器(打不开或资源慢的可以选择跳转浏览器)'),
               children: [
-                ElevatedButton(
+                TextButton(
                   child: Text(title),
                   onPressed: () {
 
                   },
                 ),
                 isDownLoad ? Container():
-                ElevatedButton(
-                  child: Text("ij播放器(推荐)"),
+                TextButton(
+                  child: Text("ij播放器"),
                   onPressed: () {
                     if(Platform.isAndroid){
                       print('播放:$playUrl');
@@ -72,7 +72,7 @@ class CommonUtil {
                   },
                 ),
                 isDownLoad ? Container():
-                ElevatedButton(
+                TextButton(
                   child: Text("内置播放器"),
                   onPressed: () {
                     Navigator.pop(context);
@@ -82,7 +82,7 @@ class CommonUtil {
                         }));
                   },
                 ),
-                ElevatedButton(
+                TextButton(
                   child: Text("跳转uc浏览器播放下载"),
                   onPressed: () {
                     if(Platform.isAndroid){
@@ -95,7 +95,7 @@ class CommonUtil {
 
                   },
                 ),
-                ElevatedButton(
+                TextButton(
                   child: Text("跳转qq浏览器播放下载(推荐)"),
                   onPressed: () {
                     if(Platform.isAndroid){
@@ -108,8 +108,8 @@ class CommonUtil {
 
                   },
                 ),
-                ElevatedButton(
-                  child: Text("本机播放"),
+                TextButton(
+                  child: Text("本机播放(推荐选择qq浏览器播霸)"),
                   onPressed: () {
                     if(Platform.isAndroid){
                       print('播放:$playUrl');
@@ -120,7 +120,7 @@ class CommonUtil {
                     }
                   },
                 ),
-                isDownLoad ? Container():ElevatedButton(
+                isDownLoad ? Container():TextButton(
                   child: Text("x5播放器"),
                   onPressed: () {
                     if(Platform.isAndroid){
@@ -133,7 +133,7 @@ class CommonUtil {
 
                   },
                 ),
-                ElevatedButton(
+                TextButton(
                   child: Text("复制播放地址"),
                   onPressed: () {
                     Fluttertoast.showToast(
