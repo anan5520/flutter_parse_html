@@ -75,56 +75,8 @@ class HomePageState extends State<ParseHomePage>
     return Scaffold(
       appBar: AppBar(
         title: Text("老司机"),
-        bottom: TabBar(
-          unselectedLabelStyle:TextStyle(color: Colors.white),
-          labelStyle: TextStyle(color: Colors.white),
-          isScrollable: true,
-          tabs: <Widget>[
-            Tab(
-              text: "${titles[0]}",
-            ),
-            Tab(
-              text: "${titles[1]}",
-            ),
-            Tab(text: "${titles[2]}"),
-            Tab(
-              text: "${titles[3]}",
-            ),
-            Tab(
-              text: "${titles[4]}",
-            ),
-            Tab(text: "${titles[5]}"),
-            Tab(text: "${titles[6]}"),
-            Tab(text: "${titles[7]}"),
-            Tab(text: "${titles[8]}"),
-            Tab(text: "${titles[9]}"),
-            Tab(text: "${titles[10]}"),
-            Tab(text: "${titles[11]}"),
-            // Tab(text: "${titles[11]}"),
-          ],
-          controller: _tabController,
-        ),
       ),
-      body: TabBarView(
-        children: <Widget>[
-          BookList4Page(''),
-          BookList3Page(),
-          GifListLsjPage(),
-          HtmlParse2Page(HtmlParse2Type.image),
-          HtmlParse2Page(HtmlParse2Type.book),
-          HtmlParse2Page(HtmlParse2Type.video),
-          ParsePage(ParseType.image, Parse2BaseType.type4),
-          ParsePage(ParseType.book, Parse2BaseType.type4),
-          ParsePage(ParseType.video, Parse2BaseType.type4),
-          ParsePage(ParseType.image, Parse2BaseType.type2),
-          ParsePage(ParseType.book, Parse2BaseType.type2),
-          ParsePage(ParseType.video, Parse2BaseType.type2),
-          // ParsePage(ParseType.image, Parse2BaseType.type1),
-          // ParsePage(ParseType.book, Parse2BaseType.type1),
-          // ParsePage(ParseType.video, Parse2BaseType.type1),
-        ],
-        controller: _tabController,
-      ),
+      body: BookList3Page(),
     );
   }
 

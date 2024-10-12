@@ -49,8 +49,8 @@ class PornForumState extends State<PornForumPage>
             color: Colors.white,
             height: 38,
             child: TabBar(
-              unselectedLabelStyle:TextStyle(color: Colors.white),
-              labelStyle: TextStyle(color: Colors.white),
+              unselectedLabelStyle:TextStyle(color: Colors.grey),
+              labelStyle: TextStyle(color: Colors.black),
               controller: _tabController,
               isScrollable: true,
               onTap: (index) {

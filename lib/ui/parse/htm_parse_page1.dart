@@ -50,7 +50,7 @@ class ParseHomePage extends StatefulWidget {
 class HomePageState extends State<ParseHomePage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  List<String> titles = ['视频1','视频2', '视频4','番号', '视频5', '视频10', '视频7', '视频8'];
+  List<String> titles = ['视频2'];
 
   @override
   void initState() {
@@ -81,42 +81,8 @@ class HomePageState extends State<ParseHomePage>
                     }));
               }),
         ],
-        bottom: TabBar(
-          unselectedLabelStyle:TextStyle(color: Colors.white),
-          labelStyle: TextStyle(color: Colors.white),
-          isScrollable: true,
-          tabs: <Widget>[
-            Tab(
-              text: "${titles[0]}",
-            ),
-            Tab(
-              text: "${titles[1]}",
-            ),
-            Tab(text: "${titles[2]}"),
-            Tab(text: "${titles[3]}"),
-            Tab(text: "${titles[4]}"),
-            Tab(text: "${titles[5]}"),
-            Tab(text: "${titles[6]}"),
-            Tab(text: "${titles[7]}"),
-          ],
-          controller: _tabController,
-        ),
       ),
-      body: TabBarView(
-        children: <Widget>[
-          VideoList10Page(),
-          VideoList2Page(),
-          VideoList4Page(),
-          VideoList6Page(''),
-          VideoList8Page(),
-          VideoList7Page(),
-          VideoList9Page(),
-          VideoList16Page(),
-
-          // HtmlParse2Page(HtmlParse2Type.video),
-        ],
-        controller: _tabController,
-      ),
+      body: VideoList2Page(),
     );
   }
 

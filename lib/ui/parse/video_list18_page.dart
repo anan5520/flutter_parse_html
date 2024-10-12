@@ -21,6 +21,7 @@ import 'package:flutter_parse_html/util/native_utils.dart';
 import 'package:flutter_parse_html/widget/fade_in_image_without_auth.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:html/dom.dart' as dom;
 import 'package:path_provider/path_provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:flutter_parse_html/model/button_bean.dart';
@@ -44,7 +45,7 @@ class VideoList17State extends State<VideoList18Page>
 
   late RefreshController _refreshController;
   int _page = 1, buttonType = 0;
-  String _currentKey = '1';
+  String _currentKey = '7';
   bool _isSearch = false;
   late TextEditingController _editingController;
   StreamController<VideoListItem> imgeStream = StreamController.broadcast();
@@ -201,10 +202,7 @@ class VideoList17State extends State<VideoList18Page>
       }
       if (_btns == null) {
         _btns = [];
-        _btns?.add(ButtonBean()..value = '1'..title = '热点');
-        _btns?.add(ButtonBean()..value = '2'..title = '明星网红');
-        _btns?.add(ButtonBean()..value = '3'..title = '奇葩');
-        _btns?.add(ButtonBean()..value = '4'..title = '真实乱');
+        parseBtnLable(doc);
       }
     } catch (e) {
       print(e);
@@ -275,5 +273,16 @@ class VideoList17State extends State<VideoList18Page>
   void dispose() {
     imgeStream.close();
     super.dispose();
+  }
+
+  void parseBtnLable(dom.Document doc) {
+    var sliderItems = doc.getElementsByClassName('labellist').first.getElementsByClassName('slider-item ');
+    sliderItems.forEach((item){
+      var name = item.getElementsByClassName('span').first.text;
+      var href = item.attributes['href']?.replaceAll('/category/', '').replaceAll('.html', '');
+      if(!name.contains('首页')){
+        _btns?.add(ButtonBean()..value = href..title = name);
+      }
+    });
   }
 }
