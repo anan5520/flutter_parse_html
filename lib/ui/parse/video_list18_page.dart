@@ -32,6 +32,9 @@ import 'package:flutter_parse_html/widget/dialog_page.dart';
 import 'package:flutter_parse_html/model/movie_bean.dart';
 
 class VideoList18Page extends StatefulWidget {
+  String? url;
+  VideoList18Page({this.url});
+
   @override
   State<StatefulWidget> createState() {
     return VideoList17State();
@@ -174,6 +177,9 @@ class VideoList17State extends State<VideoList18Page>
     String url = _isSearch
         ? '${ApiConstant.videoList18Url}/page/$_page?s=$_currentKey'
         : "${ApiConstant.videoList18Url}/category/$_currentKey/$_page.html";
+    if(widget.url?.isNotEmpty ?? false){
+      url = widget.url??'';
+    }
     String response = await PornHubUtil.getHtmlFromHttpDeugger(url);
     _refreshController.refreshCompleted();
     _refreshController.loadComplete();

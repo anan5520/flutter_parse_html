@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_parse_html/model/button_bean.dart';
 import 'package:flutter_parse_html/model/heiliao_video_entity.dart';
+import 'package:flutter_parse_html/ui/parse/video_list18_page.dart';
 import 'package:flutter_parse_html/ui/pornhub/pornhub_util.dart';
 import 'package:flutter_parse_html/util/common_util.dart';
 import 'package:flutter_parse_html/util/porn_helper.dart';
@@ -63,7 +64,14 @@ class PornForumContentState extends State<PornForumContentPage> {
                           <Widget>[
                             HtmlWidget(_forumContent != null
                                 ? _forumContent?.content??''
-                                : ""),
+                                : "",onTapUrl: (url){
+                              if(url.startsWith("http")){
+                                Navigator.push(context, MaterialPageRoute(builder: (context){
+                                  return PornForumContentPage(0,2,url!);
+                                }));
+                              }
+                              return true;
+                            },),
                           ],
                         ),
                       ),
