@@ -11,6 +11,7 @@ import 'package:flutter_parse_html/util/toast_util.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:path/path.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'native_utils.dart';
 
@@ -90,7 +91,7 @@ class CommonUtil {
                       Navigator.pop(context);
                       NativeUtils.startUcBrowser(playUrl!);
                     }else{
-                      ToastUtils.showToast("不支持ios");
+                      openUcBrowser(playUrl);
                     }
 
                   },
@@ -103,7 +104,7 @@ class CommonUtil {
                       Navigator.pop(context);
                       NativeUtils.startQBrowser(playUrl!);
                     }else{
-                      ToastUtils.showToast("不支持ios");
+                      openQQBrowser(playUrl);
                     }
 
                   },
@@ -116,7 +117,7 @@ class CommonUtil {
                       Navigator.pop(context);
                       NativeUtils.goToLocalVideoPlay(playUrl!, '',false);
                     }else{
-                      ToastUtils.showToast("不支持ios");
+                      playVideo(playUrl!);
                     }
                   },
                 ),
@@ -128,7 +129,7 @@ class CommonUtil {
                       Navigator.pop(context);
                       NativeUtils.toX5Play(playUrl!, '');
                     }else{
-                      ToastUtils.showToast("不支持ios");
+                      playVideo(playUrl!);
                     }
 
                   },
@@ -147,4 +148,26 @@ class CommonUtil {
     }
 
   }
+  static void playVideo(String videoUrl) async {
+    final Uri url = Uri.parse(videoUrl);
+
+    if (await canLaunchUrl(url)) {
+      await launchUrl(
+        url,
+        mode: LaunchMode.externalApplication, // 使用外部应用打开
+      );
+    } else {
+      print("无法打开视频链接: $videoUrl");
+    }
+  }
+  static void openUcBrowser(String? playUrl) async {
+    var url = 'ucbrowser://url=${playUrl}';
+    await launchUrl(Uri.parse(url));
+  }
+
+  static void openQQBrowser(String? playUrl) async {
+    var url = 'mttbrowser://url=${playUrl}';
+    await launchUrl(Uri.parse(url));
+  }
+
 }
