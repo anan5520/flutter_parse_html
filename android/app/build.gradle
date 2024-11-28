@@ -97,10 +97,11 @@ dependencies {
     implementation 'com.ldoublem.loadingview:loadingviewlib:1.0'
     implementation 'androidx.appcompat:appcompat:1.5.0'
     //完整版引入
-    implementation 'com.github.CarGuo.GSYVideoPlayer:GSYVideoPlayer:v8.5.0-release-jitpack'
+
+    implementation 'com.github.CarGuo.GSYVideoPlayer:gsyvideoplayer:v10.0.0'
 
 
     //是否需要AliPlayer模式
-    implementation 'com.github.CarGuo.GSYVideoPlayer:GSYVideoPlayer-aliplay:v8.5.0-release-jitpack'
+    implementation 'com.github.CarGuo.GSYVideoPlayer:gsyvideoplayer-aliplay:v10.0.0'
 
 }

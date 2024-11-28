@@ -161,7 +161,7 @@ class CommonUtil {
     }
   }
   static void openUcBrowser(String? playUrl) async {
-    var url = 'ucbrowser://url=${playUrl}';
+    var url = 'ucbrowser://${playUrl}';
     await launchUrl(Uri.parse(url));
   }
 
