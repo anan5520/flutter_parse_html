@@ -11,6 +11,7 @@ class VideoListItem {
   int? index = -1;
   bool? show = true;
   bool? isVideo = false;
+  bool? isBook = false;
 
   VideoListItem();
 

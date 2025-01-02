@@ -19,7 +19,11 @@ import 'package:flutter_parse_html/api/api_constant.dart';
 import 'package:html/parser.dart' as parse;
 import 'package:flutter_parse_html/widget/dialog_page.dart';
 import 'package:flutter_parse_html/model/movie_bean.dart';
+import 'package:http/http.dart' as http;
 
+import '../../model/api_bean.dart';
+import '../../resources/shared_preferences_keys.dart';
+import '../../util/shared_preferences.dart'; // 导入http包
 class VideoList10Page extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
@@ -30,11 +34,11 @@ class VideoList10Page extends StatefulWidget {
 class VideoList10State extends State<VideoList10Page>
     with AutomaticKeepAliveClientMixin {
   List<VideoListItem> _data = [];
-  late List<ButtonBean> _btns;
+  List<ButtonBean>? _btns;
 
   late RefreshController _refreshController;
   int _page = 1, buttonType = 0;
-  String _currentKey = '/vodlist/33';
+  String _currentKey = '';
   bool _isSearch = false;
   late TextEditingController _editingController;
 
@@ -115,7 +119,7 @@ class VideoList10State extends State<VideoList10Page>
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          if (_btns.length > 0) {
+          if (_btns?.isNotEmpty == true) {
             //有选项再显示
             _showDialog();
           }
@@ -128,21 +132,20 @@ class VideoList10State extends State<VideoList10Page>
   //跳转播放
   void goToPlay(VideoListItem data) async {
     showLoading();
-    var response = await PornHubUtil.getHtmlFromHttpDeugger(data.targetUrl!);
+    var response = await NetUtil.getHtmlData(data.targetUrl!);
     try {
       var doc = parse.parse(response);
-      var gotoEles = doc.getElementsByClassName("film_bar clearfix");
+      var gotoEles = doc.getElementsByClassName("full-top btn-submit");
       var gotoEle = gotoEles.length == 0
           ? doc.getElementsByClassName('series_body').first
           : gotoEles.first;
       String url =
-          '${ApiConstant.videoList10Url}${gotoEle.getElementsByTagName('a').first.attributes['href']}';
-      var detailResponse = await PornHubUtil.getHtmlFromHttpDeugger(url);
-      var playUrl = EscapeUnescape.unescape(
-              detailResponse.split(new RegExp(r'"\);|unescape\("'))[1])
-          .split('url=')[1];
+          '${ApiConstant.videoList10Url}${gotoEle.attributes['onclick']?.replaceAll("location.href='", '')?.replaceAll("';", '')}';
+      var detailResponse = await NetUtil.getHtmlData(url);
+      var playDoc = parse.parse(detailResponse);
+      var playUrl = playDoc.getElementsByClassName("player").first.getElementsByTagName('iframe').first.attributes['src']?.split(RegExp(r'url='))?[1];
       Navigator.pop(context);
-      if (playUrl.startsWith('http')) {
+      if (playUrl?.startsWith('http') == true) {
         CommonUtil.toVideoPlay(playUrl, context, title: data.title!);
       }
     } catch (e) {
@@ -193,21 +196,35 @@ class VideoList10State extends State<VideoList10Page>
   //获取数据
   void _getData() async {
     String url = _isSearch
-        ? '${ApiConstant.videoList10Url}/vodtag/$_currentKey/index-$_page.html'
-        : "${ApiConstant.videoList10Url}$_currentKey-$_page.html";
-    String response = await PornHubUtil.getHtmlFromHttpDeugger(url);
+        ? '${ApiConstant.videoList10Url}/?m=video_search*${Uri.encodeComponent(_currentKey)}*${_page}'
+        : _currentKey.isNotEmpty?"${ApiConstant.videoList10Url}$_currentKey${_page}/index.htm":"${ApiConstant.videoList10Url}$_currentKey";
+    String response = await NetUtil.getHtmlData(url);
     _refreshController.refreshCompleted();
     _refreshController.loadComplete();
     var doc = parse.parse(response);
     try {
-      var listEle = doc.getElementsByClassName('box movie_list');
+      var listEle = doc.getElementsByClassName('wall');
+      if(listEle.isEmpty){
+        var tempUrl =  await _startRedirectProcess();
+        if(tempUrl.isNotEmpty){
+          SpUtil sp = await SpUtil.getInstance();
+          ApiConstant.videoList10Url = tempUrl;
+          String localStr = sp.getString(SharedPreferencesKeys.urls);
+          UrlsBean localUrl;
+          if (localStr != null && localStr.isNotEmpty) {
+            localUrl = UrlsBean.fromJson(json.decode(localStr));
+            localUrl.videoList10Url = ApiConstant.videoList10Url;
+            sp.putString(SharedPreferencesKeys.urls, json.encode(localUrl));
+          }
+          _refreshController.requestRefresh();
+        }
+
+      }
       listEle = listEle.length == 0
           ? doc.getElementsByClassName('ilist_box')
           : listEle;
       var tdElements = listEle.first
-          .getElementsByTagName('ul')
-          .first
-          .getElementsByTagName('li');
+          .getElementsByClassName('article');
       for (var value in tdElements) {
         var aEles = value.getElementsByTagName('a');
         if (aEles.length > 0) {
@@ -216,7 +233,7 @@ class VideoList10State extends State<VideoList10Page>
           var hrefs = aEle.attributes['href'];
           String href = '${ApiConstant.videoList10Url}$hrefs';
           var imgEle = aEle.getElementsByTagName('img').first;
-          item.title = CommonUtil.replaceStr(value.text);
+          item.title = aEle.attributes['title'];
           item.imageUrl = imgEle.attributes['data-original'] == null
               ? imgEle.attributes['src']
               : imgEle.attributes['data-original'];
@@ -227,27 +244,16 @@ class VideoList10State extends State<VideoList10Page>
           _data.add(item);
         }
       }
-      if (_btns == null) {
-        _btns = [];
-        var menus = doc.getElementsByClassName('classlist');
-        var menu = menus.length == 0
-            ? doc
-                .getElementsByClassName('wrap mt20 nav')
-                .first
-                .getElementsByClassName('nav_menu clearfix')
-            : menus.first.getElementsByClassName('classlist_con');
-        for (int i = 0; i < 4; i++) {
-          var ulELe = menu[i];
-          var liEles = ulELe.getElementsByTagName('a');
-          liEles.forEach((value1) {
-            ButtonBean buttonBean = ButtonBean();
-            buttonBean.title = value1.text;
-            if (!value1.text.contains('区') && !value1.text.contains('会员')) {
-              buttonBean.value =
-                  value1.attributes['href']!.replaceAll('.html', '');
-              _btns.add(buttonBean);
-            }
-          });
+      _btns = [];
+      var menu = doc.getElementsByClassName('aui-palace-grid aui-phpasp');
+      for (int i = 0; i < menu.length; i++) {
+        var value1 = menu[i];
+        ButtonBean buttonBean = ButtonBean();
+        buttonBean.title = value1.text;
+        if (!value1.text.contains('区') && !value1.text.contains('会员')) {
+          buttonBean.value =
+              value1.attributes['href']!.replaceAll('1/index.htm', '');
+          _btns?.add(buttonBean);
         }
       }
     } catch (e) {
@@ -257,12 +263,84 @@ class VideoList10State extends State<VideoList10Page>
     setState(() {});
   }
 
+  // 合并后的方法，返回重定向的URL
+  Future<String> _startRedirectProcess() async {
+    // 获取当前URL并修改主机名
+    String currentUrl = ApiConstant.videoList10Url;
+    String referrer1 = Uri.parse(ApiConstant.videoList10Url).host;
+    String modifiedReferrer = referrer1.replaceAll('.', '');
+
+    // 获取当前时间的日期和秒
+    DateTime now = DateTime.now();
+    String date = now.day.toString();
+    String second = now.hour.toString();
+
+    // 延迟3秒后开始执行重定向逻辑
+    await Future.delayed(Duration(seconds: 3));
+
+    // 检查网站是否可用并返回重定向的URL
+    String redirectUrl = await _checkWebsitesAvailability(modifiedReferrer, date, second);
+
+    return redirectUrl;
+  }
+
+  // 检查网站可用性并返回最终重定向的URL
+  Future<String> _checkWebsitesAvailability(String modifiedReferrer, String date, String second) async {
+    List<Map<String, dynamic>> websites = [
+      {
+        'url': 'http://$date$second${Uri.encodeComponent(modifiedReferrer)}.linhe99.cfd/',
+      },
+      {
+        'url': 'http://$date$second${Uri.encodeComponent(modifiedReferrer)}.wuhai11.cfd/',
+      },
+    ];
+
+    int failed = 0;
+
+    // 遍历检查每个网站
+    for (var site in websites) {
+      bool isOnline = await _checkWebsiteOnline(site['url']);
+      if (isOnline) {
+        // 如果网站可用，返回重定向URL
+        return site['url'];
+      } else {
+        failed++;
+        if (failed == websites.length) {
+          // 如果所有网站都不可用，返回备用URL
+          return "";
+        }
+      }
+    }
+
+    // 默认返回备用URL
+    return "";
+  }
+
+  // 检查一个网站是否在线，返回结果
+  Future<bool> _checkWebsiteOnline(String url) async {
+    try {
+      // 发送GET请求来检测网站是否可用
+      final response = await http.get(Uri.parse(url));
+
+      // 如果响应的状态码是200，表示网站在线
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      // 捕获异常，表示网站无法访问
+      return false;
+    }
+  }
+
+
   void _showDialog() async {
     ButtonBean buttonBean = await showDialog(
         context: context,
         builder: (context) {
           return new AlertDialog(
-            content: GridViewDialog(_btns),
+            content: GridViewDialog(_btns??[]),
           );
         });
     if (buttonBean != null) {

@@ -30,6 +30,8 @@ import 'package:flutter_parse_html/model/movie_bean.dart';
 import 'package:encrypt/encrypt.dart' as Encrypt;
 import 'package:http/http.dart' as http;
 
+import 'book_page.dart';
+
 class VideoList8Page extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
@@ -187,6 +189,38 @@ class VideoList8State extends State<VideoList8Page>
     }
   }
 
+  void goToMp3(VideoListItem data) async {
+    showLoading();
+    var response = await PornHubUtil.getHtmlFromHttpDeugger(data.targetUrl!);
+    try {
+      var doc = parse.parse(response);
+      var tempUrl = '${ApiConstant.videoList8Url}${doc.getElementsByClassName('common-detail-button').first.attributes['href']}';
+      List<ButtonBean> btns = doc.getElementsByClassName("novel-chapter-item").map((item){
+        return ButtonBean()..title = aesEncode(item.getElementsByClassName('dec-ti').first.attributes['title']!)..value = item.attributes['href'];
+      }).toList();
+      if(btns.isNotEmpty){
+        ButtonBean buttonBean = await showDialog(
+            context: context,
+            builder: (context) {
+              return new AlertDialog(
+                content: GridViewDialog(btns!,showToPage: false,),
+              );
+            });
+        tempUrl = '${ApiConstant.videoList8Url}${buttonBean.value}';
+      }
+      var tempResponse = await await NetUtil.getHtmlData(tempUrl);
+      var tempDoc = parse.parse(tempResponse);
+      var playUrl = tempDoc.getElementsByTagName('source').first.attributes['src'];
+      Navigator.pop(context);
+      if (playUrl?.startsWith('http')??false) {
+        CommonUtil.toVideoPlay(playUrl, context, title: data.title!);
+      }
+    } catch (e) {
+      Navigator.pop(context);
+      print(e);
+    }
+  }
+
   String padBase64(String rawBase64) {
     if (rawBase64.length % 4 != 0) {
       rawBase64 += "=";
@@ -236,8 +270,19 @@ class VideoList8State extends State<VideoList8Page>
       borderRadius: BorderRadius.circular(5),
       child: GestureDetector(
         onTap: () {
+          if(item.isBook! && !_isMp3){
+            Navigator.of(context)
+                .push(new MaterialPageRoute(builder: (BuildContext context) {
+              return BookHomePage(
+                  item.targetUrl,
+                  8);
+            }));
+            return;
+          }
           if(item.isVideo!){
             goToPlay(item);
+          }else if(_isMp3){
+            goToMp3(item);
           }else{
             goToDetail(item);
           }
@@ -295,7 +340,8 @@ class VideoList8State extends State<VideoList8Page>
     var doc = parse.parse(response);
     try {
       var tdElements = doc.getElementsByClassName('video-list');
-      if(tdElements.length == 0){
+      var caElements = doc.getElementsByClassName('novel-list');
+      if(tdElements.length == 0 && caElements.length == 0){
         _resetUrl(url);
         return;
       }
@@ -329,6 +375,29 @@ class VideoList8State extends State<VideoList8Page>
           _data.add(item);
         });
       }
+      for (var value in caElements) {
+        var aEles = value.getElementsByTagName('a');
+        aEles.forEach((aEle) {
+          VideoListItem item = VideoListItem();
+          var hrefTemp = aEle.attributes['href'];
+          String href = '${ApiConstant.videoList8Url}$hrefTemp';
+          var imgEle = aEle
+              .getElementsByTagName('img')
+              .first;
+          item.title = CommonUtil.replaceStr(aesEncode(aEle
+              .getElementsByClassName('novel-item-title dec-ti')
+              .first
+              .attributes['title']!));
+          if(imgEle.attributes.containsKey('data-pic-base64')){
+            item.imageUrl = _getImgUrl(imgBaseUrl,imgEle.attributes['data-pic-base64']!);
+          }else{
+            item.imageUrl = _getImgUrl(imgBaseUrl,imgEle.attributes['data-base64']!);
+          }
+          item.isBook = true;
+          item.targetUrl = href;
+          _data.add(item);
+        });
+      }
       var nextEles = doc.getElementsByClassName('pagination');
       if (nextEles.length > 0) {
         try {
@@ -350,7 +419,14 @@ class VideoList8State extends State<VideoList8Page>
           ButtonBean buttonBean = ButtonBean();
           buttonBean.title = aesEncode(element.attributes['title']!);
           buttonBean.value = aesEncode(element.attributes['data-link']!);
-          _tags.add(buttonBean);
+          if(_isMp3){
+            if((buttonBean.title?.contains("有声") ?? false)){
+              _tags.add(buttonBean);
+            }
+          }else{
+            _tags.add(buttonBean);
+          }
+
         });
       }
       if (_commonBtns == null) {
@@ -419,6 +495,7 @@ class VideoList8State extends State<VideoList8Page>
     }
   }
 
+  bool _isMp3 = false;
   void _showDialog() async {
     ButtonBean buttonBean = await showDialog(
         context: context,
@@ -436,6 +513,7 @@ class VideoList8State extends State<VideoList8Page>
         buttonType = 0;
         _currentKey = buttonBean.value!;
       }
+      _isMp3 = buttonBean.title?.contains("mp3")??false;
       _refreshController.requestRefresh();
     }
   }
@@ -530,13 +608,40 @@ class VideoList8State extends State<VideoList8Page>
     if (localStr != null && localStr.isNotEmpty) {
       localUrl = UrlsBean.fromJson(json.decode(localStr));
     }
+    var body = await PornHubUtil.getHtmlFromHttpDeugger(url);
+    if(body.contains("enter/index.html")){
+      _resetBaseUrl(url);
+    }else{
+      var requestUrls = body.split('window.atob("');
+      var requestUrl = "${utf8.decode(base64Decode(requestUrls[1].split('")')[0]))}/?u=${base64Encode(utf8.encode(ApiConstant.videoList8Url))}&p=Lw==";
+      http.Request req = http.Request("Get", Uri.parse(requestUrl))..followRedirects = false;
+      http.Client baseClient = http.Client();
+      http.StreamedResponse redirectResponse = await baseClient.send(req);
+      final responseBody = await redirectResponse.stream.bytesToString();
+      if(redirectResponse.statusCode == 302){
+        Uri redirectUri = Uri.parse(redirectResponse.headers['location']!);
+        url = redirectUri.origin;
+        _resetBaseUrl(url);
+        return;
+      }
+    }
+
+  }
+
+  void _resetBaseUrl(String url,{bool useFanhao = true})  async{
+    SpUtil sp = await SpUtil.getInstance();
+    String localStr = sp.getString(SharedPreferencesKeys.urls);
+    UrlsBean? localUrl;
+    if (localStr != null && localStr.isNotEmpty) {
+      localUrl = UrlsBean.fromJson(json.decode(localStr));
+    }
     http.Request req = http.Request("Get", Uri.parse(url))..followRedirects = false;
     http.Client baseClient = http.Client();
     http.StreamedResponse redirectResponse = await baseClient.send(req);
     if(redirectResponse.statusCode == 302){
       Uri redirectUri = Uri.parse(redirectResponse.headers['location']!);
       url = redirectUri.origin;
-      _resetUrl(url,useFanhao: false);
+      _resetBaseUrl(url,useFanhao: false);
       return;
     }
     if(url.isNotEmpty){

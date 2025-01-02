@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_parse_html/model/porn_bean.dart';
+import 'package:flutter_parse_html/ui/pornhub/pornhub_util.dart';
 import 'package:flutter_parse_html/util/common_util.dart';
 import 'package:flutter_parse_html/util/escapeu_unescape.dart';
 import 'package:provider/provider.dart';
@@ -272,8 +273,11 @@ class PornState extends State<PornPage> with AutomaticKeepAliveClientMixin {
     var url = widget._type == 5
         ? ApiConstant.getAuthorVideosUrl(widget._authorId)
         : ApiConstant.getPornVideoUrl();
-    String data = await NetUtil.getHtmlData(
+    String data = await NetUtil.getHtmlDataPost(
       url,paras: param);
+    if(data.isEmpty){
+      data = await PornHubUtil.getHtmlFromHttpDeugger(url,params: param);
+    }
     _controller.loadComplete();
     _controller.refreshCompleted();
     LogUtils.d('porn', data);

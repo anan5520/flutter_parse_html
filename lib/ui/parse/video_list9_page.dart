@@ -181,8 +181,8 @@ class VideoList9State extends State<VideoList9Page>
     );
   }
 
-  String categoryKey = '/api/v1/index/tagsandcategory';
-  String videoListKey = '/api/v1/bmlist/video-list';
+  String categoryKey = '/api/v1/index-new/index';
+  String videoListKey = '/api/v1/topic/community-list';
   String videoDetailKey = '/api/v1/top/info';
   String videoSearchKey = '/api/v1/bmlist/search';
   String videoTopListKey = '/api/v1/top/top-list-page';
@@ -203,18 +203,21 @@ class VideoList9State extends State<VideoList9Page>
   //获取数据
   void _getData() async {
     var encryptUtil = EncryptUtil();
+    var testValue = encryptUtil.aesDecode1("QuTeYhhvkI46J2wSkxRbEtdrBI55kfaAzKfA6SP68PFrPSMZIkgVxKY9GwSE/p0EWRSoSPhZguz5TWvO5mDXtajllmUsp4y1R4ud8jbn+i3Z6KYD+8ATLcxUx+LRr9Q680CP/FuOnLLFRfks5wZVfIgdLlP7GnusFOHSiYLnrZICYfs423A6QPGoYpiEbgGtVTfAAJk/YAvGNZxsWMFmgb9EdXp1IIwkC5RyhM1h7R8=");
+    print("$testValue");
     if(!_isSearch && _currentKey.isEmpty){
       String url = "${ApiConstant.videoList9Url}$categoryKey";
-      String response =  await NetUtil.getHtmlDataPost(url,paras: {'encrypt_data':"s8P0nRpxt8Vff+8ZzlLRhGbBoNuU/7HmFyfFH8bPrD0="},header: header);
+      String response =  await NetUtil.getHtmlDataPost(url,paras: {'encrypt_data':encryptUtil.aesEncode1('{"token":"","t":${DateTime.now().millisecondsSinceEpoch ~/ 1000}}')},header: header);
+      _refreshController.refreshCompleted();
       String responseStr = encryptUtil.aesDecode1(json.decode(response)['data']);
       Video9CateBean video9cateBean =  Video9CateBean.fromJson(json.decode(responseStr));
-      _currentKey = video9cateBean.categoryList![0].id!;
+      _currentKey = video9cateBean.topicList![0].i!;
       if (_btns == null) {
         _btns = [];
-        for (var value1 in video9cateBean.categoryList!) {
+        for (var value1 in video9cateBean.topicList!) {
           ButtonBean buttonBean = ButtonBean();
-          buttonBean.title = String.fromCharCodes(new Runes(value1.name!));
-          buttonBean.value = value1.id;
+          buttonBean.title = String.fromCharCodes(new Runes(value1.t!));
+          buttonBean.value = value1.i;
           _btns?.add(buttonBean);
         }
         ButtonBean buttonBean = ButtonBean();
@@ -227,8 +230,8 @@ class VideoList9State extends State<VideoList9Page>
         ? '${ApiConstant.videoList9Url}$videoSearchKey'
         : "${ApiConstant.videoList9Url}${_currentKey == '头条'?videoTopListKey:videoListKey}";
 
-    String searchData = '{"page":$_page,"keyword":"$_currentKey","pagesize":6,"plat":"pc","type":"video","filter":"allorder,alltime,allsecond,allrange,all","idList":"269250,270350,268016,267990,239320,244592,235000,270221,270231,270232,270243,270251,270253,270257,251452","token":""}';
-    String encryData = EncryptUtil().aesEncode1(_isSearch?searchData:'{"page":$_page,"category":"$_currentKey","tags":"all","order":"new","pagesize":36,"plat":"pc","token":""}');
+    String searchData = '{"page":$_page,"keyword":"$_currentKey","pagesize":6,"plat":"pc","type":"video","filter":"allorder,alltime,allsecond,allrange,all","idList":"269250,270350,268016,267990,239320,244592,235000,270221,270231,270232,270243,270251,270253,270257,251452","token":"","t":${DateTime.now().millisecondsSinceEpoch ~/ 1000}}';
+    String encryData = EncryptUtil().aesEncode1(_isSearch?searchData:'{"id":$_currentKey,"page":$_page,"type":"all","chargetype":"all","token":"","t":${DateTime.now().millisecondsSinceEpoch ~/ 1000}}');
     String response =  await NetUtil.getHtmlDataPost(url,paras: {'encrypt_data':Uri.encodeFull(encryData)},header: header);
     _refreshController.refreshCompleted();
     _refreshController.loadComplete();
@@ -276,7 +279,7 @@ class VideoList9State extends State<VideoList9Page>
   void goToDetail(VideoListItem data) async {
     showLoading();
     String url = "${ApiConstant.videoList9Url}$videoDetailKey";
-    String encryData = EncryptUtil().aesEncode1('{"id":"${data.targetUrl}","token":""}');
+    String encryData = EncryptUtil().aesEncode1('{"id":${data.targetUrl},"isapp":1,"token":"","t":${DateTime.now().millisecondsSinceEpoch ~/ 1000}}');
     String response =  await NetUtil.getHtmlDataPost(url,paras: {'encrypt_data':Uri.encodeFull(encryData)},header: header);
     var decRes = EncryptUtil().aesDecode1(json.decode(response)['data']);
     var detail = Video9DetailBean.fromJson(json.decode(decRes));
@@ -310,9 +313,17 @@ class VideoList9State extends State<VideoList9Page>
     // } catch (e) {
     //   print(e);
     // }
-
+    print("地址${detail.info!.urlS}");
+    String? playUrl = "";
     Navigator.pop(context);
-    CommonUtil.toVideoPlay(detail.info!.urlS, context,title: data.title!);
+    if(detail.info!.urlS?.isNotEmpty == true){
+      playUrl = detail.info!.urlS;
+      CommonUtil.toVideoPlay(playUrl, context,title: data.title!);
+    }else{
+      // var temps = detail.info!.thumbimg?.split("uploads");
+      // playUrl = "https://xxx.wujiangwl.xyz${temps?[1]}";
+    }
+
     // Navigator.of(context)
     //     .push(new MaterialPageRoute(builder: (BuildContext context) {
     //   return MovieDetailPage(1, movieBean);

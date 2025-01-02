@@ -262,9 +262,9 @@ class ShowImageDialogState extends State {
 class ProgressDialog extends StatefulWidget{
 
   double startProgress = 0;
+  final List<ButtonBean> _btns;
 
-
-  ProgressDialog(this.startProgress);
+  ProgressDialog(this.startProgress,this._btns);
 
   @override
   State<StatefulWidget> createState() {
@@ -282,8 +282,9 @@ class ProgressDialogState extends State<ProgressDialog> {
   }
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 200,
+    return SizedBox(
+      width: MediaQuery.of(context).size.width * 0.9,
+      height: MediaQuery.of(context).size.height * (widget._btns.isNotEmpty?0.6:0.3),
       child: Padding(
         padding: EdgeInsets.only(top: 20,bottom: 20),
         child: Column(
@@ -304,6 +305,20 @@ class ProgressDialogState extends State<ProgressDialog> {
               setState((){});
             },
             ),
+            Visibility(
+              visible: widget._btns.length > 0,
+                child: Expanded(
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
+                child: GridView.count(
+                  childAspectRatio: 1.5,
+                  crossAxisCount: widget._btns.length > 8 ? 3 : 2,
+                  mainAxisSpacing: 5,
+                  crossAxisSpacing: 5,
+                  children: getItem(context),
+                ),
+              ),
+            )),
             MaterialButton(onPressed:(){
               Navigator.pop(context, _progress);
             }, child: Text("确定",style: TextStyle(color: Colors.white),),color: Colors.blue)
@@ -311,6 +326,32 @@ class ProgressDialogState extends State<ProgressDialog> {
         ),
       ),
     );
+  }
+
+  getItem(BuildContext context) {
+    List<Widget> list = [];
+    for (ButtonBean value in widget._btns) {
+      list.add(SizedBox(
+        width: 10,
+        height: 5,
+        child: MaterialButton(
+          height: 4,
+          padding: EdgeInsets.all(0),
+          onPressed: () {
+            Navigator.pop(context, value);
+          },
+          color: Colors.blue,
+          child: Text(value.title!,
+              maxLines: 1,
+              style: TextStyle(
+                  fontSize: 13,
+                  color: Colors.white,
+                  decoration: TextDecoration.none)),
+          textColor: Colors.black,
+        ),
+      ));
+    }
+    return list;
   }
 }
 

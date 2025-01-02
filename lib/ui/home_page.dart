@@ -10,6 +10,7 @@ import 'package:flutter_parse_html/ui/parse/abj_list_page.dart';
 import 'package:flutter_parse_html/ui/parse/book_list3_page.dart';
 import 'package:flutter_parse_html/ui/parse/book_list_4_page.dart';
 import 'package:flutter_parse_html/ui/parse/dong_man_page.dart';
+import 'package:flutter_parse_html/ui/parse/video_list10_page.dart';
 import 'package:flutter_parse_html/util/shared_preferences.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:installed_apps/installed_apps.dart';

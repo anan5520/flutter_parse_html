@@ -27,7 +27,7 @@ class ParseHomePage extends StatefulWidget {
 class HomePage5State extends State<ParseHomePage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  List<String> titles = ['视频1','视频2','番号','视频4','视频5',];
+  List<String> titles = ['视频1','视频2','视频3','番号','视频4','视频5',];
 
   @override
   void initState() {
@@ -72,6 +72,7 @@ class HomePage5State extends State<ParseHomePage>
             Tab(text: "${titles[2]}"),
             Tab(text: "${titles[3]}"),
             Tab(text: "${titles[4]}"),
+            Tab(text: "${titles[5]}"),
             // Tab(text: "${titles[6]}"),
             // Tab(text: "${titles[7]}"),
             // Tab(text: "${titles[8]}"),
@@ -83,7 +84,7 @@ class HomePage5State extends State<ParseHomePage>
       body: TabBarView(
         children: <Widget>[
           VideoList18Page(),
-          // VideoList3Page(),
+          VideoList10Page(),
           VideoList11Page(3),
           VideoList8Page(),
           VideoList11Page(1),

@@ -12,6 +12,9 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_parse_html/api/api_constant.dart';
 import 'package:flutter_parse_html/net/net_util.dart';
 
+import '../../model/button_bean.dart';
+import '../../util/common_util.dart';
+import 'package:encrypt/encrypt.dart' as Encrypt;
 class BookHomePage extends StatefulWidget {
   var url;
   int type = 0;
@@ -30,6 +33,7 @@ class BookState extends State<BookHomePage> {
   String? url;
   var showLoading = true;
   late ScrollController _controller;
+  List<ButtonBean>? _commonBtns;
   BookState(this.url);
 
   @override
@@ -52,6 +56,8 @@ class BookState extends State<BookHomePage> {
       getBookList4Data();
     } else if (widget.type == 7) {
       getBookList7Data();
+    }  else if (widget.type == 8) {
+      getDataWith8();
     } else {
       getBookList3Data();
     }
@@ -61,7 +67,7 @@ class BookState extends State<BookHomePage> {
   Widget build(BuildContext context) {
 
     Widget contentWidge =
-        widget.type == 1 || widget.type == 7 ? Text(content) : Html(data: content);
+        widget.type == 1 || widget.type == 7 ? Text(content) : Html(data: parse.parse(content).body?.text);
     return Scaffold(
       appBar: AppBar(
         title: Text('text'),
@@ -113,6 +119,52 @@ class BookState extends State<BookHomePage> {
           child: Icon(Icons.menu),
         )
     );
+  }
+  String aesEncode(String content) {
+    //加密key
+    final key = Encrypt.Key.fromUtf8('IdTJq0HklpuI6mu8iB%OO@!vd^4K&uXW');
+    //偏移量 - 注意这里
+    final iv = Encrypt.IV.fromUtf8('\$0v@krH7V2883346');
+
+    //设置cbc模式
+    final encrypter = Encrypt.Encrypter(
+        Encrypt.AES(key, mode: Encrypt.AESMode.cbc, padding: 'PKCS7'));
+    //加密
+    final encrypted = encrypter.decrypt64(content, iv: iv);
+    return encrypted;
+  }
+  void getDataWith8() async {
+    setState(() {
+      showLoading = true;
+    });
+    var response = await http.get(Uri.parse(url!));
+    Utf8Decoder utf8decoder = new Utf8Decoder();
+    var body = utf8decoder.convert(response.bodyBytes);
+    var document = parse.parse(body);
+    var eles = document.getElementsByClassName("novel-chapter-item");
+    if (eles.length > 0 && _commonBtns == null) {
+      _commonBtns = [];
+      for (var value in eles) {
+        ButtonBean buttonBean = new ButtonBean();
+        buttonBean.value = '${ApiConstant.videoList8Url}${value.attributes['href']}';
+        buttonBean.title = CommonUtil.replaceStr(aesEncode(value.getElementsByClassName('dec-ti').first.attributes['title']!));
+        _commonBtns?.add(buttonBean);
+      }
+      if(_commonBtns?.isNotEmpty ?? false){
+        url = _commonBtns?.first.value??'';
+      }
+      getDataWith8();
+    } else {
+      var encodeContent = document
+          .getElementsByClassName("novel-detail-content")
+          .first
+          .attributes['data-content'];
+      content = aesEncode(encodeContent!);
+    }
+
+    setState(() {
+      showLoading = false;
+    });
   }
 
   void getData() async {
@@ -232,16 +284,27 @@ class BookState extends State<BookHomePage> {
   }
 
   void _showDialog() async {
-    double progress = await showDialog(
+    var result = await showDialog(
         context: context,
         builder: (context) {
           return new AlertDialog(
-            content: ProgressDialog(_controller.offset / _controller.position.maxScrollExtent),
+            content: Column(
+              children: [
+                ProgressDialog(_controller.offset / _controller.position.maxScrollExtent,_commonBtns!),
+              ],
+            ),
           );
         });
+    if(result is double){
+      var progress = result;
       if(progress > 0){
         print("进度>>$progress");
         _controller.animateTo(_controller.position.maxScrollExtent * progress, duration: Duration(milliseconds: 500), curve: Curves.ease);
       }
+    }else if(result is ButtonBean){
+      url = result.value;
+      getDataWith8();
+    }
+
   }
 }

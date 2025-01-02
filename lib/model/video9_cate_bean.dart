@@ -1,123 +1,231 @@
-/// categoryList : [{"id":"29","name":"原创大厂"},{"id":"1","name":"美女主播"},{"id":"2","name":"国产精品"},{"id":"25","name":"宅男女神"},{"id":"24","name":"猎奇虐恋"},{"id":"26","name":"痴汉偷拍"},{"id":"23","name":"人妖皇后"},{"id":"28","name":"换脸AI区"},{"id":"14","name":"中文字幕"},{"id":"3","name":"亚洲无码"},{"id":"10","name":"欧美大片"},{"id":"16","name":"经典三级"},{"id":"15","name":"次元动漫"}]
-/// tagsList : [{"id":"10","name":"巨乳","catid":"3"},{"id":"11","name":"口交","catid":"3"},{"id":"12","name":"69","catid":"3"},{"id":"13","name":"3P","catid":"3"},{"id":"14","name":"道具","catid":"3"},{"id":"15","name":"肛交","catid":"3"},{"id":"16","name":"角色扮演","catid":"3"},{"id":"17","name":"美乳","catid":"3"},{"id":"18","name":"女仆","catid":"3"},{"id":"19","name":"女同","catid":"3"},{"id":"20","name":"群P","catid":"3"},{"id":"21","name":"人妻","catid":"3"},{"id":"22","name":"乳交","catid":"3"},{"id":"23","name":"少女","catid":"3"},{"id":"24","name":"熟女","catid":"3"},{"id":"25","name":"丝袜","catid":"3"},{"id":"26","name":"素人","catid":"3"},{"id":"27","name":"指法","catid":"3"},{"id":"28","name":"自慰","catid":"3"},{"id":"29","name":"69","catid":"10"},{"id":"30","name":"3P","catid":"10"},{"id":"31","name":"SM","catid":"10"},{"id":"32","name":"白虎","catid":"10"},{"id":"34","name":"大鸡巴","catid":"10"},{"id":"35","name":"大屁股","catid":"10"},{"id":"36","name":"道具","catid":"10"},{"id":"37","name":"肛交","catid":"10"},{"id":"38","name":"高跟鞋","catid":"10"},{"id":"39","name":"户外","catid":"10"},{"id":"40","name":"巨乳","catid":"10"},{"id":"41","name":"口交","catid":"10"},{"id":"42","name":"女同","catid":"10"},{"id":"43","name":"少女","catid":"10"},{"id":"44","name":"丝袜","catid":"10"},{"id":"45","name":"自慰","catid":"10"},{"id":"46","name":"69","catid":"14"},{"id":"47","name":"3P","catid":"14"},{"id":"48","name":"OL","catid":"14"},{"id":"49","name":"SM","catid":"14"},{"id":"50","name":"出轨","catid":"14"},{"id":"51","name":"道具","catid":"14"},{"id":"52","name":"角色扮演","catid":"14"},{"id":"53","name":"巨乳","catid":"14"},{"id":"54","name":"口交","catid":"14"},{"id":"55","name":"老师","catid":"14"},{"id":"56","name":"乱伦","catid":"14"},{"id":"57","name":"群交","catid":"14"},{"id":"58","name":"人妻","catid":"14"},{"id":"59","name":"乳交","catid":"14"},{"id":"60","name":"少女","catid":"14"},{"id":"61","name":"熟女","catid":"14"},{"id":"62","name":"丝袜","catid":"14"},{"id":"63","name":"素人","catid":"14"},{"id":"64","name":"偷情","catid":"14"},{"id":"65","name":"学生","catid":"14"},{"id":"66","name":"国产","catid":"16"},{"id":"67","name":"日韩","catid":"16"},{"id":"68","name":"欧美","catid":"16"},{"id":"69","name":"内衣","catid":"10"},{"id":"70","name":"群交","catid":"10"},{"id":"71","name":"无套内射","catid":"14"},{"id":"72","name":"护士","catid":"3"},{"id":"73","name":"护士","catid":"14"},{"id":"74","name":"女仆","catid":"14"},{"id":"75","name":"淫乱","catid":"14"},{"id":"76","name":"强奸","catid":"14"},{"id":"77","name":"指法","catid":"10"},{"id":"78","name":"调教","catid":"14"},{"id":"79","name":"大屁股","catid":"3"},{"id":"81","name":"指法","catid":"14"},{"id":"82","name":"白虎","catid":"3"},{"id":"83","name":"SM","catid":"3"},{"id":"84","name":"办公室女士","catid":"3"},{"id":"85","name":"角色扮演","catid":"10"},{"id":"86","name":"恋足","catid":"10"},{"id":"87","name":"内衣","catid":"3"},{"id":"88","name":"女学生","catid":"3"},{"id":"89","name":"无套内射","catid":"3"},{"id":"90","name":"颜射","catid":"3"},{"id":"91","name":"熟女","catid":"10"},{"id":"92","name":"内衣","catid":"14"},{"id":"93","name":"美腿控","catid":"3"},{"id":"94","name":"颜射","catid":"10"},{"id":"95","name":"户外","catid":"14"},{"id":"96","name":"大屁股","catid":"14"},{"id":"99","name":"户外","catid":"3"},{"id":"101","name":"肛交","catid":"14"},{"id":"102","name":"办公室","catid":"10"},{"id":"106","name":"刘亦菲","catid":"28"},{"id":"108","name":"刘涛","catid":"28"},{"id":"109","name":"古力娜扎","catid":"28"},{"id":"116","name":"宋轶","catid":"28"},{"id":"137","name":"彭小苒","catid":"28"},{"id":"139","name":"成果","catid":"28"},{"id":"144","name":"李沁","catid":"28"},{"id":"146","name":"杨幂","catid":"28"},{"id":"161","name":"王鸥","catid":"28"},{"id":"166","name":"范冰冰","catid":"28"},{"id":"170","name":"谭松韵","catid":"28"},{"id":"173","name":"赵今麦","catid":"28"},{"id":"177","name":"迪丽热巴","catid":"28"},{"id":"178","name":"江疏影","catid":"28"},{"id":"179","name":"杨紫","catid":"28"},{"id":"180","name":"张嘉倪","catid":"28"},{"id":"181","name":"杨颖","catid":"28"},{"id":"182","name":"佟丽娅","catid":"28"},{"id":"183","name":"蒋依依","catid":"28"},{"id":"184","name":"白鹿","catid":"28"},{"id":"185","name":"景甜","catid":"28"},{"id":"186","name":"鞠婧祎","catid":"28"},{"id":"187","name":"唐嫣","catid":"28"},{"id":"188","name":"蔡依林","catid":"28"},{"id":"189","name":"郑爽","catid":"28"},{"id":"190","name":"陈钰琪","catid":"28"},{"id":"191","name":"宋昕冉","catid":"28"},{"id":"192","name":"杨超越","catid":"28"},{"id":"193","name":"张予曦","catid":"28"},{"id":"194","name":"宋祖儿","catid":"28"},{"id":"195","name":"奚梦瑶","catid":"28"},{"id":"196","name":"章子怡","catid":"28"},{"id":"197","name":"林志玲","catid":"28"},{"id":"198","name":"王冰冰","catid":"28"},{"id":"199","name":"贾静雯","catid":"28"},{"id":"200","name":"黄圣依","catid":"28"},{"id":"201","name":"赵丽颖","catid":"28"},{"id":"202","name":"朱茵","catid":"28"},{"id":"203","name":"乳交","catid":"10"},{"id":"204","name":"张天爱","catid":"28"},{"id":"205","name":"张钧甯","catid":"28"},{"id":"206","name":"高圆圆","catid":"28"},{"id":"207","name":"女同","catid":"14"},{"id":"208","name":"欧阳娜娜","catid":"28"},{"id":"209","name":"天美","catid":"29"},{"id":"210","name":"麻豆","catid":"29"},{"id":"211","name":"茄子","catid":"29"},{"id":"212","name":"娄艺潇","catid":"28"},{"id":"213","name":"金晨","catid":"28"},{"id":"214","name":"李金铭","catid":"28"},{"id":"215","name":"李小璐","catid":"28"},{"id":"216","name":"大奶","catid":"10"},{"id":"217","name":"周慧敏","catid":"28"},{"id":"218","name":"周淑怡","catid":"28"},{"id":"219","name":"宋慧乔","catid":"28"},{"id":"220","name":"宋茜","catid":"28"},{"id":"221","name":"周冬雨","catid":"28"},{"id":"222","name":"关晓彤","catid":"28"},{"id":"223","name":"程潇","catid":"28"},{"id":"224","name":"赵奕欢","catid":"28"},{"id":"225","name":"姚晨","catid":"28"},{"id":"226","name":"韩雪","catid":"28"},{"id":"227","name":"李一桐","catid":"28"},{"id":"228","name":"刘诗诗","catid":"28"},{"id":"229","name":"张子枫","catid":"28"},{"id":"230","name":"陈玉琪","catid":"28"},{"id":"231","name":"祝绪丹","catid":"28"},{"id":"232","name":"赵小棠","catid":"28"},{"id":"233","name":"口爆","catid":"3"},{"id":"234","name":"邓紫棋","catid":"28"},{"id":"235","name":"赵露思","catid":"28"},{"id":"236","name":"张俪","catid":"28"},{"id":"237","name":"陈妍希","catid":"28"},{"id":"238","name":"毛晓彤","catid":"28"},{"id":"239","name":"高露","catid":"28"},{"id":"240","name":"张雪迎","catid":"28"},{"id":"241","name":"王子文","catid":"28"},{"id":"242","name":"董璇","catid":"28"},{"id":"243","name":"张娜拉","catid":"28"},{"id":"244","name":"陈卓璇","catid":"28"},{"id":"245","name":"锦鲤","catid":"28"},{"id":"246","name":"马思纯","catid":"28"},{"id":"247","name":"淫乱","catid":"3"},{"id":"248","name":"王祖贤","catid":"28"},{"id":"249","name":"柳岩","catid":"28"},{"id":"250","name":"全智贤","catid":"28"},{"id":"251","name":"张敏","catid":"28"},{"id":"252","name":"颜射","catid":"14"},{"id":"253","name":"深喉","catid":"10"},{"id":"254","name":"张柏芝","catid":"28"},{"id":"255","name":"林允","catid":"28"},{"id":"256","name":"黄霄云","catid":"28"},{"id":"257","name":"林依晨","catid":"28"},{"id":"258","name":"段奥娟","catid":"28"},{"id":"259","name":"兔子","catid":"29"},{"id":"260","name":"杏吧","catid":"29"},{"id":"261","name":"吴谨言","catid":"28"},{"id":"262","name":"孟美岐","catid":"28"},{"id":"263","name":"蜜桃","catid":"29"},{"id":"264","name":"周子瑜","catid":"28"},{"id":"265","name":"精东","catid":"29"},{"id":"266","name":"邓家佳","catid":"28"},{"id":"267","name":"徐娇","catid":"28"},{"id":"268","name":"性视觉","catid":"29"},{"id":"269","name":"LISA","catid":"28"},{"id":"270","name":"文颂娴","catid":"28"},{"id":"271","name":"戚薇","catid":"28"},{"id":"272","name":"沈梦辰","catid":"28"},{"id":"273","name":"徐熙媛","catid":"28"},{"id":"274","name":"杨晨晨","catid":"28"},{"id":"275","name":"林允儿","catid":"28"},{"id":"276","name":"蒋欣","catid":"28"},{"id":"278","name":"徐璐","catid":"28"},{"id":"279","name":"张慧雯","catid":"28"},{"id":"280","name":"宋雨琦","catid":"28"},{"id":"281","name":"起点","catid":"29"},{"id":"282","name":"周也","catid":"28"}]
+/// bannerList : [{"id":"43","url":"https://zfx04.top","thumbimg":"https://cc777img.dqsldz.com/i/2024/12/26/750-360.gif"},{"id":"50","url":"https://avy28.top","thumbimg":"https://cc777img.dqsldz.com/i/2024/12/26/750-360_1.gif"},{"id":"67","url":"https://avy28.top","thumbimg":"https://cc777img.dqsldz.com/i/2024/12/26/750-360_1.gif"},{"id":"100","url":"https://www.3pj25.top","thumbimg":"https://www.3pj.xyz/images/h5lb.gif"},{"id":"45","url":"https://mth2b.net/luodi_si26K","thumbimg":"https://monkey.p2ld58.com/img/mt-saf750x360.gif"},{"id":"75","url":"https://tmir.vtuoa.cn/1098/?cid=649464","thumbimg":"https://www.xtpag.top:2087/images/673b36bfad2c6f85190b0149.gif"},{"id":"85","url":"https://somh.wvthbl.cn/350/?cid=745507","thumbimg":"https://www.ebqmz.top:2087/images/6764214c0ab8157b1a245d79.gif"},{"id":"81","url":"https://yl1137.com","thumbimg":"https://tycjb777.hccoeutg.com/i/yl/dh1207-5.gif"},{"id":"58","url":"https://x53197.com:6987","thumbimg":"https://w6144.com:33236/60d72c7221f8481aaa8a73704f6663c9.gif"},{"id":"73","url":"https://p1211.com","thumbimg":"https://tycjb777.hccoeutg.com/i/LD/DH85.gif"},{"id":"77","url":"https://587773jj.com:61016","thumbimg":"https://666ppp111ppp.com/0c439231f39242d89432824cdc94278a.gif"},{"id":"70","url":"https://y24110523-e989b9a0cfca2297.elb.ap-east-1.amazonaws.com:7777","thumbimg":"https://ig35.vip/img/Fky_750x360.gif"},{"id":"83","url":"https://euan2vnv58jjc.vip","thumbimg":"https://777wy888bb.com/6088c0f495ae49efb0361c9445fb6313.gif"},{"id":"89","url":"http://xh11td.vip","thumbimg":"https://cc777img.dqsldz.com/i/2024/12/05/750-360_1.gif"},{"id":"91","url":"https://yh24122001-a2be5a0e1f295752.elb.ap-east-1.amazonaws.com:8888","thumbimg":"https://ig53.vip/img/gy_750x360.gif"},{"id":"92","url":"https://x24112610-f9087dc2e273dab6.elb.ap-east-1.amazonaws.com:8888","thumbimg":"https://ig83.vip/img/050_750x360.gif"},{"id":"93","url":"https://t24112608-962968ac42e3e34b.elb.ap-east-1.amazonaws.com:8888","thumbimg":"https://ig82.vip/img/fftyc_750x360.gif"},{"id":"94","url":"https://h24112611-d5f4f159cd04c413.elb.ap-east-1.amazonaws.com:8888","thumbimg":"https://ig65.vip/img/012hg_750x360.gif"}]
+/// sysNotice : {"title":"【公告】：豆花視頻海外(翻墻)永久網址 https://3ye2d.com","textarea":"豆花視頻海外(翻墻)永久網址 https://3ye2d.com","type":"system"}
+/// indexNotice : {"title":"【重要通知--用户必读】","textarea":"<p><font color=\"#ffff00\" style=\"background-color: rgb(255, 0, 0);\">重点：如果网站地址无法访问，</font></p><p style=\"padding-top: 5px; padding-bottom: 5px;\"><font color=\"#ffffff\"><span style=\"background-color: rgb(0, 0, 255);\">请尝试</span><span style=\"background-color: rgb(156, 0, 255);\">加www</span><span style=\"background-color: rgb(0, 0, 255);\">或</span><span style=\"background-color: rgb(156, 0, 255);\">不加www</span><span style=\"background-color: rgb(0, 0, 255);\">的域名进行访问！</span></font></p>","type":"index"}
+/// topicList : [{"i":"353","t":"自拍"},{"i":"787","t":"国产"},{"i":"2264","t":"学生"},{"i":"5995","t":"刺激"},{"i":"1137","t":"人妻"},{"i":"4252","t":"后入"},{"i":"4298","t":"少妇"},{"i":"5493","t":"乱伦"},{"i":"2694","t":"诱惑"},{"i":"4368","t":"萝莉"},{"i":"5695","t":"母狗"},{"i":"5927","t":"偷拍"},{"i":"2779","t":"自慰"},{"i":"2537","t":"口交"},{"i":"3190","t":"巨乳"},{"i":"5206","t":"猎奇"},{"i":"5993","t":"内射"},{"i":"4534","t":"粉嫩"},{"i":"4234","t":"极品"},{"i":"3594","t":"熟女"},{"i":"1748","t":"调教"},{"i":"1181","t":"反差婊"},{"i":"5826","t":"原创"},{"i":"5150","t":"强奸"},{"i":"4827","t":"偷情"},{"i":"4000","t":"少女"},{"i":"3138","t":"抖音风"},{"i":"6024","t":"动漫"},{"i":"2599","t":"丝袜"},{"i":"136","t":"网曝门"},{"i":"517","t":"女上位"},{"i":"5219","t":"白虎"},{"i":"3532","t":"无套"},{"i":"3393","t":"绿帽"},{"i":"2457","t":"幼女"},{"i":"4031","t":"多人"},{"i":"5522","t":"重口"},{"i":"3351","t":"勾引"},{"i":"806","t":"网红"},{"i":"3086","t":"黑人"},{"i":"1554","t":"H动漫"},{"i":"1836","t":"嫩模"},{"i":"3730","t":"欧美"},{"i":"5193","t":"户外"},{"i":"871","t":"初中生"},{"i":"5243","t":"初中"},{"i":"1958","t":"3D动漫"},{"i":"3181","t":"母子"},{"i":"4996","t":"动漫无码"},{"i":"2341","t":"制服"},{"i":"527","t":"露出"},{"i":"5923","t":"迷奸"},{"i":"1494","t":"3P"},{"i":"5411","t":"明星"},{"i":"1548","t":"美臀"},{"i":"3877","t":"AI"},{"i":"2410","t":"3D"},{"i":"5310","t":"父女"},{"i":"569","t":"初中女"},{"i":"2631","t":"美腿"},{"i":"3625","t":"中学生"},{"i":"1164","t":"动漫巨乳"},{"i":"1527","t":"女学生"},{"i":"5329","t":"探花"},{"i":"1691","t":"猎奇刺激"},{"i":"1438","t":"事件"},{"i":"1989","t":"强奸侵犯幼女"},{"i":"652","t":"肛交"},{"i":"1734","t":"AI换脸"},{"i":"1210","t":"吃瓜"}]
 
 class Video9CateBean {
   Video9CateBean({
-      List<CategoryList>? categoryList,
-      List<TagsList>? tagsList,}){
-    _categoryList = categoryList;
-    _tagsList = tagsList;
+      List<BannerList>? bannerList, 
+      SysNotice? sysNotice, 
+      IndexNotice? indexNotice, 
+      List<TopicList>? topicList,}){
+    _bannerList = bannerList;
+    _sysNotice = sysNotice;
+    _indexNotice = indexNotice;
+    _topicList = topicList;
 }
 
   Video9CateBean.fromJson(dynamic json) {
-    if (json['categoryList'] != null) {
-      _categoryList = [];
-      json['categoryList'].forEach((v) {
-        _categoryList!.add(CategoryList.fromJson(v));
+    if (json['bannerList'] != null) {
+      _bannerList = [];
+      json['bannerList'].forEach((v) {
+        _bannerList?.add(BannerList.fromJson(v));
       });
     }
-    if (json['tagsList'] != null) {
-      _tagsList = [];
-      json['tagsList'].forEach((v) {
-        _tagsList?.add(TagsList.fromJson(v));
+    _sysNotice = json['sysNotice'] != null ? SysNotice.fromJson(json['sysNotice']) : null;
+    _indexNotice = json['indexNotice'] != null ? IndexNotice.fromJson(json['indexNotice']) : null;
+    if (json['topicList'] != null) {
+      _topicList = [];
+      json['topicList'].forEach((v) {
+        _topicList?.add(TopicList.fromJson(v));
       });
     }
   }
-  List<CategoryList>?_categoryList;
-  List<TagsList>? _tagsList;
-Video9CateBean copyWith({  List<CategoryList>? categoryList,
-  List<TagsList>? tagsList,
-}) => Video9CateBean(  categoryList: categoryList ?? _categoryList,
-  tagsList: tagsList ?? _tagsList,
+  List<BannerList>? _bannerList;
+  SysNotice? _sysNotice;
+  IndexNotice? _indexNotice;
+  List<TopicList>? _topicList;
+Video9CateBean copyWith({  List<BannerList>? bannerList,
+  SysNotice? sysNotice,
+  IndexNotice? indexNotice,
+  List<TopicList>? topicList,
+}) => Video9CateBean(  bannerList: bannerList ?? _bannerList,
+  sysNotice: sysNotice ?? _sysNotice,
+  indexNotice: indexNotice ?? _indexNotice,
+  topicList: topicList ?? _topicList,
 );
-  List<CategoryList>? get categoryList => _categoryList;
-  List<TagsList>? get tagsList => _tagsList;
+  List<BannerList>? get bannerList => _bannerList;
+  SysNotice? get sysNotice => _sysNotice;
+  IndexNotice? get indexNotice => _indexNotice;
+  List<TopicList>? get topicList => _topicList;
 
-  Map<String?, dynamic> toJson() {
-    final map = <String?, dynamic>{};
-    if (_categoryList != null) {
-      map['categoryList'] = _categoryList!.map((v) => v.toJson()).toList();
+  Map<String, dynamic> toJson() {
+    final map = <String, dynamic>{};
+    if (_bannerList != null) {
+      map['bannerList'] = _bannerList?.map((v) => v.toJson()).toList();
     }
-    if (_tagsList != null) {
-      map['tagsList'] = _tagsList!.map((v) => v.toJson()).toList();
+    if (_sysNotice != null) {
+      map['sysNotice'] = _sysNotice?.toJson();
+    }
+    if (_indexNotice != null) {
+      map['indexNotice'] = _indexNotice?.toJson();
+    }
+    if (_topicList != null) {
+      map['topicList'] = _topicList?.map((v) => v.toJson()).toList();
     }
     return map;
   }
 
 }
 
-/// id : "10"
-/// name : "巨乳"
-/// catid : "3"
+/// i : "353"
+/// t : "自拍"
 
-class TagsList {
-  TagsList({
-      String? id, 
-      String? name, 
-      String? catid,}){
-    _id = id;
-    _name = name;
-    _catid = catid;
+class TopicList {
+  TopicList({
+      String? i, 
+      String? t,}){
+    _i = i;
+    _t = t;
 }
 
-  TagsList.fromJson(dynamic json) {
-    _id = json['id'];
-    _name = json['name'];
-    _catid = json['catid'];
+  TopicList.fromJson(dynamic json) {
+    _i = json['i'];
+    _t = json['t'];
   }
-  String? _id;
-  String? _name;
-  String? _catid;
-TagsList copyWith({  String? id,
-  String? name,
-  String? catid,
-}) => TagsList(  id: id ?? _id,
-  name: name ?? _name,
-  catid: catid ?? _catid,
+  String? _i;
+  String? _t;
+TopicList copyWith({  String? i,
+  String? t,
+}) => TopicList(  i: i ?? _i,
+  t: t ?? _t,
 );
-  String? get id => _id;
-  String? get name => _name;
-  String? get catid => _catid;
+  String? get i => _i;
+  String? get t => _t;
 
-  Map<String?, dynamic> toJson() {
-    final map = <String?, dynamic>{};
-    map['id'] = _id;
-    map['name'] = _name;
-    map['catid'] = _catid;
+  Map<String, dynamic> toJson() {
+    final map = <String, dynamic>{};
+    map['i'] = _i;
+    map['t'] = _t;
     return map;
   }
 
 }
 
-/// id : "29"
-/// name : "原创大厂"
+/// title : "【重要通知--用户必读】"
+/// textarea : "<p><font color=\"#ffff00\" style=\"background-color: rgb(255, 0, 0);\">重点：如果网站地址无法访问，</font></p><p style=\"padding-top: 5px; padding-bottom: 5px;\"><font color=\"#ffffff\"><span style=\"background-color: rgb(0, 0, 255);\">请尝试</span><span style=\"background-color: rgb(156, 0, 255);\">加www</span><span style=\"background-color: rgb(0, 0, 255);\">或</span><span style=\"background-color: rgb(156, 0, 255);\">不加www</span><span style=\"background-color: rgb(0, 0, 255);\">的域名进行访问！</span></font></p>"
+/// type : "index"
 
-class CategoryList {
-  CategoryList({
-      String? id, 
-      String? name,}){
-    _id = id;
-    _name = name;
+class IndexNotice {
+  IndexNotice({
+      String? title, 
+      String? textarea, 
+      String? type,}){
+    _title = title;
+    _textarea = textarea;
+    _type = type;
 }
 
-  CategoryList.fromJson(dynamic json) {
+  IndexNotice.fromJson(dynamic json) {
+    _title = json['title'];
+    _textarea = json['textarea'];
+    _type = json['type'];
+  }
+  String? _title;
+  String? _textarea;
+  String? _type;
+IndexNotice copyWith({  String? title,
+  String? textarea,
+  String? type,
+}) => IndexNotice(  title: title ?? _title,
+  textarea: textarea ?? _textarea,
+  type: type ?? _type,
+);
+  String? get title => _title;
+  String? get textarea => _textarea;
+  String? get type => _type;
+
+  Map<String, dynamic> toJson() {
+    final map = <String, dynamic>{};
+    map['title'] = _title;
+    map['textarea'] = _textarea;
+    map['type'] = _type;
+    return map;
+  }
+
+}
+
+/// title : "【公告】：豆花視頻海外(翻墻)永久網址 https://3ye2d.com"
+/// textarea : "豆花視頻海外(翻墻)永久網址 https://3ye2d.com"
+/// type : "system"
+
+class SysNotice {
+  SysNotice({
+      String? title, 
+      String? textarea, 
+      String? type,}){
+    _title = title;
+    _textarea = textarea;
+    _type = type;
+}
+
+  SysNotice.fromJson(dynamic json) {
+    _title = json['title'];
+    _textarea = json['textarea'];
+    _type = json['type'];
+  }
+  String? _title;
+  String? _textarea;
+  String? _type;
+SysNotice copyWith({  String? title,
+  String? textarea,
+  String? type,
+}) => SysNotice(  title: title ?? _title,
+  textarea: textarea ?? _textarea,
+  type: type ?? _type,
+);
+  String? get title => _title;
+  String? get textarea => _textarea;
+  String? get type => _type;
+
+  Map<String, dynamic> toJson() {
+    final map = <String, dynamic>{};
+    map['title'] = _title;
+    map['textarea'] = _textarea;
+    map['type'] = _type;
+    return map;
+  }
+
+}
+
+/// id : "43"
+/// url : "https://zfx04.top"
+/// thumbimg : "https://cc777img.dqsldz.com/i/2024/12/26/750-360.gif"
+
+class BannerList {
+  BannerList({
+      String? id, 
+      String? url, 
+      String? thumbimg,}){
+    _id = id;
+    _url = url;
+    _thumbimg = thumbimg;
+}
+
+  BannerList.fromJson(dynamic json) {
     _id = json['id'];
-    _name = json['name'];
+    _url = json['url'];
+    _thumbimg = json['thumbimg'];
   }
   String? _id;
-  String? _name;
-CategoryList copyWith({  String? id,
-  String? name,
-}) => CategoryList(  id: id ?? _id,
-  name: name ?? _name,
+  String? _url;
+  String? _thumbimg;
+BannerList copyWith({  String? id,
+  String? url,
+  String? thumbimg,
+}) => BannerList(  id: id ?? _id,
+  url: url ?? _url,
+  thumbimg: thumbimg ?? _thumbimg,
 );
   String? get id => _id;
-  String? get name => _name;
+  String? get url => _url;
+  String? get thumbimg => _thumbimg;
 
-  Map<String?, dynamic> toJson() {
-    final map = <String?, dynamic>{};
+  Map<String, dynamic> toJson() {
+    final map = <String, dynamic>{};
     map['id'] = _id;
-    map['name'] = _name;
+    map['url'] = _url;
+    map['thumbimg'] = _thumbimg;
     return map;
   }
 

@@ -26,7 +26,7 @@ import 'package:flutter_parse_html/model/movie_bean.dart';
 class GifListLsjPage extends StatefulWidget {
   GifListLsjPage();
 
-  static var videoBase = "https://www.k8467w.com/";
+  static var videoBase = "https://xa1jgfbdlwf2ncxq.967504.com:8283/";
 
   @override
   State<StatefulWidget> createState() {

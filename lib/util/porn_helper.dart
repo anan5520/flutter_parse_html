@@ -19,10 +19,18 @@ class PornHelper {
       'Referer': ApiConstant.getPornHomeUrl(),
       'Cookie': ApiConstant.pornCookie
     };
+
     return NetUtil.getHtmlData(ApiConstant.getPornParseVideoUrl(),
             paras: param, header: header)
         .then((onValue) {
-      return _parseVideoUrl(onValue, item);
+          if(onValue.isEmpty){
+            return PornHubUtil.getHtmlFromHttpDeugger(ApiConstant.getPornParseVideoUrl(),params: param,header: header).then((value){
+              return _parseVideoUrl(onValue, item);
+            });
+          }else{
+            return _parseVideoUrl(onValue, item);
+          }
+
     });
   }
 

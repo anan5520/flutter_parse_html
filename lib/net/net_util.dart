@@ -249,9 +249,9 @@ class NetUtil {
     print('请求url>>$uri');
     return _dio.get<String>(uri, options: op).then((value) {
       print('返回结果:${value.data}');
-      return Future.value(value.data??'');
+      return Future.value("${value.data??''}");
     }).catchError((e){
-      return Future.value('error');
+      return Future.value('');
     });
   }
 

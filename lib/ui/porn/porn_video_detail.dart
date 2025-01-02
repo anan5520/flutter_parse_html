@@ -128,7 +128,7 @@ class PornVideoDetailState extends State<PornVideoDetailPage> {
               children: <Widget>[
                 Padding(
                   padding: EdgeInsets.only(bottom: 5, left: 5, right: 5),
-                  child: widget._videoResult.videoName!.startsWith('http')
+                  child: widget._videoResult.videoName?.startsWith('http')??false
                       ? CachedNetworkImage(
                           imageUrl: widget._videoResult.videoName!)
                       : Text(
