@@ -273,7 +273,7 @@ class PornState extends State<PornPage> with AutomaticKeepAliveClientMixin {
     var url = widget._type == 5
         ? ApiConstant.getAuthorVideosUrl(widget._authorId)
         : ApiConstant.getPornVideoUrl();
-    String data = await NetUtil.getHtmlDataPost(
+    String data = await NetUtil.getHtmlData(
       url,paras: param);
     if(data.isEmpty){
       data = await PornHubUtil.getHtmlFromHttpDeugger(url,params: param);

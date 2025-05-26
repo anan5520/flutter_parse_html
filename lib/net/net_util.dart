@@ -439,6 +439,8 @@ class NetUtil {
     return _dio.request<String>(uri, data: data, options: op).then((value) {
       print('返回结果:${value.data}');
       return Future.value(value.data);
+    })..onError((_,e){
+      return Future.value('error');
     });
   }
 

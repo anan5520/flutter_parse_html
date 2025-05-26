@@ -5,6 +5,7 @@ class ButtonBean{
   String? title;
   String? value;
   int page = 1;
+  bool isTheme = false;
 
 
 

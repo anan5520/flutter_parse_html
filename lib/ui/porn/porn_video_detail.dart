@@ -96,27 +96,24 @@ class PornVideoDetailState extends State<PornVideoDetailPage> {
       ),
       body: Column(
         children: <Widget>[
-          SizedBox(
-            height: 200,
-            child: Stack(
-              children: <Widget>[
-                FlickVideoPlayer(
-                  flickManager: _controller,
-                  flickVideoWithControls: new FlickVideoWithControls(
-                      videoFit: BoxFit.contain,
-                      controls: FlickPortraitControls()),
-                ),
-                Offstage(
-                    offstage: _showThumb,
-                    child: CachedNetworkImage(
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                        imageUrl: widget._videoResult.thumbImgUrl == null
-                            ? ''
-                            : widget._videoResult.thumbImgUrl!)),
-              ],
-            ),
-          ),
+          Expanded(child:  Stack(
+            children: <Widget>[
+              FlickVideoPlayer(
+                flickManager: _controller,
+                flickVideoWithControls: new FlickVideoWithControls(
+                    videoFit: BoxFit.contain,
+                    controls: FlickPortraitControls()),
+              ),
+              Offstage(
+                  offstage: _showThumb,
+                  child: CachedNetworkImage(
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                      imageUrl: widget._videoResult.thumbImgUrl == null
+                          ? ''
+                          : widget._videoResult.thumbImgUrl!)),
+            ],
+          )),
           Container(
             alignment: Alignment.centerLeft,
             width: double.infinity,
@@ -159,7 +156,7 @@ class PornVideoDetailState extends State<PornVideoDetailPage> {
               ],
             ),
           ),
-          getCommentWidget()
+          // getCommentWidget()
         ],
       ),
     );

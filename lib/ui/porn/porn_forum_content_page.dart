@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_parse_html/model/button_bean.dart';
 import 'package:flutter_parse_html/model/heiliao_video_entity.dart';
+import 'package:flutter_parse_html/net/net_util.dart';
 import 'package:flutter_parse_html/ui/parse/video_list18_page.dart';
 import 'package:flutter_parse_html/ui/pornhub/pornhub_util.dart';
 import 'package:flutter_parse_html/util/common_util.dart';
@@ -16,6 +17,8 @@ import 'package:flutter_parse_html/widget/dialog_page.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:html/parser.dart' as parse;
+
+import '../../model/movie_bean.dart';
 
 class PornForumContentPage extends StatefulWidget {
   final int _tid;
@@ -156,7 +159,7 @@ class PornForumContentState extends State<PornForumContentPage> {
   }
 
   getContent() {
-    return PornHubUtil.getHtmlFromHttpDeugger(widget._url).then((value) {
+    return NetUtil.getHtmlData(widget._url).then((value) {
       var doc = parse.parse(value);
       PornForumContent content = PornForumContent();
       content.content = doc.getElementsByClassName('detail-page').first.outerHtml;
@@ -194,7 +197,9 @@ class PornForumContentState extends State<PornForumContentPage> {
   void _showVideoDialog() async {
     int start = 0;
     List<ButtonBean> _btns = [];
+    List<MovieItemBean>? movieList = [];
     _forumContent?.videoList.forEach((element) {
+      movieList.add(MovieItemBean()..name = '视频${start}'..targetUrl=element);
       _btns.add(ButtonBean()
         ..title = '视频${start++}'
         ..value = element);
@@ -206,6 +211,6 @@ class PornForumContentState extends State<PornForumContentPage> {
             content: GridViewDialog(_btns,showToPage: false,),
           );
         });
-    CommonUtil.toVideoPlay(buttonBean.value, context);
+    CommonUtil.toVideoPlay(buttonBean.value, context,movieList: movieList);
   }
 }

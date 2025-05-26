@@ -92,6 +92,29 @@ class _VideoAppState extends State<VideoPlayPage> {
               '${widget._movieBean.number != null ? widget._movieBean.number : ""}'),
           actions: <Widget>[
             GestureDetector(
+              onTap: () async{
+                int currentIndex =  widget._movieBean?.list?.indexWhere((Item)=> Item.targetUrl == playUrl)??0;
+                var name = "";
+                if((currentIndex + 1) < (widget._movieBean?.list?.length??0)){
+                  playUrl = widget._movieBean?.list?[currentIndex + 1]?.targetUrl??'';
+                  name = widget._movieBean?.list?[currentIndex + 1]?.name??'';
+                  Navigator.pop(context);
+                  Navigator.of(context).push(
+                      new MaterialPageRoute(builder: (BuildContext context) {
+                        var bean = MovieBean()..playUrl = playUrl..list = widget._movieBean.list..name = name;
+                        return VideoPlayPage.alongMovieBean(bean);
+                      }));
+                }
+
+              },
+              child: Center(
+                child: Padding(
+                  padding: EdgeInsets.only(right: 10),
+                  child: Text('下一个'),
+                ),
+              ),
+            ),
+            GestureDetector(
               onTap: () {
                 Fluttertoast.showToast(
                     msg: '已复制到粘贴板', toastLength: Toast.LENGTH_SHORT);
@@ -173,12 +196,16 @@ class _VideoAppState extends State<VideoPlayPage> {
 //        }
 //      });
 //    });
-    await flickManager.flickVideoManager!.videoPlayerController!.pause();
-    flickManager.dispose();
-    KeepScreenOn.turnOff();
-    super.dispose();
-    if (_timer != null) {
-      _timer.cancel();
+    try {
+      await flickManager.flickVideoManager!.videoPlayerController!.pause();
+      await flickManager.dispose();
+      KeepScreenOn.turnOff();
+      super.dispose();
+      if (_timer != null) {
+            _timer.cancel();
+          }
+    } catch (e) {
+      print(e);
     }
   }
 

@@ -12,6 +12,7 @@ class VideoListItem {
   bool? show = true;
   bool? isVideo = false;
   bool? isBook = false;
+  bool? isImage = false;
 
   VideoListItem();
 

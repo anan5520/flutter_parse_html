@@ -160,7 +160,7 @@ class VideoList8State extends State<VideoList8Page>
 
   void goToPlay(VideoListItem data) async {
     showLoading();
-    var response = await PornHubUtil.getHtmlFromHttpDeugger(data.targetUrl!);
+    var response = await NetUtil.getHtmlData(data.targetUrl!);
     try {
       var doc = parse.parse(response);
       var playUrl = '';
@@ -298,7 +298,7 @@ class VideoList8State extends State<VideoList8Page>
                     builder: (_, _snap) {
                       return item.index !> -1
                           ? Image.file(
-                        File(item.imageUrl!),
+                        File(item.base64Img!),
                         gaplessPlayback: true,
                         fit: BoxFit.cover,
                       )
@@ -472,7 +472,7 @@ class VideoList8State extends State<VideoList8Page>
     try {
       List<dynamic> jsons = json.decode(response);
       var imageBaseUrls = response.split(RegExp(r"var pic_image_url = '|';"));
-      var imgBaseUrl = 'https://base.jingmin.wang/';
+      var imgBaseUrl = 'https://4sbase.cqfeiyang.xyz/';
       if(imageBaseUrls.length > 1){
         imgBaseUrl = imageBaseUrls[1];
       }
@@ -582,13 +582,13 @@ class VideoList8State extends State<VideoList8Page>
         new Utf8Encoder().convert(item.imageUrl!))}';
     if (await File(path).exists()) {
       item.index = index;
-      imgeStream.sink.add(item..imageUrl = path);
+      imgeStream.sink.add(item..base64Img = path);
     } else {
       NetUtil.getHtmlData(item.imageUrl).then((value) {
         value = value.replaceAll('data:image/jpg;base64,', '');
         new File(path).writeAsBytes(base64Decode(value)).then((value) {
           item.index = index;
-          item.imageUrl = path;
+          item.base64Img = path;
           imgeStream.sink.add(item);
         });
       });
@@ -608,7 +608,7 @@ class VideoList8State extends State<VideoList8Page>
     if (localStr != null && localStr.isNotEmpty) {
       localUrl = UrlsBean.fromJson(json.decode(localStr));
     }
-    var body = await PornHubUtil.getHtmlFromHttpDeugger(url);
+    var body = await NetUtil.getHtmlData(url);
     if(body.contains("enter/index.html")){
       _resetBaseUrl(url);
     }else{

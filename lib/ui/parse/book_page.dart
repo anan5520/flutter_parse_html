@@ -58,6 +58,8 @@ class BookState extends State<BookHomePage> {
       getBookList7Data();
     }  else if (widget.type == 8) {
       getDataWith8();
+    }   else if (widget.type == 9) {
+      getBookList9Data();
     } else {
       getBookList3Data();
     }
@@ -67,7 +69,7 @@ class BookState extends State<BookHomePage> {
   Widget build(BuildContext context) {
 
     Widget contentWidge =
-        widget.type == 1 || widget.type == 7 ? Text(content) : Html(data: parse.parse(content).body?.text);
+        widget.type == 1 || widget.type == 7 ? Text(content) : Html(data: content);
     return Scaffold(
       appBar: AppBar(
         title: Text('text'),
@@ -268,6 +270,16 @@ class BookState extends State<BookHomePage> {
         content = element.outerHtml;
       }
     });
+    setState(() {
+      showLoading = false;
+    });
+  }
+
+  void getBookList9Data() async {
+    var body = await NetUtil.getHtmlData(url!);
+    var document = parse.parse(body);
+    var articles = document.getElementsByClassName("main book");
+    content = articles.first.outerHtml;
     setState(() {
       showLoading = false;
     });

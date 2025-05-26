@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_parse_html/ui/parse/video_list10_page.dart';
 import 'package:flutter_parse_html/ui/parse/video_list11_page.dart';
 import 'package:flutter_parse_html/ui/parse/video_list18_page.dart';
+import 'package:flutter_parse_html/ui/parse/video_list4_page.dart';
 import 'package:flutter_parse_html/ui/parse/video_list9_page.dart';
 import 'package:flutter_parse_html/util/native_utils.dart';
 
@@ -27,7 +28,7 @@ class ParseHomePage extends StatefulWidget {
 class HomePage5State extends State<ParseHomePage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  List<String> titles = ['视频1','视频2','视频3','番号','视频4','视频5',];
+  List<String> titles = ['视频1','高清av','视频3','番号','视频4','视频5',];
 
   @override
   void initState() {
@@ -87,7 +88,7 @@ class HomePage5State extends State<ParseHomePage>
           VideoList10Page(),
           VideoList11Page(3),
           VideoList8Page(),
-          VideoList11Page(1),
+          VideoList4Page(),
           VideoList9Page(),
           // VideoList11Page(4),
           // VideoList13Page(),

@@ -48,7 +48,7 @@ class VideoList17State extends State<VideoList18Page>
 
   late RefreshController _refreshController;
   int _page = 1, buttonType = 0;
-  String _currentKey = '7';
+  String _currentKey = '/jrrs';
   bool _isSearch = false;
   late TextEditingController _editingController;
   StreamController<VideoListItem> imgeStream = StreamController.broadcast();
@@ -101,7 +101,7 @@ class VideoList17State extends State<VideoList18Page>
   void goToPlay(VideoListItem data) async {
     showLoading();
     if(data.isVideo!){
-      var response = await PornHubUtil.getHtmlFromHttpDeugger(data.targetUrl!);
+      var response = await NetUtil.getHtmlData(data.targetUrl!);
       try {
         var doc = parse.parse(response);
         String playUrl = doc.getElementsByClassName('danmu').first.attributes['src']!.split('url=')[1];
@@ -176,11 +176,11 @@ class VideoList17State extends State<VideoList18Page>
   void _getData() async {
     String url = _isSearch
         ? '${ApiConstant.videoList18Url}/page/$_page?s=$_currentKey'
-        : "${ApiConstant.videoList18Url}/category/$_currentKey/$_page.html";
+        : "${ApiConstant.videoList18Url}$_currentKey/page/$_page";
     if(widget.url?.isNotEmpty ?? false){
       url = widget.url??'';
     }
-    String response = await PornHubUtil.getHtmlFromHttpDeugger(url);
+    String response = await NetUtil.getHtmlData(url);
     _refreshController.refreshCompleted();
     _refreshController.loadComplete();
     var doc = parse.parse(response);

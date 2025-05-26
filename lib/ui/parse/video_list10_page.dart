@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'dart:convert';
-
+import 'dart:io';
+import 'package:crypto/crypto.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -12,6 +14,7 @@ import 'package:flutter_parse_html/util/files.dart';
 import 'package:flutter_parse_html/util/native_utils.dart';
 import 'package:flutter_parse_html/widget/fade_in_image_without_auth.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:flutter_parse_html/model/button_bean.dart';
 import 'package:flutter_parse_html/net/net_util.dart';
@@ -20,7 +23,7 @@ import 'package:html/parser.dart' as parse;
 import 'package:flutter_parse_html/widget/dialog_page.dart';
 import 'package:flutter_parse_html/model/movie_bean.dart';
 import 'package:http/http.dart' as http;
-
+import 'package:encrypt/encrypt.dart' as encrypt;
 import '../../model/api_bean.dart';
 import '../../resources/shared_preferences_keys.dart';
 import '../../util/shared_preferences.dart'; // 导入http包
@@ -38,10 +41,11 @@ class VideoList10State extends State<VideoList10Page>
 
   late RefreshController _refreshController;
   int _page = 1, buttonType = 0;
-  String _currentKey = '';
+  String _currentKey = '/theme/detail/3/update';
+  bool _isTheme = true;
   bool _isSearch = false;
   late TextEditingController _editingController;
-
+  StreamController<String> imgeStream = StreamController.broadcast();
   @override
   void initState() {
     _refreshController = new RefreshController(initialRefresh: true);
@@ -74,6 +78,7 @@ class VideoList10State extends State<VideoList10Page>
                       _page = 1;
                       _currentKey = value;
                       _isSearch = true;
+                      _isTheme = false;
                       _refreshController.requestRefresh();
                     },
                     style: TextStyle(color: Colors.blue),
@@ -108,7 +113,9 @@ class VideoList10State extends State<VideoList10Page>
                       crossAxisSpacing: 10,
                       mainAxisSpacing: 10),
                   itemBuilder: (BuildContext context, int index) {
-                    return getItem(index);
+                    return StreamBuilder(stream: imgeStream.stream, builder: (_,snap){
+                      return getItem(index);
+                    });
                   },
                   itemCount: _data.length,
                 ),
@@ -134,16 +141,8 @@ class VideoList10State extends State<VideoList10Page>
     showLoading();
     var response = await NetUtil.getHtmlData(data.targetUrl!);
     try {
-      var doc = parse.parse(response);
-      var gotoEles = doc.getElementsByClassName("full-top btn-submit");
-      var gotoEle = gotoEles.length == 0
-          ? doc.getElementsByClassName('series_body').first
-          : gotoEles.first;
-      String url =
-          '${ApiConstant.videoList10Url}${gotoEle.attributes['onclick']?.replaceAll("location.href='", '')?.replaceAll("';", '')}';
-      var detailResponse = await NetUtil.getHtmlData(url);
-      var playDoc = parse.parse(detailResponse);
-      var playUrl = playDoc.getElementsByClassName("player").first.getElementsByTagName('iframe').first.attributes['src']?.split(RegExp(r'url='))?[1];
+      var urls = response.split(RegExp(r'hlsUrl = "|";'));
+      var playUrl = urls[1];
       Navigator.pop(context);
       if (playUrl?.startsWith('http') == true) {
         CommonUtil.toVideoPlay(playUrl, context, title: data.title!);
@@ -169,12 +168,13 @@ class VideoList10State extends State<VideoList10Page>
             children: <Widget>[
               Expanded(
                 child: ConstrainedBox(
-                  child: CachedNetworkImage(
-                    placeholder: (context, url) => new Icon(Icons.image),
-                    errorWidget: (context, url, error) => new Icon(Icons.error),
-                    imageUrl: item.imageUrl!,
+                  child: item.index !> -1
+                      ? Image.file(
+                    File(item.base64Img!),
+                    gaplessPlayback: true,
                     fit: BoxFit.cover,
-                  ),
+                  )
+                      : Image.asset('images/video_bg.png'),
                   constraints: new BoxConstraints.expand(),
                 ),
               ),
@@ -196,63 +196,43 @@ class VideoList10State extends State<VideoList10Page>
   //获取数据
   void _getData() async {
     String url = _isSearch
-        ? '${ApiConstant.videoList10Url}/?m=video_search*${Uri.encodeComponent(_currentKey)}*${_page}'
-        : _currentKey.isNotEmpty?"${ApiConstant.videoList10Url}$_currentKey${_page}/index.htm":"${ApiConstant.videoList10Url}$_currentKey";
+        ? '${ApiConstant.videoList10Url}/search/${Uri.encodeComponent(_currentKey)}/${_page}'
+        : _currentKey.isNotEmpty?"${ApiConstant.videoList10Url}$_currentKey${_isTheme?'/${_page}':'/page/${_page}'}":"${ApiConstant.videoList10Url}$_currentKey";
     String response = await NetUtil.getHtmlData(url);
     _refreshController.refreshCompleted();
     _refreshController.loadComplete();
     var doc = parse.parse(response);
     try {
-      var listEle = doc.getElementsByClassName('wall');
-      if(listEle.isEmpty){
-        var tempUrl =  await _startRedirectProcess();
-        if(tempUrl.isNotEmpty){
-          SpUtil sp = await SpUtil.getInstance();
-          ApiConstant.videoList10Url = tempUrl;
-          String localStr = sp.getString(SharedPreferencesKeys.urls);
-          UrlsBean localUrl;
-          if (localStr != null && localStr.isNotEmpty) {
-            localUrl = UrlsBean.fromJson(json.decode(localStr));
-            localUrl.videoList10Url = ApiConstant.videoList10Url;
-            sp.putString(SharedPreferencesKeys.urls, json.encode(localUrl));
-          }
-          _refreshController.requestRefresh();
-        }
+      var rootEle = doc.getElementById('list_videos_common_videos_list');
+      if(rootEle == null){
+       rootEle = doc.getElementById('site-content');
+      }
+      var listEle = rootEle?.getElementsByClassName("col-6 col-sm-4 col-lg-3");
+      listEle?.forEach((ele){
+        var aEle = ele.getElementsByTagName("a").first;
+        VideoListItem item = VideoListItem();
+        var hrefs = aEle.attributes['href'];
+        String href = '${ApiConstant.videoList10Url}$hrefs';
+        var imgEle = aEle.getElementsByTagName('img').first;
+        item.title = imgEle.attributes['alt'];
+        item.imageUrl = imgEle.attributes['z-image-loader-url'];
+        item.targetUrl = href;
+        _data.add(item);
+      });
 
-      }
-      listEle = listEle.length == 0
-          ? doc.getElementsByClassName('ilist_box')
-          : listEle;
-      var tdElements = listEle.first
-          .getElementsByClassName('article');
-      for (var value in tdElements) {
-        var aEles = value.getElementsByTagName('a');
-        if (aEles.length > 0) {
-          var aEle = aEles.first;
-          VideoListItem item = VideoListItem();
-          var hrefs = aEle.attributes['href'];
-          String href = '${ApiConstant.videoList10Url}$hrefs';
-          var imgEle = aEle.getElementsByTagName('img').first;
-          item.title = aEle.attributes['title'];
-          item.imageUrl = imgEle.attributes['data-original'] == null
-              ? imgEle.attributes['src']
-              : imgEle.attributes['data-original'];
-          item.imageUrl = item.imageUrl!.startsWith('http')
-              ? item.imageUrl
-              : 'http:${item.imageUrl}';
-          item.targetUrl = href;
-          _data.add(item);
-        }
-      }
       _btns = [];
-      var menu = doc.getElementsByClassName('aui-palace-grid aui-phpasp');
+      var menu = doc.getElementsByClassName('col-6 col-sm-4 col-lg-3 mb-3');
+      _btns?.add(ButtonBean()..title = "中文字幕"..value = "/theme/detail/3/update"..isTheme = true);
+      _btns?.add(ButtonBean()..title = "角色剧情"..value = "/theme/detail/2/update"..isTheme = true);
+      _btns?.add(ButtonBean()..title = "主奴"..value = "/theme/detail/7/update"..isTheme = true);
+      _btns?.add(ButtonBean()..title = "制服"..value = "/theme/detail/4/update"..isTheme = true);
       for (int i = 0; i < menu.length; i++) {
-        var value1 = menu[i];
+        var value1 = menu[i].getElementsByTagName("a").first;
         ButtonBean buttonBean = ButtonBean();
         buttonBean.title = value1.text;
         if (!value1.text.contains('区') && !value1.text.contains('会员')) {
           buttonBean.value =
-              value1.attributes['href']!.replaceAll('1/index.htm', '');
+              value1.attributes['href'];
           _btns?.add(buttonBean);
         }
       }
@@ -260,8 +240,51 @@ class VideoList10State extends State<VideoList10Page>
       print(e);
     }
 
-    setState(() {});
+    setState(() {
+      for(int i = 0;i<_data.length;i++){
+        _getSiseImage(_data[i],i);
+      }
+    });
   }
+
+  _getSiseImage(VideoListItem item, int index) async {
+    String url = item?.imageUrl??'';
+    Directory tempDir = await getTemporaryDirectory();
+    var path = '${tempDir.path}/${md5.convert(new Utf8Encoder().convert(url))}';
+    if(await File(path).exists()){
+      item.index = index;
+      item.base64Img = path;
+      imgeStream.sink.add(url);
+    }else{
+      http.get(Uri.parse(url)).then((response) {
+        if (response.statusCode == 200) {
+          String base64Image = base64Encode(response.bodyBytes);
+          String decryptedBase64 = _decryptImage(base64Image);
+          new File(path).writeAsBytes(base64Decode(decryptedBase64)).then((value) {
+            item.index = index;
+            item.base64Img = path;
+            imgeStream.sink.add(url);
+          });
+
+        } else {
+
+        }
+
+      });
+    }
+
+  }
+
+  String _decryptImage(String base64Image) {
+    final key = encrypt.Key.fromUtf8("102_53_100_57_54_53_100_102_55_53_51_51_54_50_55_48".split("_").map((e) => String.fromCharCode(int.parse(e))).join(""));
+    final iv = encrypt.IV.fromUtf8("57_55_98_54_48_51_57_52_97_98_99_50_102_98_101_49".split("_").map((e) => String.fromCharCode(int.parse(e))).join(""));
+
+    final encrypter = encrypt.Encrypter(encrypt.AES(key, mode: encrypt.AESMode.cbc, padding: null));
+    final decrypted = base64Encode(encrypter.decryptBytes(encrypt.Encrypted.fromBase64(base64Image), iv: iv));
+
+    return decrypted;
+  }
+
 
   // 合并后的方法，返回重定向的URL
   Future<String> _startRedirectProcess() async {
@@ -351,6 +374,7 @@ class VideoList10State extends State<VideoList10Page>
         _isSearch = false;
         buttonType = 0;
         _currentKey = buttonBean.value!;
+        _isTheme = buttonBean.isTheme;
       }
       _refreshController.requestRefresh();
     }
