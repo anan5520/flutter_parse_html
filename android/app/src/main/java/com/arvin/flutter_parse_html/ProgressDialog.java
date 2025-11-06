@@ -9,7 +9,6 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
 
-import com.ldoublem.loadingviewlib.view.LVEatBeans;
 
 import java.lang.ref.WeakReference;
 
@@ -21,7 +20,6 @@ public class ProgressDialog
     private boolean isOutTime = true;
     private static ProgressDialog progressDialog;
     private Activity mAct;
-    private LVEatBeans lvGhost;
 
     public static ProgressDialog getInstance(){
         if (progressDialog == null)
@@ -35,8 +33,6 @@ public class ProgressDialog
             mAct = context;
             dialog = new Dialog(context, R.style.Dialog02);
             dialog.setContentView(R.layout.firset_dialog_view);
-            lvGhost = dialog.findViewById(R.id.img_loading);
-            lvGhost.startAnim(5000);
             Window window = dialog.getWindow();
             WindowManager.LayoutParams lp = window.getAttributes();
 
@@ -46,27 +42,7 @@ public class ProgressDialog
             tvDescribe = (TextView) dialog.findViewById(R.id.tvLoad);
 
             final ProcessOutTime processOutTime = new ProcessOutTime(context,dialog);
-            dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                @Override
-                public void onDismiss(DialogInterface dialog) {
-                    if (processOutTime!=null && isOutTime)
-                        processOutTime.stop();
 
-                    if (lvGhost!=null)
-                        lvGhost.stopAnim();
-
-                }
-            });
-            dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-                @Override
-                public void onShow(DialogInterface dialog) {
-                    if (processOutTime!=null && isOutTime)
-                        processOutTime.start();
-
-                    if (lvGhost!=null)
-                        lvGhost.startAnim();
-                }
-            });
         }
         return this;
     }

@@ -153,7 +153,7 @@ public class PlayActivity extends Activity {
                 @Override
                 public void run() {
                     finish();
-                    overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out);
+//                    overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out);
                 }
             }, 500);
         }

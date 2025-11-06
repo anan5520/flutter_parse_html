@@ -97,8 +97,11 @@ class NetworkImageWithoutAuth extends image_provider.ImageProvider<image_provide
   }
 
   @override
-  int get hashCode => hashValues(url, scale);
+  int get hashCode => url.hashCode;
 
   @override
   String toString() => '${objectRuntimeType(this, 'NetworkImage')}("$url", scale: $scale)';
+
+  @override
+  image_provider.WebHtmlElementStrategy get webHtmlElementStrategy => throw UnimplementedError();
 }

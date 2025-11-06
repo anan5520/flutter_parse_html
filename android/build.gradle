@@ -1,13 +1,17 @@
 buildscript {
-    ext.kotlin_version = '1.8.0'
+    ext.kotlin_version = '2.1.0'
     repositories {
         google()
         jcenter()
         mavenCentral()
+        maven { url "https://kotlin.bintray.com/kotlinx" }
+        maven { url "https://maven.aliyun.com/repository/public" }
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.2.2'
+        classpath ('com.android.tools.build:gradle:8.6.0'){
+            exclude module: 'proguard-gradle'
+        }
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
@@ -15,10 +19,12 @@ buildscript {
 allprojects {
     repositories {
         google()
-        maven { url 'https://maven.aliyun.com/repository/jcenter' }
+        maven { url "https://kotlin.bintray.com/kotlinx" }
+        maven { url "https://maven.aliyun.com/repository/public" }
+//        maven { url 'https://maven.aliyun.com/repository/jcenter' }
         jcenter()
         maven { url 'https://jitpack.io' }
-        maven { url "https://maven.aliyun.com/repository/public" }
+//        maven { url "https://maven.aliyun.com/repository/public" }
         mavenCentral()
         maven {
             url 'https://storage.googleapis.com/download.flutter.io'

@@ -28,6 +28,7 @@
         android:label='老司机'
         xmlns:tools="http://schemas.android.com/tools"
         tools:replace="android:label"
+        android:requestLegacyExternalStorage="true"
         android:icon="@mipmap/ic_launcher"
         android:usesCleartextTraffic="true"
         android:largeHeap="true"

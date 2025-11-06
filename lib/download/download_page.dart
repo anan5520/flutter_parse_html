@@ -9,7 +9,7 @@ import 'package:flutter_parse_html/model/movie_bean.dart';
 import 'package:flutter_parse_html/ui/video_play.dart';
 import 'package:flutter_parse_html/util/native_utils.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:image_gallery_saver_plus/image_gallery_saver_plus.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -284,7 +284,7 @@ class DownloadItemState extends State<DownloadItemPage>
     print('保存视频>>>$path');
 
     if (Platform.isAndroid) {
-      File savedFile = await ImageGallerySaver.saveFile(path);
+      File savedFile = await ImageGallerySaverPlus.saveFile(path);
       print('保存成功>>>' + savedFile.path);
       Fluttertoast.showToast(msg: '保存成功');
     } else {

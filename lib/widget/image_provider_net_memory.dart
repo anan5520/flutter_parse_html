@@ -13,7 +13,7 @@ import 'package:flutter/src/painting/image_cache.dart';
 import 'package:flutter/src/painting/image_stream.dart';
 import 'package:flutter/src/painting/image_provider.dart' as image_provider;
 import 'package:flutter/src/painting/binding.dart';
-
+import 'package:flutter/foundation.dart';
 
 class NetworkImageMemory extends image_provider.ImageProvider<image_provider.NetworkImage> implements image_provider.NetworkImage {
   /// Creates an object that fetches the image at the given URL.
@@ -100,8 +100,11 @@ class NetworkImageMemory extends image_provider.ImageProvider<image_provider.Net
   }
 
   @override
-  int get hashCode => hashValues(url, scale);
+  int get hashCode => url.hashCode;
 
   @override
   String toString() => '${objectRuntimeType(this, 'NetworkImage')}("$url", scale: $scale)';
+
+  @override
+  image_provider.WebHtmlElementStrategy get webHtmlElementStrategy => throw UnimplementedError();
 }

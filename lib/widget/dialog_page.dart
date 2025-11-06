@@ -9,7 +9,7 @@ import 'package:flutter_parse_html/model/button_bean.dart';
 import 'package:flutter_parse_html/util/native_utils.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:image_gallery_saver_plus/image_gallery_saver_plus.dart';
 
 class NoticeDialog extends StatefulWidget {
   final String _title;
@@ -247,7 +247,7 @@ class ShowImageDialogState extends State {
       // print('保存成功>>>' + savedFile.path);
       var response = await Dio().get(url,
           options: Options(responseType: ResponseType.bytes));
-      final result = await ImageGallerySaver.saveImage(Uint8List.fromList(response.data));
+      final result = await ImageGallerySaverPlus.saveImage(Uint8List.fromList(response.data));
       Fluttertoast.showToast(msg: '保存成功$result');
     } else {
       NativeUtils.saveImage(url, albumName: 'Media').then((bool success) {

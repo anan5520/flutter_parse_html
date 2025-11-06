@@ -72,6 +72,11 @@ class PornForumContentState extends State<PornForumContentPage> {
                                 Navigator.push(context, MaterialPageRoute(builder: (context){
                                   return PornForumContentPage(0,2,url!);
                                 }));
+                              }else{
+                                url = Uri.parse(widget._url).scheme + "://" + Uri.parse(widget._url).host + url;
+                                Navigator.push(context, MaterialPageRoute(builder: (context){
+                                  return PornForumContentPage(0,2,url!);
+                                }));
                               }
                               return true;
                             },),

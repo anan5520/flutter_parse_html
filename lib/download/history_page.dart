@@ -12,7 +12,7 @@ import 'package:flutter_parse_html/util/movie_util.dart';
 import 'package:flutter_parse_html/util/native_utils.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:image_gallery_saver_plus/image_gallery_saver_plus.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class HistoryPage extends StatefulWidget {
@@ -169,7 +169,7 @@ class HistoryState extends State<HistoryPage>
     print('保存视频>>>$path');
 
     if (Platform.isAndroid) {
-      File savedFile = await ImageGallerySaver.saveFile(path);
+      File savedFile = await ImageGallerySaverPlus.saveFile(path);
       print('保存成功>>>' + savedFile.path);
       Fluttertoast.showToast(msg: '保存成功');
     } else {

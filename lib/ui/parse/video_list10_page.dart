@@ -139,7 +139,7 @@ class VideoList10State extends State<VideoList10Page>
   //跳转播放
   void goToPlay(VideoListItem data) async {
     showLoading();
-    var response = await NetUtil.getHtmlData(data.targetUrl!);
+    var response = await PornHubUtil.getHtmlFromHttpDeugger(data.targetUrl!);
     try {
       var urls = response.split(RegExp(r'hlsUrl = "|";'));
       var playUrl = urls[1];
@@ -198,7 +198,7 @@ class VideoList10State extends State<VideoList10Page>
     String url = _isSearch
         ? '${ApiConstant.videoList10Url}/search/${Uri.encodeComponent(_currentKey)}/${_page}'
         : _currentKey.isNotEmpty?"${ApiConstant.videoList10Url}$_currentKey${_isTheme?'/${_page}':'/page/${_page}'}":"${ApiConstant.videoList10Url}$_currentKey";
-    String response = await NetUtil.getHtmlData(url);
+    String response = await PornHubUtil.getHtmlFromHttpDeugger(url);
     _refreshController.refreshCompleted();
     _refreshController.loadComplete();
     var doc = parse.parse(response);

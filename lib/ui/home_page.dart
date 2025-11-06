@@ -14,6 +14,7 @@ import 'package:flutter_parse_html/ui/parse/video_list10_page.dart';
 import 'package:flutter_parse_html/util/shared_preferences.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:installed_apps/installed_apps.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:umeng_common_sdk/umeng_common_sdk.dart';
@@ -26,7 +27,6 @@ import 'package:flutter_parse_html/model/api_bean.dart';
 import 'dart:io';
 import 'dart:convert';
 import 'package:flutter_parse_html/util/native_utils.dart';
-import 'package:package_info/package_info.dart';
 
 class HomePage extends StatefulWidget {
   static bool goToFuLi = false;
@@ -287,9 +287,9 @@ class HomeState extends State<HomePage> with WidgetsBindingObserver {
     }
     if(isShowDialog){
       if(updateKey.isJd ?? true){
-        isShowDialog = await InstalledApps.getAppInfo('com.jingdong.app.mall').then((value) => value.versionName?.isNotEmpty ?? false);
+        isShowDialog = await InstalledApps.getAppInfo('com.jingdong.app.mall').then((value) => value?.name?.isNotEmpty ?? false);
       } else{
-        isShowDialog = await InstalledApps.getAppInfo('com.taobao.taobao').then((value) => value.versionName?.isNotEmpty ?? false);
+        isShowDialog = await InstalledApps.getAppInfo('com.taobao.taobao').then((value) => value?.name?.isNotEmpty ?? false);
       }
     }
     if(updateKey.copyKey!.isNotEmpty && isShowDialog){

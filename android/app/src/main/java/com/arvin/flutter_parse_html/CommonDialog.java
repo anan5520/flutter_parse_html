@@ -135,15 +135,15 @@ public class CommonDialog extends Dialog implements View.OnClickListener{
         titleTxt = findViewById(R.id.tv_dialog_title);
         submitTxt = findViewById(R.id.tv_confirm);
         submitTxt.setOnClickListener(this);
-        cancelTxt = findViewById(R.id.tv_cancel);
-        cancelTxt.setOnClickListener(this);
+//        cancelTxt = findViewById(R.id.tv_cancel);
+//        cancelTxt.setOnClickListener(this);
         if (contentColor != 0)
             contentTxt.setTextColor(contentColor);
 
         if (contentSize != 0)
             contentTxt.setTextSize(contentSize);
 
-        cancelTxt.setVisibility(showNegative?View.VISIBLE:View.GONE);
+//        cancelTxt.setVisibility(showNegative?View.VISIBLE:View.GONE);
 //        if (!showNegative)
 //            submitTxt.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.dialog_btn_confirm_selector));
         contentTxt.setVisibility(TextUtils.isEmpty(content)?View.GONE:View.VISIBLE);
@@ -152,9 +152,9 @@ public class CommonDialog extends Dialog implements View.OnClickListener{
             submitTxt.setText(positiveName);
         }
 
-        if(!TextUtils.isEmpty(negativeName)){
-            cancelTxt.setText(negativeName);
-        }
+//        if(!TextUtils.isEmpty(negativeName)){
+//            cancelTxt.setText(negativeName);
+//        }
 
         if(!TextUtils.isEmpty(title)){
             titleTxt.setText(title);
@@ -174,22 +174,22 @@ public class CommonDialog extends Dialog implements View.OnClickListener{
     @Override
     public void onClick(View v) {
         switch (v.getId()){
-            case R.id.tv_cancel:
-                if(listener != null){
-                    listener.onClick(this, false);
-                }
-                if (negativeiOnclick != null)
-                    negativeiOnclick.onClick(v);
-                this.dismiss();
-                break;
-            case R.id.tv_confirm:
-                this.dismiss();
-                if(listener != null){
-                    listener.onClick(this, true);
-                }
-                if (positiveOnclick != null)
-                    positiveOnclick.onClick(v);
-                break;
+//            case R.id.tv_cancel:
+//                if(listener != null){
+//                    listener.onClick(this, false);
+//                }
+//                if (negativeiOnclick != null)
+//                    negativeiOnclick.onClick(v);
+//                this.dismiss();
+//                break;
+//            case R.id.tv_confirm:
+//                this.dismiss();
+//                if(listener != null){
+//                    listener.onClick(this, true);
+//                }
+//                if (positiveOnclick != null)
+//                    positiveOnclick.onClick(v);
+//                break;
         }
     }
 

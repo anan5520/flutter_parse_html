@@ -429,16 +429,20 @@ class VideoList8State extends State<VideoList8Page>
 
         });
       }
-      if (_commonBtns == null) {
+      if (_commonBtns == null ||_commonBtns!.isEmpty) {
         _commonBtns = [];
         var menu = doc
             .getElementsByClassName('menu-common')
             .first;
         var liEles = menu.getElementsByTagName('div');
         liEles.forEach((element) {
+          var divEle = element;
+          if(element.attributes['title'] == null){
+            divEle = divEle.getElementsByTagName("div").first;
+          }
           ButtonBean buttonBean = ButtonBean();
-          buttonBean.title = aesEncode(element.attributes['title']!);
-          buttonBean.value = aesEncode(element.attributes['onclick']
+          buttonBean.title = aesEncode(divEle.attributes['title']!);
+          buttonBean.value = aesEncode(divEle.attributes['onclick']
               !.replaceAll("onMenuItemClick('", '')
               .replaceAll("')", ''));
           _commonBtns?.add(buttonBean);

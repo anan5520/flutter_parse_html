@@ -11,7 +11,7 @@ import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' as parse;
 import 'package:flutter_parse_html/util/native_utils.dart';
 import 'package:extended_image/extended_image.dart';
-import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:image_gallery_saver_plus/image_gallery_saver_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:crypto/crypto.dart';
 
@@ -144,11 +144,11 @@ class BookState extends State<ImagePage> {
         Directory tempDir = await getTemporaryDirectory();
         var path = '${tempDir.path}/${md5.convert(new Utf8Encoder().convert(url))}.gif';
         await NetUtil.dio.download(url, path);
-        await ImageGallerySaver.saveFile(path, isReturnPathOfIOS: true);
+        await ImageGallerySaverPlus.saveFile(path, isReturnPathOfIOS: true);
       }else{
         var response = await Dio().get(url,
             options: Options(responseType: ResponseType.bytes));
-        final result = await ImageGallerySaver.saveImage(Uint8List.fromList(response.data));
+        final result = await ImageGallerySaverPlus.saveImage(Uint8List.fromList(response.data));
       }
       Fluttertoast.showToast(msg: '保存成功');
 
@@ -162,7 +162,7 @@ class BookState extends State<ImagePage> {
 //        url,
 //        options: Options(responseType: ResponseType.bytes,headers: header));
 //    final result =
-//        await ImageGallerySaver.saveImage(Uint8List.fromList(response.data));
+//        await ImageGallerySaverPlus.saveImage(Uint8List.fromList(response.data));
 //    print('保存成功>>>' +result);
 //    var response = await http.get(url,headers: header);
 //    File savedFile = await ImageSaver.toFile(fileData: response.bodyBytes);

@@ -48,7 +48,7 @@ class VideoList17State extends State<VideoList18Page>
 
   late RefreshController _refreshController;
   int _page = 1, buttonType = 0;
-  String _currentKey = '/jrrs';
+  String _currentKey = '/hlcg';
   bool _isSearch = false;
   late TextEditingController _editingController;
   StreamController<VideoListItem> imgeStream = StreamController.broadcast();
@@ -176,7 +176,7 @@ class VideoList17State extends State<VideoList18Page>
   void _getData() async {
     String url = _isSearch
         ? '${ApiConstant.videoList18Url}/page/$_page?s=$_currentKey'
-        : "${ApiConstant.videoList18Url}$_currentKey/page/$_page";
+        : "${ApiConstant.videoList18Url}$_currentKey/page/$_page/";
     if(widget.url?.isNotEmpty ?? false){
       url = widget.url??'';
     }
@@ -194,16 +194,20 @@ class VideoList17State extends State<VideoList18Page>
           var hrefs = aEle.attributes['href'];
           String href = hrefs!;
           var imgEle = aEle.getElementsByTagName('img').first;
-          var titleELe = value.getElementsByClassName('title').first;
-          item.title = CommonUtil.replaceStr(titleELe.text);
-          if(item.title!.isNotEmpty){
-            // item.isVideo = aEle.getElementsByClassName("thumb-video").length > 0;
-            var loads = imgEle.attributes['onload']!.split('https')[1];
-            item.imageUrl = 'https${loads.substring(0,loads.length - 2)}';
-            // String s = await NetUtil.getHtmlData(item.imageUrl);
-            item.targetUrl = href.startsWith('http')?href:"${ApiConstant.videoList18Url}$href";
-            _data.add(item);
+          var titleEles = value.getElementsByClassName('title');
+          if(titleEles.isNotEmpty){
+            var titleELe = value.getElementsByClassName('title').first;
+            item.title = CommonUtil.replaceStr(titleELe.text);
+            if(item.title!.isNotEmpty){
+              // item.isVideo = aEle.getElementsByClassName("thumb-video").length > 0;
+              var loads = imgEle.attributes['onload']!.split('https')[1];
+              item.imageUrl = 'https${loads.substring(0,loads.length - 2)}';
+              // String s = await NetUtil.getHtmlData(item.imageUrl);
+              item.targetUrl = href.startsWith('http')?href:"${ApiConstant.videoList18Url}$href";
+              _data.add(item);
+            }
           }
+
         }
       }
       if (_btns == null) {

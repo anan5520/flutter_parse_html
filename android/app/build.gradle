@@ -1,3 +1,9 @@
+
+plugins {
+    id "com.android.application"
+    id "kotlin-android"
+    id "dev.flutter.flutter-gradle-plugin" // 替换原 Flutter 插件的 apply from 方式
+}
 def localProperties = new Properties()
 def localPropertiesFile = rootProject.file('local.properties')
 if (localPropertiesFile.exists()) {
@@ -21,22 +27,21 @@ if (flutterVersionName == null) {
     flutterVersionName = '1.2'
 }
 
-apply plugin: 'com.android.application'
-apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
-
 android {
+    namespace "com.arvin.flutter_parse_html"
+    ndkVersion = "29.0.14033849"
 //    packagingOptions {
 //        // Fixes duplicate libraries build issue,
 //        // when your project uses more than one plugin that depend on C++ libs.
 //        pickFirst 'lib/**/libc++_shared.so'
 //    }
-    compileSdkVersion 34
+    compileSdkVersion 35
 //    ndkVersion '21.3.6528147'
 
     defaultConfig {
         applicationId "com.arvin.flutter_parse_html"
-        minSdkVersion 21
-        targetSdkVersion 34
+        minSdkVersion flutter.minSdkVersion
+        targetSdkVersion 35
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
         ndk {
@@ -59,8 +64,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
     buildTypes {
         release {
@@ -78,8 +83,7 @@ android {
 
 configurations.all {
     resolutionStrategy {
-        force 'androidx.core:core:1.6.0'
-        force 'androidx.core:core-ktx:1.6.0'
+        force "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.7.0"
     }
 }
 
@@ -94,13 +98,18 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     implementation("com.squareup.okhttp3:okhttp:4.9.0")
     implementation 'androidx.multidex:multidex:2.0.1'
-    implementation 'com.ldoublem.loadingview:loadingviewlib:1.0'
+//    implementation 'com.ldoublem.loadingview:loadingviewlib:1.0'
     implementation 'androidx.appcompat:appcompat:1.5.0'
     //完整版引入
-    implementation 'com.github.CarGuo.GSYVideoPlayer:GSYVideoPlayer:v8.3.5-release-jitpack'
+
+    implementation 'io.github.carguo:gsyvideoplayer:11.1.0'
+
+
+//是否需要AliPlayer模式
+    implementation 'io.github.carguo:gsyvideoplayer-aliplay:11.1.0'
 
 
     //是否需要AliPlayer模式
-    implementation 'com.github.CarGuo.GSYVideoPlayer:GSYVideoPlayer-aliplay:v8.3.5-release-jitpack'
+//    implementation 'com.github.CarGuo.GSYVideoPlayer:GSYVideoPlayer-aliplay:v8.3.5-release-jitpack'
 
 }

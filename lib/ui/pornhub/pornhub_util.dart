@@ -23,7 +23,7 @@ class PornHubUtil {
       "https://www.vlogdownloader.com/download.html";
 
   static final String _httpDebuger =
-      "http://www.httpdebugger.com/tools/ViewHttpHeaders.aspx";
+      "https://www.httpdebugger.com/tools/ViewHttpHeaders.aspx";
 
   //从cors-anywhere代理 获取网页内容
   static Future<String> getHtmlFromCors(String url, {bool isMobile = true}) async{
@@ -133,7 +133,7 @@ class PornHubUtil {
       "RefererBox": referer,
       "HeadersBox": headerStr,
       "Accept-Language":"zh-CN,zh;q=0.9",
-      "Referer": "http://www.httpdebugger.com/tools/ViewHttpHeaders.aspx",
+      "Referer": "https://www.httpdebugger.com/tools/ViewHttpHeaders.aspx",
       "Upgrade-Insecure-Requests": "1",
     },isGbk: isGbk).then((response) async {
       if ("error" != response) {
